@@ -1,10 +1,9 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-import { HeartIcon, EditIcon } from '../assets/icons'
-
-import { PageTitle, SectionTitle, CTA } from '../components'
 import { Button } from '@windmill/react-ui'
+import { HeartIcon, EditIcon } from '../../assets/icons'
+import { CTA, PageTitle, SectionTitle } from '../../components/atoms'
 
 function Buttons() {
   return (

@@ -1,7 +1,9 @@
 import React from 'react'
-import { PageTitle, SectionTitle, RoundIcon, CTA, InfoCard } from '../components'
+
 import { Card, CardBody } from '@windmill/react-ui'
-import { CartIcon, ChatIcon, MoneyIcon, PeopleIcon } from '../assets/icons'
+import { CartIcon, ChatIcon, MoneyIcon, PeopleIcon } from '../../assets/icons'
+import { CTA, PageTitle, RoundIcon, SectionTitle } from '../../components/atoms'
+import { InfoCard } from '../../components/organisms'
 
 function Cards() {
   return (

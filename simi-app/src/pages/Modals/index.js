@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 
-import { PageTitle, CTA } from '../components'
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from '@windmill/react-ui'
+import { CTA, PageTitle } from '../../components'
 
 function Modals() {
   const [isModalOpen, setIsModalOpen] = useState(false)

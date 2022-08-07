@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { PageTitle, SectionTitle, CTA } from '../components'
+
+import { PageTitle, SectionTitle, CTA } from '../../components'
 import {
   Table,
   TableHeader,
@@ -13,9 +14,9 @@ import {
   Button,
   Pagination,
 } from '@windmill/react-ui'
-import { EditIcon, TrashIcon } from '../assets/icons'
+import { EditIcon, TrashIcon } from '../../assets/icons'
 
-import response from '../utils/demo/tableData'
+import response from '../../utils/demo/tableData'
 // make a copy of the data, for the second table
 const response2 = response.concat([])
 

@@ -1,4 +1,4 @@
-import React, { useContext, Suspense, useEffect, lazy } from 'react'
+import React, { useContext, Suspense, useEffect } from 'react'
 import { Switch, Route, Redirect, useLocation } from 'react-router-dom'
 import routes from '../../routes'
 
@@ -6,8 +6,7 @@ import Main from './Main'
 import { SidebarContext } from '../../context/SidebarContext'
 import { Header, Sidebar } from '../organisms'
 import { ThemedSuspense } from '../atoms'
-
-const Page404 = lazy(() => import('../../pages/404'))
+import { Page404 } from '../../pages'
 
 function Layout() {
   const { isSidebarOpen, closeSidebar } = useContext(SidebarContext)

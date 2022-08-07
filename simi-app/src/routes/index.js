@@ -1,4 +1,3 @@
-import { lazy } from 'react'
 import {  Blank, Buttons, Cards, Charts, Dashboard, Forms, Modals, Page404, Tables } from '../pages'
 
 // use lazy for better code splitting, a.k.a. load faster

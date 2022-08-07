@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { Doughnut, Line } from 'react-chartjs-2'
-import { ChartCard, ChartLegend, CTA, InfoCard, PageTitle, RoundIcon } from '../components'
-import { ChatIcon, CartIcon, MoneyIcon, PeopleIcon } from '../assets/icons'
-import response from '../utils/demo/tableData'
+import { ChartCard, ChartLegend, CTA, InfoCard, PageTitle, RoundIcon } from '../../components'
+import { ChatIcon, CartIcon, MoneyIcon, PeopleIcon } from '../../assets/icons'
+import response from '../../utils/demo/tableData'
 import {
   TableBody,
   TableContainer,
@@ -21,7 +21,7 @@ import {
   lineOptions,
   doughnutLegends,
   lineLegends,
-} from '../utils/demo/chartsData'
+} from '../../utils/demo/chartsData'
 
 function Dashboard() {
   const [page, setPage] = useState(1)

@@ -1,9 +1,8 @@
 import React from 'react'
 
-import { PageTitle, SectionTitle, CTA } from '../components'
 import { Input, HelperText, Label, Select, Textarea } from '@windmill/react-ui'
-
-import { MailIcon } from '../assets/icons'
+import { MailIcon } from '../../assets/icons'
+import { CTA, PageTitle, SectionTitle } from '../../components'
 
 function Forms() {
   return (

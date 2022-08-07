@@ -1,6 +1,7 @@
 import React from 'react'
 import { Doughnut, Line, Bar } from 'react-chartjs-2'
-import { PageTitle, ChartCard, ChartLegend } from '../components'
+
+import { PageTitle, ChartCard, ChartLegend } from '../../components'
 import {
   doughnutOptions,
   lineOptions,
@@ -8,7 +9,7 @@ import {
   doughnutLegends,
   lineLegends,
   barLegends,
-} from '../utils/demo/chartsData'
+} from '../../utils/demo/chartsData'
 
 function Charts() {
   return (

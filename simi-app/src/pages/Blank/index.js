@@ -1,5 +1,6 @@
 import React from 'react'
-import { PageTitle } from '../components'
+
+import { PageTitle } from '../../components/atoms'
 
 function Blank() {
   return (
