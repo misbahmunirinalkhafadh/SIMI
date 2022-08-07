@@ -1,8 +1,6 @@
 import React from 'react'
 
-import CTA from '../components/CTA'
-import { PageTitle } from '../components'
-import SectionTitle from '../components/Typography/SectionTitle'
+import { PageTitle, SectionTitle, CTA } from '../components'
 import { Input, HelperText, Label, Select, Textarea } from '@windmill/react-ui'
 
 import { MailIcon } from '../icons'

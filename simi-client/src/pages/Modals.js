@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 
-import { PageTitle } from '../components'
-import CTA from '../components/CTA'
+import { PageTitle, CTA } from '../components'
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from '@windmill/react-ui'
 
 function Modals() {

@@ -3,9 +3,7 @@ import { Link } from 'react-router-dom'
 
 import { HeartIcon, EditIcon } from '../icons'
 
-import { PageTitle } from '../components'
-import SectionTitle from '../components/Typography/SectionTitle'
-import CTA from '../components/CTA'
+import { PageTitle, SectionTitle, CTA } from '../components'
 import { Button } from '@windmill/react-ui'
 
 function Buttons() {
