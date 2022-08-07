@@ -1,27 +1,30 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import ProvideAuth from "./auth/ProvideAuth";
-import Login from "./pages/Login";
+import React, { lazy } from 'react'
+import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom'
+import AccessibleNavigationAnnouncer from './components/AccessibleNavigationAnnouncer'
+
+const Layout = lazy(() => import('./components/templates/Layout'))
+const Login = lazy(() => import('./pages/Login'))
+const CreateAccount = lazy(() => import('./pages/CreateAccount'))
+const ForgotPassword = lazy(() => import('./pages/ForgotPassword'))
 
 function App() {
   return (
     <>
-      <ProvideAuth>
-        <Router>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-          </Routes>
-          {/* <Navigate from="/" to="login" /> */}
-        </Router>
-      </ProvideAuth>
+      <Router>
+        <AccessibleNavigationAnnouncer />
+        <Switch>
+          <Route path="/login" component={Login} />
+          <Route path="/create-account" component={CreateAccount} />
+          <Route path="/forgot-password" component={ForgotPassword} />
+
+          {/* Place new routes over this */}
+          <Route path="/app" component={Layout} />
+          {/* If you have an index page, you can remothis Redirect */}
+          <Redirect exact from="/" to="/login" />
+        </Switch>
+      </Router>
     </>
-  );
-}
-
-export default App;
-
-function Dashboard() {
-  return (
-    <div>Dashboard</div>
   )
 }
+
+export default App

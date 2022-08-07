@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useLayoutEffect, useMemo, useCallback } from 'react'
+import React, { useState, useEffect, useRef, useLayoutEffect, useMemo } from 'react'
 
 /**
  * Saves the old theme for future use
@@ -49,20 +49,17 @@ export const ThemeProvider = ({ children }) => {
     document.documentElement.classList.add(`theme-${theme}`)
   }, [theme, oldTheme])
 
-  const toggleTheme = useCallback(
-    () => {
-      if (theme === 'light') setTheme('dark')
-      else setTheme('light')
-    },
-    [setTheme, theme],
-  );
+  function toggleTheme() {
+    if (theme === 'light') setTheme('dark')
+    else setTheme('light')
+  }
 
   const value = useMemo(
     () => ({
       theme,
       toggleTheme,
     }),
-    [theme, toggleTheme]
+    [theme]
   )
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>

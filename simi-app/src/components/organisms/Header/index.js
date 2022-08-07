@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react'
-import { SidebarContext } from '../context/SidebarContext'
+import { SidebarContext } from '../../../context/SidebarContext'
 import {
   SearchIcon,
   MoonIcon,
@@ -10,10 +10,10 @@ import {
   OutlineCogIcon,
   OutlineLogoutIcon,
 } from '../../../assets/icons'
-// import { Avatar, Badge, Input, Dropdown, DropdownItem, WindmillContext } from '@windmill/react-ui'
+import { Avatar, Badge, Input, Dropdown, DropdownItem, WindmillContext } from '@windmill/react-ui'
 
 function Header() {
-//   const { mode, toggleMode } = useContext(WindmillContext)
+  const { mode, toggleMode } = useContext(WindmillContext)
   const { toggleSidebar } = useContext(SidebarContext)
 
   const [isNotificationsMenuOpen, setIsNotificationsMenuOpen] = useState(false)
@@ -44,17 +44,17 @@ function Header() {
             <div className="absolute inset-y-0 flex items-center pl-2">
               <SearchIcon className="w-4 h-4" aria-hidden="true" />
             </div>
-            {/* <Input
+            <Input
               className="pl-8 text-gray-700"
               placeholder="Search for projects"
               aria-label="Search"
-            /> */}
+            />
           </div>
         </div>
         <ul className="flex items-center flex-shrink-0 space-x-6">
           {/* <!-- Theme toggler --> */}
           <li className="flex">
-            {/* <button
+            <button
               className="rounded-md focus:outline-none focus:shadow-outline-purple"
               onClick={toggleMode}
               aria-label="Toggle color mode"
@@ -64,7 +64,7 @@ function Header() {
               ) : (
                 <MoonIcon className="w-5 h-5" aria-hidden="true" />
               )}
-            </button> */}
+            </button>
           </li>
           {/* <!-- Notifications menu --> */}
           <li className="relative">
@@ -82,7 +82,7 @@ function Header() {
               ></span>
             </button>
 
-            {/* <Dropdown
+            <Dropdown
               align="right"
               isOpen={isNotificationsMenuOpen}
               onClose={() => setIsNotificationsMenuOpen(false)}
@@ -98,7 +98,7 @@ function Header() {
               <DropdownItem onClick={() => alert('Alerts!')}>
                 <span>Alerts</span>
               </DropdownItem>
-            </Dropdown> */}
+            </Dropdown>
           </li>
           {/* <!-- Profile menu --> */}
           <li className="relative">
@@ -108,14 +108,14 @@ function Header() {
               aria-label="Account"
               aria-haspopup="true"
             >
-              {/* <Avatar
+              <Avatar
                 className="align-middle"
                 src="https://images.unsplash.com/photo-1502378735452-bc7d86632805?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=200&fit=max&s=aa3a807e1bbdfd4364d1f449eaa96d82"
                 alt=""
                 aria-hidden="true"
-              /> */}
+              />
             </button>
-            {/* <Dropdown
+            <Dropdown
               align="right"
               isOpen={isProfileMenuOpen}
               onClose={() => setIsProfileMenuOpen(false)}
@@ -132,7 +132,7 @@ function Header() {
                 <OutlineLogoutIcon className="w-4 h-4 mr-3" aria-hidden="true" />
                 <span>Log out</span>
               </DropdownItem>
-            </Dropdown> */}
+            </Dropdown>
           </li>
         </ul>
       </div>
