@@ -1,4 +1,19 @@
-import {  Blank, Buttons, Cards, Charts, Dashboard, Forms, Modals, Page404, Tables } from '../pages'
+import {
+  Assets,
+  Blank,
+  Buttons,
+  Cards,
+  Charts,
+  Configuration,
+  Dashboard,
+  DetailAsset,
+  Forms,
+  Home,
+  Modals,
+  Page404,
+  RequestService,
+  Tables
+} from '../pages'
 
 // use lazy for better code splitting, a.k.a. load faster
 // const Dashboard = lazy(() => import('../pages/Dashboard'))
@@ -23,9 +38,41 @@ import {  Blank, Buttons, Cards, Charts, Dashboard, Forms, Modals, Page404, Tabl
  */
 const routes = [
   {
+    path: '/home', // the url
+    component: Home, // view rendered
+  },
+  {
     path: '/dashboard', // the url
     component: Dashboard, // view rendered
   },
+  {
+    path: '/assets', // the url
+    component: Assets, // view rendered
+  },
+  {
+    path: '/assets/detail', // the url
+    component: DetailAsset, // view rendered
+  },
+  {
+    path: '/requestservice', // the url
+    component: RequestService, // view rendered
+  },
+  {
+    path: '/configuration', // the url
+    component: Configuration, // view rendered
+  },
+  {
+    path: '/404',
+    component: Page404,
+  },
+
+  // Sample Page
+  {
+    path: '/blank',
+    component: Blank,
+  },
+
+  // Component Page
   {
     path: '/forms',
     component: Forms,
@@ -49,14 +96,6 @@ const routes = [
   {
     path: '/tables',
     component: Tables,
-  },
-  {
-    path: '/404',
-    component: Page404,
-  },
-  {
-    path: '/blank',
-    component: Blank,
   },
 ]
 
