@@ -3,7 +3,7 @@ import routes from '../../../routes/sidebar'
 import { Link, NavLink, Route } from 'react-router-dom'
 import * as Icons from '../../../assets/icons'
 import SidebarSubmenu from './SidebarSubmenu'
-import { Button } from '@windmill/react-ui'
+import { Avatar } from '@windmill/react-ui'
 
 function Icon({ icon, ...props }) {
   const Icon = Icons[icon]
@@ -13,9 +13,27 @@ function Icon({ icon, ...props }) {
 function SidebarContent() {
   return (
     <div className="py-4 text-gray-500 dark:text-gray-400">
-      <Link className="ml-6 text-lg font-bold text-gray-800 dark:text-gray-200" to="/app/dashboard">
+      <Link className="ml-20 text-lg font-bold text-gray-800 dark:text-gray-200 max-w-20" to="/app/home">
         SIMI
       </Link>
+      <div className='pt-10'>
+        <div className='flex justify-center'>
+          <Avatar
+            className="w-20 h-20 p-1 align-middle border-2 rounded-full gray-300"
+            src="https://images.unsplash.com/photo-1502378735452-bc7d86632805?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=200&fit=max&s=aa3a807e1bbdfd4364d1f449eaa96d82"
+            alt=""
+            aria-hidden="true"
+          />
+        </div>
+        <div className='pt-3'>
+          <h2
+            className="text-xs font-medium text-center text-teal-500 md:text-sm"
+          >
+            Eduard Pantazi
+          </h2>
+          <p className="text-xs text-center text-gray-500">Administrator</p>
+        </div>
+      </div>
       <ul className="mt-6">
         {routes.map((route) =>
           route.routes ? (
@@ -41,14 +59,14 @@ function SidebarContent() {
           )
         )}
       </ul>
-      <div className="px-6 my-6">
+      {/* <div className="px-6 my-6">
         <Button>
           Create account
           <span className="ml-2" aria-hidden="true">
             +
           </span>
         </Button>
-      </div>
+      </div> */}
     </div>
   )
 }

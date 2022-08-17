@@ -7,9 +7,29 @@
  */
 const routes = [
   {
-    path: '/app/dashboard', // the url
+    path: '/app/home', // the url
     icon: 'HomeIcon', // the component being exported from icons/index.js
+    name: 'Home', // name that appear in Sidebar
+  },
+  {
+    path: '/app/dashboard', // the url
+    icon: 'ChartsIcon', // the component being exported from icons/index.js
     name: 'Dashboard', // name that appear in Sidebar
+  },
+  {
+    path: '/app/assets', // the url
+    icon: 'TablesIcon', // the component being exported from icons/index.js
+    name: 'Assets', // name that appear in Sidebar
+  },
+  {
+    path: '/app/requestservice', // the url
+    icon: 'FormsIcon', // the component being exported from icons/index.js
+    name: 'Request Service', // name that appear in Sidebar
+  },
+  {
+    path: '/app/configuration', // the url
+    icon: 'OutlineCogIcon', // the component being exported from icons/index.js
+    name: 'Configuration', // name that appear in Sidebar
   },
   {
     icon: 'PagesIcon',
