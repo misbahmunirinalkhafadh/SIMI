@@ -10,6 +10,13 @@ function Icon({ icon, ...props }) {
   return <Icon {...props} />
 }
 
+const user = {
+  avatar:
+    "https://robohash.org/dictavoluptatessimilique.jpg?size=50x50&set=set1",
+  name: "Lissi Meir",
+  job: "Geologist III"
+}
+
 function SidebarContent() {
   return (
     <div className="py-4 text-gray-500 dark:text-gray-400">
@@ -20,7 +27,7 @@ function SidebarContent() {
         <div className='flex justify-center'>
           <Avatar
             className="w-20 h-20 p-1 align-middle border-2 rounded-full gray-300"
-            src="https://images.unsplash.com/photo-1502378735452-bc7d86632805?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=200&fit=max&s=aa3a807e1bbdfd4364d1f449eaa96d82"
+            src={user.avatar}
             alt=""
             aria-hidden="true"
           />
@@ -29,9 +36,9 @@ function SidebarContent() {
           <h2
             className="text-xs font-medium text-center text-teal-500 md:text-sm"
           >
-            Eduard Pantazi
+            {user.name}
           </h2>
-          <p className="text-xs text-center text-gray-500">Administrator</p>
+          <p className="text-xs text-center text-gray-500">{user.job}</p>
         </div>
       </div>
       <ul className="mt-6">
@@ -54,19 +61,12 @@ function SidebarContent() {
                 </Route>
                 <Icon className="w-5 h-5" aria-hidden="true" icon={route.icon} />
                 <span className="ml-4">{route.name}</span>
+                {route.name === 'Request Service' ? <span className="px-2 py-0.5 ml-auto text-xs font-medium tracking-wide text-red-500 bg-red-50 rounded-full">10</span> : ''}
               </NavLink>
             </li>
           )
         )}
       </ul>
-      {/* <div className="px-6 my-6">
-        <Button>
-          Create account
-          <span className="ml-2" aria-hidden="true">
-            +
-          </span>
-        </Button>
-      </div> */}
     </div>
   )
 }

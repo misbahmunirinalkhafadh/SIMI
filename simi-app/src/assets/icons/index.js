@@ -1,6 +1,11 @@
+import { ReactComponent as AddIcon } from './add.svg'
+import { ReactComponent as ArrowLeftIcon } from './arrowLeft.svg'
 import { ReactComponent as ButtonsIcon } from './buttons.svg'
 import { ReactComponent as CardsIcon } from './cards.svg'
 import { ReactComponent as ChartsIcon } from './charts.svg'
+import { ReactComponent as ChipIcon } from './chip.svg'
+import { ReactComponent as CodeIcon } from './code.svg'
+import { ReactComponent as InformationIcon } from './information.svg'
 import { ReactComponent as FormsIcon } from './forms.svg'
 import { ReactComponent as HomeIcon } from './home.svg'
 import { ReactComponent as ModalsIcon } from './modals.svg'
@@ -28,9 +33,14 @@ import { ReactComponent as OutlineCogIcon } from './outlineCog.svg'
 import { ReactComponent as OutlineLogoutIcon } from './outlineLogout.svg'
 
 export {
+  AddIcon,
+  ArrowLeftIcon,
   ButtonsIcon,
   CardsIcon,
   ChartsIcon,
+  ChipIcon,
+  CodeIcon,
+  InformationIcon,
   FormsIcon,
   HomeIcon,
   ModalsIcon,

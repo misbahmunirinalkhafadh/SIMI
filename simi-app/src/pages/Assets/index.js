@@ -3,8 +3,7 @@ import React from 'react'
 import { PageTitle } from '../../components/atoms'
 import { Tabs } from './Tabs'
 
-function Assets({color}) {
-
+function Assets() {
   return (
     <>
       <PageTitle>Assets</PageTitle>

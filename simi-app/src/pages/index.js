@@ -3,7 +3,7 @@ import Home from './Home';
 import Dashboard from './Dashboard';
 import Assets from './Assets';
 import DetailAsset from './DetailAsset';
-import Configuration from './Configuration';
+import Manage from './Manage';
 import RequestService from './RequestService';
 import Page404 from './404';
 
@@ -27,7 +27,7 @@ export {
     Assets,
     DetailAsset,
     RequestService,
-    Configuration,
+    Manage,
     Page404,
 
     // Sample Page

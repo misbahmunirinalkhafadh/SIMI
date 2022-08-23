@@ -2,7 +2,7 @@ import React from 'react'
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Input, Label, Select } from '@windmill/react-ui'
 import { MailIcon } from '../../assets/icons'
 
-function ModalFormTechnician({ closeModal, isModalOpen }) {
+function ModalFormUser({ closeModal, isModalOpen }) {
     return (
         <>
             <Modal isOpen={isModalOpen} onClose={closeModal}>
@@ -74,4 +74,4 @@ function ModalFormTechnician({ closeModal, isModalOpen }) {
     )
 }
 
-export default ModalFormTechnician
+export default ModalFormUser

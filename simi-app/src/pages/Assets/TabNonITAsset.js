@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { SearchIcon } from '../../assets/icons';
+import { AddIcon, SearchIcon } from '../../assets/icons';
 import { Input, Button } from '@windmill/react-ui';
 import TableNonITAsset from './TableNonITAsset';
 import ModalFormNonITAsset from './ModalFormNonITAsset';
@@ -33,11 +33,8 @@ function TabNonITAsset() {
 
             {/* Button Add */}
             <div className='flex justify-end mx-4 mb-4'>
-                <Button onClick={openModal}>
-                    Add New
-                    <span className="ml-2" aria-hidden="true">
-                        +
-                    </span>
+                <Button iconLeft={AddIcon} onClick={openModal}>
+                    <span>Add New</span>
                 </Button>
             </div>
 

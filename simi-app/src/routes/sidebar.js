@@ -27,9 +27,9 @@ const routes = [
     name: 'Request Service', // name that appear in Sidebar
   },
   {
-    path: '/app/configuration', // the url
+    path: '/app/manage', // the url
     icon: 'OutlineCogIcon', // the component being exported from icons/index.js
-    name: 'Configuration', // name that appear in Sidebar
+    name: 'Manage', // name that appear in Sidebar
   },
   {
     icon: 'PagesIcon',

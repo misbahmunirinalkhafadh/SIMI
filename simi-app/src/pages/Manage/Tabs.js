@@ -1,5 +1,5 @@
 import React from 'react';
-import TabTechnician from './TabTechnician';
+import TabTechnician from './TabUser';
 
 export const Tabs = ({ color }) => {
     const [openTab, setOpenTab] = React.useState(1);
@@ -27,7 +27,7 @@ export const Tabs = ({ color }) => {
                                 href="#link1"
                                 role="tablist"
                             >
-                                Technician
+                                User
                             </a>
                         </li>
                         <li className="flex-auto mr-2 -mb-px text-center last:mr-0">
@@ -46,7 +46,7 @@ export const Tabs = ({ color }) => {
                                 href="#link2"
                                 role="tablist"
                             >
-                                Tab2
+                                Role
                             </a>
                         </li>
                         <li className="flex-auto mr-2 -mb-px text-center last:mr-0">

@@ -3,14 +3,14 @@ import React from 'react'
 import { PageTitle } from '../../components/atoms'
 import { Tabs } from './Tabs'
 
-function Configuration({color}) {
+function Manage({color}) {
 
   return (
     <>
-      <PageTitle>Configuration</PageTitle>
+      <PageTitle>Manage</PageTitle>
       <Tabs color="purple" />
     </>
   )
 }
 
-export default Configuration
+export default Manage

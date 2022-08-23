@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 
 import {
+    Avatar,
     Table,
     TableHeader,
     TableCell,
@@ -14,11 +15,11 @@ import {
 } from '@windmill/react-ui'
 import { EditIcon, TrashIcon } from '../../assets/icons'
 
-import response from '../../utils/demo/tableData'
+import response from '../../utils/demo/userData'
 // make a copy of the data, for the second table
 const response2 = response.concat([])
 
-function TableTechnician() {
+function TableUser() {
 
     // setup pages control for every table
     const [pageTable2, setPageTable2] = useState(1)
@@ -47,9 +48,9 @@ function TableTechnician() {
                 <Table>
                     <TableHeader>
                         <tr>
-                            <TableCell>Technician</TableCell>
-                            <TableCell>Email Address</TableCell>
-                            <TableCell>Department</TableCell>
+                            <TableCell>User</TableCell>
+                            <TableCell>Username</TableCell>
+                            <TableCell>Role</TableCell>
                             <TableCell>Status</TableCell>
                             <TableCell>Actions</TableCell>
                         </tr>
@@ -59,20 +60,21 @@ function TableTechnician() {
                             <TableRow key={i}>
                                 <TableCell>
                                     <div className="flex items-center text-sm">
+                                        <Avatar className="hidden mr-3 md:block" src={user.avatar} alt="User avatar" />
                                         <div>
                                             <p className="font-semibold">{user.name}</p>
-                                            <p className="text-xs text-gray-600 dark:text-gray-400">{user.job}</p>
+                                            <p className="text-xs text-gray-600 dark:text-gray-400">{user.email}</p>
                                         </div>
                                     </div>
                                 </TableCell>
                                 <TableCell>
-                                    Email Address
+                                    {user.username}
                                 </TableCell>
                                 <TableCell>
-                                    Department
+                                    {user.role}
                                 </TableCell>
                                 <TableCell>
-                                    <Badge type={user.status}>{user.status}</Badge>
+                                    <Badge type="success">{user.status}</Badge>
                                 </TableCell>
                                 <TableCell>
                                     <div className="flex items-center space-x-4">
@@ -101,4 +103,4 @@ function TableTechnician() {
     )
 }
 
-export default TableTechnician
+export default TableUser
