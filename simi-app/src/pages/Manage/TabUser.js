@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 
-import { SearchIcon } from '../../assets/icons';
-import TableTechnician from './TableTechnician';
+import { AddIcon, SearchIcon } from '../../assets/icons';
 import { Input, Button } from '@windmill/react-ui';
-import ModalFormTechnician from './ModalFormTechnician';
+import ModalFormUser from './ModalFormUser';
+import TableUser from './TableUser';
 
-function TabTechnician() {
+function TabUser() {
     const [isModalOpen, setIsModalOpen] = useState(false)
 
     function openModal() {
@@ -33,20 +33,17 @@ function TabTechnician() {
 
             {/* Button Add */}
             <div className='flex justify-end mx-4 mb-3'>
-                <Button onClick={openModal}>
-                    Add New
-                    <span className="ml-2" aria-hidden="true">
-                        +
-                    </span>
+                <Button iconLeft={AddIcon} onClick={openModal}>
+                    <span>Add New</span>
                 </Button>
             </div>
 
             {/* Table Data */}
-            <TableTechnician />
+            <TableUser />
 
-            <ModalFormTechnician isModalOpen={isModalOpen} closeModal={closeModal} />
+            <ModalFormUser isModalOpen={isModalOpen} closeModal={closeModal} />
         </>
     )
 }
 
-export default TabTechnician
+export default TabUser

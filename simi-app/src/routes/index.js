@@ -4,7 +4,7 @@ import {
   Buttons,
   Cards,
   Charts,
-  Configuration,
+  Manage,
   Dashboard,
   DetailAsset,
   Forms,
@@ -58,8 +58,8 @@ const routes = [
     component: RequestService, // view rendered
   },
   {
-    path: '/configuration', // the url
-    component: Configuration, // view rendered
+    path: '/manage', // the url
+    component: Manage, // view rendered
   },
   {
     path: '/404',

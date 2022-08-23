@@ -1,4 +1,6 @@
 import React from 'react';
+import TabCompleted from './TabCompleted';
+import TabInProgress from './TabInProgress';
 
 export const Tabs = ({ color }) => {
     const [openTab, setOpenTab] = React.useState(1);
@@ -26,7 +28,7 @@ export const Tabs = ({ color }) => {
                                 href="#link1"
                                 role="tablist"
                             >
-                                Tab 1
+                                In Progress
                             </a>
                         </li>
                         <li className="flex-auto mr-2 -mb-px text-center last:mr-0">
@@ -45,7 +47,7 @@ export const Tabs = ({ color }) => {
                                 href="#link2"
                                 role="tablist"
                             >
-                                Tab 2
+                                Completed
                             </a>
                         </li>
                     </ul>
@@ -53,26 +55,10 @@ export const Tabs = ({ color }) => {
                         <div className="flex-auto pt-5">
                             <div className="tab-content tab-space">
                                 <div className={openTab === 1 ? "block" : "hidden"} id="link1">
-                                    <p>
-                                        Completely synergize resource taxing relationships via
-                                        premier niche markets. Professionally cultivate one-to-one
-                                        customer service with robust ideas.
-                                        <br />
-                                        <br />
-                                        Dynamically innovate resource-leveling customer service for
-                                        state of the art customer service.
-                                    </p>
+                                    <TabInProgress/>
                                 </div>
                                 <div className={openTab === 2 ? "block" : "hidden"} id="link2">
-                                    <p>
-                                        Completely synergize resource taxing relationships via
-                                        premier niche markets. Professionally cultivate one-to-one
-                                        customer service with robust ideas.
-                                        <br />
-                                        <br />
-                                        Dynamically innovate resource-leveling customer service for
-                                        state of the art customer service.
-                                    </p>
+                                    <TabCompleted />
                                 </div>
                             </div>
                         </div>

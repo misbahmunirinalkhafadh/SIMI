@@ -28,7 +28,7 @@ export const Tabs = ({ color }) => {
                                 href="#link1"
                                 role="tablist"
                             >
-                                IT Assets
+                                IT Asset
                             </a>
                         </li>
                         <li className="flex-auto mr-2 -mb-px text-center last:mr-0">
@@ -47,7 +47,7 @@ export const Tabs = ({ color }) => {
                                 href="#link2"
                                 role="tablist"
                             >
-                                Non-IT Assets
+                                Non-IT Asset
                             </a>
                         </li>
                     </ul>
