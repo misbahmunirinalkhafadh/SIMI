@@ -12,7 +12,8 @@ import {
   Modals,
   Page404,
   RequestService,
-  Tables
+  Tables,
+  Permission
 } from '../pages'
 
 // use lazy for better code splitting, a.k.a. load faster
@@ -60,6 +61,10 @@ const routes = [
   {
     path: '/manage', // the url
     component: Manage, // view rendered
+  },
+  {
+    path: '/manage/role/permission/:id', // the url
+    component: Permission, // view rendered
   },
   {
     path: '/404',

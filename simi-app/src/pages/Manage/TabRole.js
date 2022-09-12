@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 
 import { AddIcon, SearchIcon } from '../../assets/icons';
 import { Input, Button } from '@windmill/react-ui';
-import ModalFormUser from './ModalFormUser';
-import TableUser from './TableUser';
+import TableRole from './TableRole';
+import ModalFormRole from './ModalFormRole';
 
-function TabUser() {
+function TabRole() {
     const [isModalOpen, setIsModalOpen] = useState(false)
 
     function openModal() {
@@ -40,11 +40,11 @@ function TabUser() {
             </div>
 
             {/* Table Data */}
-            <TableUser />
+            <TableRole />
 
-            <ModalFormUser isModalOpen={isModalOpen} closeModal={closeModal} />
+            <ModalFormRole isModalOpen={isModalOpen} closeModal={closeModal} />
         </>
     )
 }
 
-export default TabUser
+export default TabRole

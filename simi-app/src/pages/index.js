@@ -4,6 +4,7 @@ import Dashboard from './Dashboard';
 import Assets from './Assets';
 import DetailAsset from './DetailAsset';
 import Manage from './Manage';
+import Permission from './Permission';
 import RequestService from './RequestService';
 import Page404 from './404';
 
@@ -28,6 +29,7 @@ export {
     DetailAsset,
     RequestService,
     Manage,
+    Permission,
     Page404,
 
     // Sample Page

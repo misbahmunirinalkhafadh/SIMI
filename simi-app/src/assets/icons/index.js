@@ -1,4 +1,5 @@
 import { ReactComponent as AddIcon } from './add.svg'
+import { ReactComponent as ArchiveIcon } from './archive.svg'
 import { ReactComponent as ArrowLeftIcon } from './arrowLeft.svg'
 import { ReactComponent as ButtonsIcon } from './buttons.svg'
 import { ReactComponent as CardsIcon } from './cards.svg'
@@ -34,6 +35,7 @@ import { ReactComponent as OutlineLogoutIcon } from './outlineLogout.svg'
 
 export {
   AddIcon,
+  ArchiveIcon,
   ArrowLeftIcon,
   ButtonsIcon,
   CardsIcon,

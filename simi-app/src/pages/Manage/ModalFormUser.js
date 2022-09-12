@@ -3,10 +3,11 @@ import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Input, Label, Selec
 import { MailIcon } from '../../assets/icons'
 
 function ModalFormUser({ closeModal, isModalOpen }) {
+    
     return (
         <>
             <Modal isOpen={isModalOpen} onClose={closeModal}>
-                <ModalHeader>Form Data Technician</ModalHeader>
+                <ModalHeader>Form Data User</ModalHeader>
                 <ModalBody>
                     <Label>
                         <span>Name<small className='text-red-600'>*</small></span>
