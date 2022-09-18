@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Input, Label, Select } from '@windmill/react-ui'
 import { useForm } from 'react-hook-form'
 import { assetsServices } from '../../services/assets'
 import { Timestamp } from 'firebase/firestore'
 import Swal from 'sweetalert2'
 
-function ModalFormITAsset({ closeModal, id, isModalOpen }) {
+function ModalFormITAsset({ closeModal, isModalOpen, id, data }) {
     const { register, handleSubmit } = useForm()
 
     const onSubmit = (value) => {
@@ -15,62 +15,64 @@ function ModalFormITAsset({ closeModal, id, isModalOpen }) {
             category: value.category,
             type: value.type,
             serialNumber: value.serialNumber,
+            storageCapacity: value.storageCapacity,
+            storageType: value.storageType,
             status: 'Standby',
             archived: false,
             createdAt: Timestamp.now()
         }
-        console.log(value);
+
         try {
-            // if (id == null) {
-            Swal.fire({
-                title: 'Do you want to save the New IT Asset?',
-                showDenyButton: false,
-                showCancelButton: true,
-                confirmButtonText: 'Save',
-            }).then((result) => {
-                /* Read more about isConfirmed, isDenied below */
-                if (result.isConfirmed) {
-                    assetsServices.add(dataAsset)
-                    console.log(value);
-                    Swal.fire('Saved!', '', 'success')
-                        .then(() => window.location.reload())
-                    closeModal()
-                }
-            })
-            // } else {
-            //     Swal.fire({
-            //         title: 'Do you want to save the changes?',
-            //         showDenyButton: true,
-            //         showCancelButton: true,
-            //         confirmButtonText: 'Save',
-            //         denyButtonText: `Don't save`,
-            //     }).then((result) => {
-            //         /* Read more about isConfirmed, isDenied below */
-            //         if (result.isConfirmed) {
-            //             // assetsServices.update(id, dataAsset)
-            //             Swal.fire('Saved!', '', 'success')
-            //                 .then(() => window.location.reload())
-            //             closeModal()
-            //         } else if (result.isDenied) {
-            //             Swal.fire('Changes are not saved', '', 'info')
-            //             closeModal()
-            //         }
-            //     })
-            // }
+            if (id == null) {
+                Swal.fire({
+                    title: 'Do you want to save the New IT Asset?',
+                    showDenyButton: false,
+                    showCancelButton: true,
+                    confirmButtonText: 'Save',
+                }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        assetsServices.add(dataAsset)
+                        Swal.fire('Saved!', '', 'success')
+                            .then(() => window.location.reload())
+                        closeModal()
+                    }
+                })
+            } else {
+                Swal.fire({
+                    title: 'Do you want to save the changes?',
+                    showDenyButton: true,
+                    showCancelButton: true,
+                    confirmButtonText: 'Save',
+                    denyButtonText: `Don't save`,
+                }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        assetsServices.update(id, {
+                            assetId: value.assetId,
+                            assetName: value.assetName,
+                            category: value.category,
+                            type: value.type,
+                            serialNumber: value.serialNumber,
+                            storageCapacity: value.storageCapacity,
+                            storageType: value.storageType,
+                            status: value.status,
+                            archived: value.archived,
+                        })
+                        // console.log("Edit : ",dataAsset);
+                        Swal.fire('Saved!', '', 'success')
+                            .then(() => window.location.reload())
+                        closeModal()
+                    } else if (result.isDenied) {
+                        Swal.fire('Changes are not saved', '', 'info')
+                        closeModal()
+                    }
+                })
+            }
         } catch (err) {
             alert(err)
         }
     }
-
-    // useEffect(() => {
-    //     try {
-    //         assetsServices.getById(id).then(data => {
-    //             console.log(data);
-    //         })
-    //     } catch (error) {
-    //         console.log(error)
-    //     }
-    // }, [id])
 
     return (
         <>
@@ -78,8 +80,8 @@ function ModalFormITAsset({ closeModal, id, isModalOpen }) {
                 <ModalHeader>Form Data IT Asset</ModalHeader>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <ModalBody>
+                        {/* FieldAdd */}
                         <FieldAdd />
-
                     </ModalBody>
                     <ModalFooter>
                         {/* I don't like this approach. Consider passing a prop to ModalFooter
@@ -117,10 +119,9 @@ function ModalFormITAsset({ closeModal, id, isModalOpen }) {
                 <Label>
                     <span>Asset ID<small className='text-red-600'>*</small></span>
                     <Input
-                        name="assetId"
-                        id="assetId"
                         className="mt-1"
                         placeholder="Type here..."
+                        defaultValue={data?.assetId}
                         required
                         {...register("assetId")}
                     />
@@ -128,18 +129,17 @@ function ModalFormITAsset({ closeModal, id, isModalOpen }) {
                 <Label className="mt-3">
                     <span>Asset Name<small className='text-red-600'>*</small></span>
                     <Input
-                        name="assetName"
-                        id="assetName"
                         className="mt-1"
                         placeholder="Type here..."
+                        defaultValue={data?.assetName}
                         required
                         {...register("assetName")}
                     />
                 </Label>
                 <Label className="mt-3">
                     <span>Category<small className='text-red-600'>*</small></span>
-                    <Select className="mt-1" name="category" id="category" required {...register("category")}>
-                        <option value="" > -- Choose one -- </option>
+                    <Select className="mt-1" defaultValue={data?.category} required {...register("category")}>
+                        <option value="" >-- Choose one --</option>
                         <option value="Laptop" >Laptop</option>
                         <option value="Desktop" >Desktop</option>
                     </Select>
@@ -147,10 +147,9 @@ function ModalFormITAsset({ closeModal, id, isModalOpen }) {
                 <Label className="mt-3">
                     <span>Type<small className='text-red-600'>*</small></span>
                     <Input
-                        name="type"
-                        id="type"
                         className="mt-1"
                         placeholder="Type here..."
+                        defaultValue={data?.type}
                         required
                         {...register("type")}
                     />
@@ -158,10 +157,9 @@ function ModalFormITAsset({ closeModal, id, isModalOpen }) {
                 <Label className="mt-3">
                     <span>Serial Number<small className='text-red-600'>*</small></span>
                     <Input
-                        name="serialNumber"
-                        id="serialNumber"
                         className="mt-1"
                         placeholder="Type here..."
+                        defaultValue={data?.serialNumber}
                         required
                         {...register("serialNumber")}
                     />
@@ -170,16 +168,15 @@ function ModalFormITAsset({ closeModal, id, isModalOpen }) {
                     <span>Storage Capacity<small className='text-red-600'>*</small></span>
                     <div className="relative mt-1 rounded-md shadow-sm">
                         <Input
-                            name="serialNumber"
-                            id="serialNumber"
                             className="block w-full pl-48 mt-1"
                             placeholder="Type here..."
+                            defaultValue={data?.storageCapacity}
                             required
-                            {...register("serialNumber")}
+                            {...register("storageCapacity")}
                         />
                         <div className="absolute inset-y-0 left-0 flex items-center">
-                            <Select className="h-full py-0" name="category" id="category" required {...register("category")}>
-                                <option value="" > -- Choose one -- </option>
+                            <Select className="h-full py-0" defaultValue={data?.storageType} required {...register("storageType")}>
+                                <option value="" >-- Choose one --</option>
                                 <option value="Laptop" >SSD</option>
                                 <option value="Desktop" >HDD</option>
                             </Select>
@@ -189,7 +186,6 @@ function ModalFormITAsset({ closeModal, id, isModalOpen }) {
             </>
         )
     }
-
 }
 
 export default ModalFormITAsset

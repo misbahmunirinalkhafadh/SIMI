@@ -27,14 +27,14 @@ function TableRole() {
 
     const [isModalOpen, setIsModalOpen] = useState(false)
 
-    const [dataId, setDataId] = useState('')
-    const [dataEdit, setDataEdit] = useState([])
+    const [roleId, setRoleId] = useState(null)
+    const [roleData, setRoleData] = useState([])
 
     // pagination setup
     const resultsPerPage = 10
     const totalResults = dataTable.length
 
-    const { roleName, description } = dataEdit;
+    // const { roleName, description } = dataEdit;
 
     // pagination change control
     function onPageChangeTable(p) {
@@ -43,8 +43,8 @@ function TableRole() {
 
     function openModal(data) {
         setIsModalOpen(true)
-        setDataId(data.id)
-        setDataEdit(data.data)
+        setRoleId(data.id)
+        setRoleData(data.data)
     }
 
     function closeModal() {
@@ -132,7 +132,7 @@ function TableRole() {
                     />
                 </TableFooter>
             </TableContainer>
-            <ModalFormRole isModalOpen={isModalOpen} id={dataId} roleName={roleName} desc={description} closeModal={closeModal} />
+            <ModalFormRole isModalOpen={isModalOpen} closeModal={closeModal} id={roleId} data={roleData} />
         </>
     )
 }

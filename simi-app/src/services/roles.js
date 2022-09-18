@@ -1,4 +1,4 @@
-import { addDoc, collection, getDocs, updateDoc, deleteDoc,getDoc, doc, } from "firebase/firestore";
+import { addDoc, collection, getDocs, updateDoc, deleteDoc, getDoc, doc, } from "firebase/firestore";
 import { db } from "../utils/firebase";
 
 export const rolesServices = {
@@ -42,4 +42,3 @@ export const rolesServices = {
         return remove;
     }
 }
-

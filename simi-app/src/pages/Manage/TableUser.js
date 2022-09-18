@@ -16,6 +16,8 @@ import {
 import { EditIcon, TrashIcon } from '../../assets/icons'
 
 import { usersServices } from '../../services/users';
+import ModalFormUser from './ModalFormUser';
+import Swal from 'sweetalert2';
 // make a copy of the data, for the second table
 
 function TableUser() {
@@ -26,7 +28,10 @@ function TableUser() {
     // setup data for every table
     const [dataTable, setDataTable] = useState([])
 
-    const [dataId, setDataId] = useState(null)
+    const [isModalOpen, setIsModalOpen] = useState(false)
+
+    const [userId, setUserId] = useState(null)
+    const [userData, setUserData] = useState([])
 
     // pagination setup
     const resultsPerPage = 10
@@ -35,6 +40,41 @@ function TableUser() {
     // pagination change control
     function onPageChangeTable(p) {
         setPageTable(p)
+    }
+
+    function openModal(value) {
+        setIsModalOpen(true)
+        setUserId(value.id)
+        setUserData(value.data)
+    }
+
+    function closeModal() {
+        setIsModalOpen(false)
+    }
+
+    const handleDelete = (id) => {
+        try {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    usersServices.delete(id)
+                    Swal.fire(
+                        'Deleted!',
+                        'Your file has been deleted.',
+                        'success',
+                    ).then(() => window.location.reload())
+                }
+            })
+        } catch (err) {
+            alert(err)
+        }
     }
 
     // on page change, load new sliced data
@@ -50,6 +90,8 @@ function TableUser() {
             console.log(error)
         }
     }, [pageTable])
+
+
     return (
         <>
             <TableContainer className="mb-8">
@@ -87,9 +129,9 @@ function TableUser() {
                                 <TableCell>
                                     <div className="flex items-center space-x-4">
                                         <Button layout="link" size="icon" aria-label="Edit">
-                                            <EditIcon className="w-5 h-5" aria-hidden="true" />
+                                            <EditIcon className="w-5 h-5" aria-hidden="true" onClick={() => openModal(user)} />
                                         </Button>
-                                        <Button layout="link" size="icon" aria-label="Delete" onClick={() => usersServices.delete(user.id)}>
+                                        <Button layout="link" size="icon" aria-label="Delete" onClick={() => handleDelete(user.id)}>
                                             <TrashIcon className="w-5 h-5" aria-hidden="true" />
                                         </Button>
                                     </div>
@@ -107,6 +149,7 @@ function TableUser() {
                     />
                 </TableFooter>
             </TableContainer>
+            <ModalFormUser isModalOpen={isModalOpen} closeModal={closeModal} id={userId} data={userData} />
         </>
     )
 }

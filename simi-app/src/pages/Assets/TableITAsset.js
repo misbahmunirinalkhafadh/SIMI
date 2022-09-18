@@ -17,6 +17,7 @@ import { ArchiveIcon, EditIcon, TrashIcon } from '../../assets/icons'
 import { Link } from 'react-router-dom'
 import { assetsServices } from '../../services/assets'
 import Swal from 'sweetalert2'
+import ModalFormITAsset from './ModalFormITAsset'
 // make a copy of the data, for the second table
 
 function TableITAsset({ archive }) {
@@ -27,9 +28,14 @@ function TableITAsset({ archive }) {
     // setup data for every table
     const [dataTable, setDataTable] = useState([])
 
+    const [isModalOpen, setIsModalOpen] = useState(false)
+
     const [textBlue, setTextBlue] = useState(false)
 
-    const [archived, setArchived] = useState(false)
+    // const [archived, setArchived] = useState(false)
+
+    const [assetId, setAssetId] = useState(null)
+    const [assetData, setAssetData] = useState([])
 
     // pagination setup
     const resultsPerPage = 10
@@ -38,6 +44,16 @@ function TableITAsset({ archive }) {
     // pagination change control
     function onPageChangeTable(p) {
         setPageTable(p)
+    }
+
+    function openModal(value) {
+        setIsModalOpen(true)
+        setAssetId(value.id)
+        setAssetData(value.data)
+    }
+
+    function closeModal() {
+        setIsModalOpen(false)
     }
 
     const handleArchive = (id) => {
@@ -63,10 +79,34 @@ function TableITAsset({ archive }) {
         }
     }
 
+    const handleDelete = (id) => {
+        try {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    assetsServices.delete(id)
+                    Swal.fire(
+                        'Deleted!',
+                        'Your file has been deleted.',
+                        'success',
+                    ).then(() => window.location.reload())
+                }
+            })
+        } catch (err) {
+            alert(err)
+        }
+    }
+
     // on page change, load new sliced data
     // here you would make another server request for new data
     useEffect(() => {
-       
         try {
             assetsServices.getAllITAsset().then(data => {
                 const response = data.concat([])
@@ -76,13 +116,6 @@ function TableITAsset({ archive }) {
             console.log(error)
         }
     }, [pageTable])
-
-    const asd = false
-    if (archive === 'archived') {
-        asd = true
-    } 
-
-    console.log(asd);
 
     return (
         <>
@@ -122,11 +155,11 @@ function TableITAsset({ archive }) {
                                 </TableCell>
                                 <TableCell>
                                     <div className="flex items-center space-x-4">
-                                        <Button layout="link" size="icon" aria-label="Edit">
+                                        <Button layout="link" size="icon" aria-label="Edit" onClick={() => openModal(asset)}>
                                             <EditIcon className="w-5 h-5" aria-hidden="true" color={textBlue === true ? '#7e3af2' : ''} />
                                         </Button>
                                         {archive === 'true' ?
-                                            (<Button layout="link" size="icon" aria-label="Delete">
+                                            (<Button layout="link" size="icon" aria-label="Delete" onClick={() => handleDelete(asset.id)}>
                                                 <TrashIcon className="w-5 h-5" aria-hidden="true" color={textBlue === true ? '#c81e1e' : ''} />
                                             </Button>)
                                             :
@@ -149,6 +182,7 @@ function TableITAsset({ archive }) {
                     />
                 </TableFooter>
             </TableContainer>
+            <ModalFormITAsset isModalOpen={isModalOpen} closeModal={closeModal} id={assetId} data={assetData} />
         </>
     )
 }

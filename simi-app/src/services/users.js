@@ -1,4 +1,4 @@
-import { addDoc, collection, deleteDoc, doc, getDocs, updateDoc } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, updateDoc } from "firebase/firestore";
 import { db } from "../utils/firebase";
 
 export const usersServices = {
@@ -11,6 +11,14 @@ export const usersServices = {
             data: doc.data()
         }));
         return list;
+    },
+
+    // Get by Id of roles from database
+    async getById(id) {
+        const col = doc(db, 'users', id);
+        const get = await getDoc(col);
+        const data = get.data();
+        return data;
     },
 
     // Create a list of users from database

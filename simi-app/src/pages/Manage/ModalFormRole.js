@@ -5,7 +5,7 @@ import { Timestamp } from 'firebase/firestore'
 import { rolesServices } from '../../services/roles'
 import Swal from 'sweetalert2'
 
-function ModalFormRole({ closeModal, id, roleName, desc, isModalOpen }) {
+function ModalFormRole({ closeModal, isModalOpen, id, data }) {
     const { register, handleSubmit } = useForm()
 
     const onSubmit = (value) => {
@@ -104,24 +104,20 @@ function ModalFormRole({ closeModal, id, roleName, desc, isModalOpen }) {
                         <Label>
                             <span>Role Name<small className='text-red-600'>*</small></span>
                             <Input
-                                name="roleName"
-                                id="roleName"
                                 className="mt-1"
                                 placeholder="Type here..."
                                 required
-                                defaultValue={roleName}
+                                defaultValue={data?.roleName}
                                 {...register("roleName")}
                             />
                         </Label>
                         <Label className="mt-3">
                             <span>Description<small className='text-red-600'>*</small></span>
                             <Input
-                                name="description"
-                                id="description"
                                 className="mt-1"
                                 placeholder="Type here..."
                                 required
-                                defaultValue={desc}
+                                defaultValue={data?.description}
                                 {...register("description")}
                             />
                         </Label>
