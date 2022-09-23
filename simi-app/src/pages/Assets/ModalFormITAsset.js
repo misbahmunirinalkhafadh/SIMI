@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Input, Label, Select } from '@windmill/react-ui'
 import { useForm } from 'react-hook-form'
 import { assetsServices } from '../../services/assets'
@@ -6,19 +6,18 @@ import { Timestamp } from 'firebase/firestore'
 import Swal from 'sweetalert2'
 
 function ModalFormITAsset({ closeModal, isModalOpen, id, data }) {
-    const { register, handleSubmit } = useForm()
+    const { register, handleSubmit, reset } = useForm({ defaultValues: data })
 
     const onSubmit = (value) => {
         const dataAsset = {
-            assetId: value.assetId,
             assetName: value.assetName,
             category: value.category,
             type: value.type,
             serialNumber: value.serialNumber,
             storageCapacity: value.storageCapacity,
             storageType: value.storageType,
+            visibility: value.visibility,
             status: 'Standby',
-            archived: false,
             createdAt: Timestamp.now()
         }
 
@@ -49,7 +48,6 @@ function ModalFormITAsset({ closeModal, isModalOpen, id, data }) {
                     /* Read more about isConfirmed, isDenied below */
                     if (result.isConfirmed) {
                         assetsServices.update(id, {
-                            assetId: value.assetId,
                             assetName: value.assetName,
                             category: value.category,
                             type: value.type,
@@ -57,7 +55,7 @@ function ModalFormITAsset({ closeModal, isModalOpen, id, data }) {
                             storageCapacity: value.storageCapacity,
                             storageType: value.storageType,
                             status: value.status,
-                            archived: value.archived,
+                            visibility: value.visibility,
                         })
                         // console.log("Edit : ",dataAsset);
                         Swal.fire('Saved!', '', 'success')
@@ -74,14 +72,90 @@ function ModalFormITAsset({ closeModal, isModalOpen, id, data }) {
         }
     }
 
+    useEffect(() => {
+        reset(data)
+    }, [reset, data])
+
     return (
         <>
             <Modal isOpen={isModalOpen} onClose={closeModal} size='lg'>
                 <ModalHeader>Form Data IT Asset</ModalHeader>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <ModalBody>
-                        {/* FieldAdd */}
-                        <FieldAdd />
+                        <Label className="mt-3">
+                            <span>Asset Name<small className='text-red-600'>*</small></span>
+                            <Input
+                                className="mt-1"
+                                placeholder="Type here..."
+                                required
+                                {...register("assetName")}
+                            />
+                        </Label>
+                        <Label className="mt-3">
+                            <span>Category<small className='text-red-600'>*</small></span>
+                            <Select className="mt-1" required {...register("category")}>
+                                <option value="" >-- Choose one --</option>
+                                <option value="Laptop" >Laptop</option>
+                                <option value="Desktop" >Desktop</option>
+                                <option value="Printer" >Printer</option>
+                            </Select>
+                        </Label>
+                        <Label className="mt-3">
+                            <span>Type<small className='text-red-600'>*</small></span>
+                            <Input
+                                className="mt-1"
+                                placeholder="Type here..."
+                                required
+                                {...register("type")}
+                            />
+                        </Label>
+                        <Label className="mt-3">
+                            <span>Serial Number<small className='text-red-600'>*</small></span>
+                            <Input
+                                className="mt-1"
+                                placeholder="Type here..."
+                                required
+                                {...register("serialNumber")}
+                            />
+                        </Label>
+                        <Label className="mt-3">
+                            <span>Storage Capacity<small className='text-red-600'>*</small></span>
+                            <div className="relative mt-1 rounded-md shadow-sm">
+                                <Input
+                                    className="block w-full pl-48 mt-1"
+                                    placeholder="Type here..."
+                                    required
+                                    {...register("storageCapacity")}
+                                />
+                                <div className="absolute inset-y-0 left-0 flex items-center">
+                                    <Select className="h-full py-0" required {...register("storageType")}>
+                                        <option value="" >-- Choose one --</option>
+                                        <option value="SSD" >SSD</option>
+                                        <option value="HDD" >HDD</option>
+                                    </Select>
+                                </div>
+                            </div>
+                        </Label>
+                        <div className="grid col-gap-3 lg:grid-cols-2">
+                            <Label className="mt-3">
+                                <span>Status<small className='text-red-600'>*</small></span>
+                                <Select className="mt-1" required {...register("status")}>
+                                    <option value="" >-- Choose one --</option>
+                                    <option value="Standby" >Standby</option>
+                                    <option value="In Use" >In Use</option>
+                                    <option value="In Repair" >In Repair</option>
+                                    <option value="Dispose" >Dispose</option>
+                                </Select>
+                            </Label>
+                            <Label className="mt-3">
+                                <span>Visibility<small className='text-red-600'>*</small></span>
+                                <Select className="mt-1" required {...register("visibility")}>
+                                    <option value="Unarchived">Unarchived</option>
+                                    <option value="Archived" >Archived</option>
+                                    <option value="Draft" >Draft</option>
+                                </Select>
+                            </Label>
+                        </div>
                     </ModalBody>
                     <ModalFooter>
                         {/* I don't like this approach. Consider passing a prop to ModalFooter
@@ -112,80 +186,6 @@ function ModalFormITAsset({ closeModal, isModalOpen, id, data }) {
             </Modal>
         </>
     )
-
-    function FieldAdd() {
-        return (
-            <>
-                <Label>
-                    <span>Asset ID<small className='text-red-600'>*</small></span>
-                    <Input
-                        className="mt-1"
-                        placeholder="Type here..."
-                        defaultValue={data?.assetId}
-                        required
-                        {...register("assetId")}
-                    />
-                </Label>
-                <Label className="mt-3">
-                    <span>Asset Name<small className='text-red-600'>*</small></span>
-                    <Input
-                        className="mt-1"
-                        placeholder="Type here..."
-                        defaultValue={data?.assetName}
-                        required
-                        {...register("assetName")}
-                    />
-                </Label>
-                <Label className="mt-3">
-                    <span>Category<small className='text-red-600'>*</small></span>
-                    <Select className="mt-1" defaultValue={data?.category} required {...register("category")}>
-                        <option value="" >-- Choose one --</option>
-                        <option value="Laptop" >Laptop</option>
-                        <option value="Desktop" >Desktop</option>
-                    </Select>
-                </Label>
-                <Label className="mt-3">
-                    <span>Type<small className='text-red-600'>*</small></span>
-                    <Input
-                        className="mt-1"
-                        placeholder="Type here..."
-                        defaultValue={data?.type}
-                        required
-                        {...register("type")}
-                    />
-                </Label>
-                <Label className="mt-3">
-                    <span>Serial Number<small className='text-red-600'>*</small></span>
-                    <Input
-                        className="mt-1"
-                        placeholder="Type here..."
-                        defaultValue={data?.serialNumber}
-                        required
-                        {...register("serialNumber")}
-                    />
-                </Label>
-                <Label className="mt-3">
-                    <span>Storage Capacity<small className='text-red-600'>*</small></span>
-                    <div className="relative mt-1 rounded-md shadow-sm">
-                        <Input
-                            className="block w-full pl-48 mt-1"
-                            placeholder="Type here..."
-                            defaultValue={data?.storageCapacity}
-                            required
-                            {...register("storageCapacity")}
-                        />
-                        <div className="absolute inset-y-0 left-0 flex items-center">
-                            <Select className="h-full py-0" defaultValue={data?.storageType} required {...register("storageType")}>
-                                <option value="" >-- Choose one --</option>
-                                <option value="Laptop" >SSD</option>
-                                <option value="Desktop" >HDD</option>
-                            </Select>
-                        </div>
-                    </div>
-                </Label>
-            </>
-        )
-    }
 }
 
 export default ModalFormITAsset

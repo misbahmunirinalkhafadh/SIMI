@@ -21,6 +21,7 @@ import Swal from 'sweetalert2';
 // make a copy of the data, for the second table
 
 function TableUser() {
+    const [response, setResponse] = useState([])
 
     // setup pages control for every table
     const [pageTable, setPageTable] = useState(1)
@@ -35,7 +36,7 @@ function TableUser() {
 
     // pagination setup
     const resultsPerPage = 10
-    const totalResults = dataTable.length
+    const totalResults = response.length
 
     // pagination change control
     function onPageChangeTable(p) {
@@ -77,20 +78,22 @@ function TableUser() {
         }
     }
 
-    // on page change, load new sliced data
-    // here you would make another server request for new data
     useEffect(() => {
         // setDataTable(response.slice((pageTable - 1) * resultsPerPage, pageTable * resultsPerPage))
         try {
             usersServices.getAll().then(data => {
-                const response = data.concat([])
-                setDataTable(data, response.slice((pageTable - 1) * resultsPerPage, pageTable * resultsPerPage))
+                setResponse(data)
             })
         } catch (error) {
             console.log(error)
         }
-    }, [pageTable])
+    }, [])
 
+    // on page change, load new sliced data
+    // here you would make another server request for new data
+    useEffect(() => {
+        setDataTable(response.slice((pageTable - 1) * resultsPerPage, pageTable * resultsPerPage))
+    }, [response, pageTable])
 
     return (
         <>

@@ -18,9 +18,10 @@ import ModalFormRole from './ModalFormRole'
 import Swal from 'sweetalert2'
 
 function TableRole() {
+    const [response, setResponse] = useState([])
 
     // setup pages control for every table
-    const [pageTable, setpageTable] = useState(1)
+    const [pageTable, setPageTable] = useState(1)
 
     // setup data for every table
     const [dataTable, setDataTable] = useState([])
@@ -30,15 +31,13 @@ function TableRole() {
     const [roleId, setRoleId] = useState(null)
     const [roleData, setRoleData] = useState([])
 
-    // pagination setup
+    // pagination setups
     const resultsPerPage = 10
-    const totalResults = dataTable.length
-
-    // const { roleName, description } = dataEdit;
+    const totalResults = response.length
 
     // pagination change control
     function onPageChangeTable(p) {
-        setpageTable(p)
+        setPageTable(p)
     }
 
     function openModal(data) {
@@ -81,13 +80,16 @@ function TableRole() {
     useEffect(() => {
         try {
             rolesServices.getAll().then(data => {
-                const response = data.concat([])
-                setDataTable(data, response.slice((pageTable - 1) * resultsPerPage, pageTable * resultsPerPage))
+                setResponse(data)
             })
         } catch (error) {
             console.log(error)
         }
-    }, [pageTable])
+    }, [])
+
+    useEffect(() => {
+        setDataTable(response.slice((pageTable - 1) * resultsPerPage, pageTable * resultsPerPage))
+    }, [response, pageTable])
 
     return (
         <>

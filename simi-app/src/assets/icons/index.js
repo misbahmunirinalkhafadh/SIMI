@@ -17,6 +17,7 @@ import { ReactComponent as EditIcon } from './edit.svg'
 import { ReactComponent as TrashIcon } from './trash.svg'
 import { ReactComponent as ForbiddenIcon } from './forbidden.svg'
 import { ReactComponent as GithubIcon } from './github.svg'
+import { ReactComponent as GoogleIcon } from './google.svg'
 import { ReactComponent as TwitterIcon } from './twitter.svg'
 import { ReactComponent as MailIcon } from './mail.svg'
 import { ReactComponent as CartIcon } from './cart.svg'
@@ -53,6 +54,7 @@ export {
   TrashIcon,
   ForbiddenIcon,
   GithubIcon,
+  GoogleIcon,
   TwitterIcon,
   MailIcon,
   CartIcon,

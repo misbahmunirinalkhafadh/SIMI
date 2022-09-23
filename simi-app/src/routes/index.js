@@ -51,7 +51,7 @@ const routes = [
     component: Assets, // view rendered
   },
   {
-    path: '/assets/detail', // the url
+    path: '/assets/detail/:id', // the url
     component: DetailAsset, // view rendered
   },
   {

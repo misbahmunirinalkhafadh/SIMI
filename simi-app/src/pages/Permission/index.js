@@ -12,7 +12,7 @@ import { rolesServices } from "../../services/roles";
 function Permission() {
   const [dataRole, setDataRole] = useState([])
   const [priviledges, setPriviledges] = useState([])
-  const [checkedAll, setCheckedAll] = useState(false);
+  // const [checkedAll, setCheckedAll] = useState(false);
   const { register, handleSubmit } = useForm()
   const history = useHistory();
   const { id } = useParams();

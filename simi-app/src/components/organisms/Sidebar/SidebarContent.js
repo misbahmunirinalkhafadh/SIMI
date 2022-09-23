@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useState } from 'react'
 import routes from '../../../routes/sidebar'
 import { Link, NavLink, Route } from 'react-router-dom'
 import * as Icons from '../../../assets/icons'
 import SidebarSubmenu from './SidebarSubmenu'
-import { Avatar } from '@windmill/react-ui'
+import { Avatar, Button } from '@windmill/react-ui'
+import ModalFormRequest from '../../../pages/RequestService/ModalFormRequest'
 
 function Icon({ icon, ...props }) {
   const Icon = Icons[icon]
@@ -18,6 +19,16 @@ const user = {
 }
 
 function SidebarContent() {
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+  function openModal() {
+    setIsModalOpen(true)
+  }
+
+  function closeModal() {
+    setIsModalOpen(false)
+  }
+
   return (
     <div className="py-4 text-gray-500 dark:text-gray-400">
       <Link className="ml-20 text-lg font-bold text-gray-800 dark:text-gray-200 max-w-20" to="/app/home">
@@ -67,6 +78,12 @@ function SidebarContent() {
           )
         )}
       </ul>
+      <div className="px-6 my-6">
+        <Button iconLeft={Icons.AddIcon} onClick={openModal} >
+          <span>Create New Request</span>
+        </Button>
+        <ModalFormRequest isModalOpen={isModalOpen} closeModal={closeModal} />
+      </div>
     </div>
   )
 }

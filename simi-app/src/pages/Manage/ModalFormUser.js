@@ -8,7 +8,7 @@ import { usersServices } from '../../services/users'
 import { Timestamp } from 'firebase/firestore'
 
 function ModalFormUser({ closeModal, isModalOpen, id, data }) {
-    const { register, handleSubmit } = useForm()
+    const { register, handleSubmit, reset } = useForm({ defaultValues: data })
     const [role, setRole] = useState([])
     const [avatar, setAvatar] = useState("")
 
@@ -91,6 +91,10 @@ function ModalFormUser({ closeModal, isModalOpen, id, data }) {
     }
 
     useEffect(() => {
+        reset(data);
+    }, [reset, data])
+
+    useEffect(() => {
         try {
             rolesServices.getAll().then(data => {
                 setRole(data)
@@ -112,7 +116,6 @@ function ModalFormUser({ closeModal, isModalOpen, id, data }) {
                             <Input
                                 className="mt-1"
                                 placeholder="Type here..."
-                                defaultValue={data?.fullName}
                                 required
                                 {...register("fullName")}
                             />
@@ -130,7 +133,6 @@ function ModalFormUser({ closeModal, isModalOpen, id, data }) {
                                     className="mt-1"
                                     placeholder="Type here..."
                                     type="email"
-                                    defaultValue={data?.email}
                                     required
                                     {...register("email")}
                                 />
@@ -145,7 +147,6 @@ function ModalFormUser({ closeModal, isModalOpen, id, data }) {
                                 <Input
                                     className="mt-1"
                                     placeholder="Type here..."
-                                    defaultValue={data?.username}
                                     required
                                     {...register("username")}
                                 />
@@ -155,7 +156,6 @@ function ModalFormUser({ closeModal, isModalOpen, id, data }) {
                                 <Input
                                     className="mt-1"
                                     placeholder="Type here..."
-                                    defaultValue={data?.department}
                                     required
                                     {...register("department")}
                                 />
@@ -165,7 +165,6 @@ function ModalFormUser({ closeModal, isModalOpen, id, data }) {
                                 <Input
                                     className="mt-1"
                                     placeholder="Type here..."
-                                    defaultValue={data?.site}
                                     required
                                     {...register("site")}
                                 />
@@ -175,7 +174,6 @@ function ModalFormUser({ closeModal, isModalOpen, id, data }) {
                                 <Input
                                     className="mt-1"
                                     placeholder="Type here..."
-                                    defaultValue={data?.job}
                                     required
                                     {...register("job")}
                                 />
@@ -185,7 +183,6 @@ function ModalFormUser({ closeModal, isModalOpen, id, data }) {
                                 <Input
                                     className="mt-1"
                                     placeholder="Type here..."
-                                    defaultValue={data?.password}
                                     type="password"
                                     required
                                     {...register("password")}
@@ -204,7 +201,7 @@ function ModalFormUser({ closeModal, isModalOpen, id, data }) {
                         <div className="grid col-gap-3 lg:grid-cols-3">
                             <Label className="mt-3">
                                 <span>Gender<small className='text-red-600'>*</small></span>
-                                <Select className="mt-1" defaultValue={data?.gender} {...register("gender")} onChange={handleGender}>
+                                <Select className="mt-1" {...register("gender")} onChange={handleGender}>
                                     <option value="">-- Choose One --</option>
                                     <option value="Male">Male</option>
                                     <option value="Female">Female</option>
@@ -212,8 +209,9 @@ function ModalFormUser({ closeModal, isModalOpen, id, data }) {
                             </Label>
                             <Label className="mt-3">
                                 <span>Role<small className='text-red-600'>*</small></span>
-                                <Select className="mt-1" defaultValue={data?.role} {...register("role")}>
+                                <Select className="mt-1" {...register("role")}>
                                     <option value="">-- Choose One --</option>
+                                    <option value="User">User</option>
                                     {role.map((role, i) => (
                                         <option key={i} value={role.data.roleName}>{role.data.roleName}</option>
                                     ))}
@@ -221,7 +219,7 @@ function ModalFormUser({ closeModal, isModalOpen, id, data }) {
                             </Label>
                             <Label className="mt-3">
                                 <span>Status<small className='text-red-600'>*</small></span>
-                                <Select className="mt-1" defaultValue={data?.status} {...register("status")}>
+                                <Select className="mt-1" {...register("status")} >
                                     <option value="">-- Choose One --</option>
                                     <option>Active</option>
                                     <option>Banned</option>

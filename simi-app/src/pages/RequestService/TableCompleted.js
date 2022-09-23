@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-
 import {
     Table,
     TableHeader,
@@ -8,19 +7,17 @@ import {
     TableRow,
     TableFooter,
     TableContainer,
-    Badge,
     Button,
-    Pagination
+    Pagination,
+    Badge
 } from '@windmill/react-ui'
-import { ArchiveIcon, EditIcon, TrashIcon } from '../../assets/icons'
-
-import { Link } from 'react-router-dom'
-import { assetsServices } from '../../services/assets'
+import ModalFormRequest from './ModalFormRequest'
+import { EditIcon, TrashIcon } from '../../assets/icons'
 import Swal from 'sweetalert2'
-import ModalFormITAsset from './ModalFormITAsset'
-// make a copy of the data, for the second table
+import { requestsServices } from '../../services/requests'
+import { Link } from 'react-router-dom'
 
-function TableITAsset({ selected }) {
+export default function TableCompleted() {
     const [response, setResponse] = useState([])
 
     // setup pages control for every table
@@ -29,10 +26,6 @@ function TableITAsset({ selected }) {
     // setup data for every table
     const [dataTable, setDataTable] = useState([])
     const [isModalOpen, setIsModalOpen] = useState(false)
-    // const [textBlue, setTextBlue] = useState(false)
-    // const [archived, setArchived] = useState(false)
-    const [assetId, setAssetId] = useState(null)
-    const [assetData, setAssetData] = useState([])
 
     // pagination setup
     const resultsPerPage = 10
@@ -43,37 +36,12 @@ function TableITAsset({ selected }) {
         setPageTable(p)
     }
 
-    function openModal(value) {
+    function openModal() {
         setIsModalOpen(true)
-        setAssetId(value.id)
-        setAssetData(value.data)
     }
 
     function closeModal() {
         setIsModalOpen(false)
-    }
-
-    const handleArchive = (id) => {
-        try {
-            Swal.fire({
-                text: "Do you want to move in Archive?",
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, archive it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    assetsServices.update(id, { "visibility": "Archived", })
-                    Swal.fire(
-                        'Archived!',
-                        'Your file has been archived.',
-                        'success',
-                    ).then(() => window.location.reload())
-                }
-            })
-        } catch (err) {
-            alert(err)
-        }
     }
 
     const handleDelete = (id) => {
@@ -88,7 +56,7 @@ function TableITAsset({ selected }) {
                 confirmButtonText: 'Yes, delete it!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    assetsServices.delete(id)
+                    // assetsServices.delete(id)
                     Swal.fire(
                         'Deleted!',
                         'Your file has been deleted.',
@@ -103,7 +71,7 @@ function TableITAsset({ selected }) {
 
     useEffect(() => {
         try {
-            assetsServices.getAllITAsset().then(data => {
+            requestsServices.getAll().then(data => {
                 setResponse(data)
             })
         } catch (error) {
@@ -132,37 +100,31 @@ function TableITAsset({ selected }) {
                         </tr>
                     </TableHeader>
                     <TableBody>
-                        {dataTable.map((asset) => (
-                            <TableRow className="dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600" key={asset.id}>
+                        {dataTable.map((req) => (
+                            <TableRow className="dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600" key={req?.id}>
                                 <TableCell>
-                                    <Link className="text-blue-500" to={`/app/assets/detail/${asset.id}`}>{asset.data.assetName}</Link>
+                                    <Link className="text-blue-500" to='/app/assets/detail'>{req?.data.assetName}</Link>
                                 </TableCell>
                                 <TableCell>
-                                    {asset.data.category}
+                                    {req?.data.category}
                                 </TableCell>
                                 <TableCell>
-                                    {asset.data.type}
+                                    {req?.data.type}
                                 </TableCell>
                                 <TableCell>
-                                    {asset.data.serialNumber}
+                                    {req?.data.serialNumber}
                                 </TableCell>
                                 <TableCell className="text-center" >
-                                    <Badge type={asset.data.status === 'Standby' ? 'success' : 'primary'}>{asset.data.status}</Badge>
+                                    <Badge type={req?.data.status === 'Standby' ? 'success' : 'primary'}></Badge>
                                 </TableCell>
                                 <TableCell>
                                     <div className="flex items-center space-x-4">
-                                        <Button layout="link" size="icon" aria-label="Edit" onClick={() => openModal(asset)}>
+                                        <Button layout="link" size="icon" aria-label="Edit" onClick={() => openModal()}>
                                             <EditIcon className="w-5 h-5" aria-hidden="true" color="#7e3af2" />
                                         </Button>
-                                        {selected === "Archived" || selected === "Draft" ?
-                                            (<Button layout="link" size="icon" aria-label="Delete" onClick={() => handleDelete(asset.id)}>
-                                                <TrashIcon className="w-5 h-5" aria-hidden="true" color='#c81e1e' />
-                                            </Button>)
-                                            :
-                                            (<Button layout="link" size="icon" aria-label="Archive" onClick={() => handleArchive(asset.id)}>
-                                                <ArchiveIcon className="w-5 h-5" aria-hidden="true" color="#7e3af2" />
-                                            </Button>)
-                                        }
+                                        <Button layout="link" size="icon" aria-label="Delete" onClick={() => handleDelete()}>
+                                            <TrashIcon className="w-5 h-5" aria-hidden="true" color='#c81e1e' />
+                                        </Button>
                                     </div>
                                 </TableCell>
                             </TableRow>
@@ -178,9 +140,7 @@ function TableITAsset({ selected }) {
                     />
                 </TableFooter>
             </TableContainer>
-            <ModalFormITAsset isModalOpen={isModalOpen} closeModal={closeModal} id={assetId} data={assetData} />
+            <ModalFormRequest isModalOpen={isModalOpen} closeModal={closeModal} />
         </>
     )
 }
-
-export default TableITAsset

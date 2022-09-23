@@ -1,74 +1,165 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Input, Label, Select } from '@windmill/react-ui'
-import { MailIcon } from '../../assets/icons'
+import { useForm } from 'react-hook-form'
+import Swal from 'sweetalert2'
+import { assetsServices } from '../../services/assets'
+import { Timestamp } from 'firebase/firestore'
 
-function ModalFormNonITAsset({ closeModal, isModalOpen }) {
+function ModalFormNonITAsset({ closeModal, isModalOpen, id, data }) {
+    const { register, handleSubmit, reset } = useForm({ defaultValues: data })
+
+    const onSubmit = (value) => {
+        const dataAsset = {
+            assetName: value.assetName,
+            category: value.category,
+            type: value.type,
+            serialNumber: value.serialNumber,
+            status: 'Standby',
+            archived: false,
+            createdAt: Timestamp.now()
+        }
+
+        try {
+            if (id == null) {
+                Swal.fire({
+                    title: 'Do you want to save the New Non IT Asset?',
+                    showDenyButton: false,
+                    showCancelButton: true,
+                    confirmButtonText: 'Save',
+                }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        assetsServices.add(dataAsset)
+                        Swal.fire('Saved!', '', 'success')
+                            .then(() => window.location.reload())
+                        closeModal()
+                    }
+                })
+            } else {
+                Swal.fire({
+                    title: 'Do you want to save the changes?',
+                    showDenyButton: true,
+                    showCancelButton: true,
+                    confirmButtonText: 'Save',
+                    denyButtonText: `Don't save`,
+                }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        assetsServices.update(id, {
+                            assetName: value.assetName,
+                            category: value.category,
+                            type: value.type,
+                            serialNumber: value.serialNumber,
+                            status: value.status,
+                            archived: value.archived,
+                        })
+                        // console.log("Edit : ",dataAsset);
+                        Swal.fire('Saved!', '', 'success')
+                            .then(() => window.location.reload())
+                        closeModal()
+                    } else if (result.isDenied) {
+                        Swal.fire('Changes are not saved', '', 'info')
+                        closeModal()
+                    }
+                })
+            }
+        } catch (err) {
+            alert(err)
+        }
+    }
+
+    useEffect(() => {
+        reset(data)
+    }, [reset, data])
+
     return (
         <>
             <Modal isOpen={isModalOpen} onClose={closeModal}>
                 <ModalHeader>Form Data Non IT Asset</ModalHeader>
-                <ModalBody>
-                    <Label>
-                        <span>Name<small className='text-red-600'>*</small></span>
-                        <Input className="mt-1" placeholder="Type here..." />
-                    </Label>
-                    <Label className="mt-3">
-                        <span>Job Title<small className='text-red-600'>*</small></span>
-                        <Input className="mt-1" placeholder="Type here..." />
-                    </Label>
-                    <Label className="mt-3">
-                        <span>Email Address<small className='text-red-600'>*</small></span>
-                        {/* <!-- focus-within sets the color for the icon when input is focused --> */}
-                        <div className="relative text-gray-500 focus-within:text-purple-600 dark:focus-within:text-purple-400">
-                            <input
-                                className="block w-full pr-10 mt-1 text-sm text-black dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray form-input"
+                <form onSubmit={handleSubmit(onSubmit)}>
+                    <ModalBody>
+                        <Label className="mt-3">
+                            <span>Asset Name<small className='text-red-600'>*</small></span>
+                            <Input
+                                className="mt-1"
                                 placeholder="Type here..."
+                                required
+                                {...register("assetName")}
                             />
-                            <div className="absolute inset-y-0 right-0 flex items-center mr-3 pointer-events-none">
-                                <MailIcon className="w-5 h-5" aria-hidden="true" />
-                            </div>
+                        </Label>
+                        <Label className="mt-3">
+                            <span>Category<small className='text-red-600'>*</small></span>
+                            <Select className="mt-1" required {...register("category")}>
+                                <option value="" >-- Choose one --</option>
+                                <option value="Projector" >Projector</option>
+                                <option value="Scanner" >Scanner</option>
+                            </Select>
+                        </Label>
+                        <Label className="mt-3">
+                            <span>Type<small className='text-red-600'>*</small></span>
+                            <Input
+                                className="mt-1"
+                                placeholder="Type here..."
+                                required
+                                {...register("type")}
+                            />
+                        </Label>
+                        <Label className="mt-3">
+                            <span>Serial Number<small className='text-red-600'>*</small></span>
+                            <Input
+                                className="mt-1"
+                                placeholder="Type here..."
+                                required
+                                {...register("serialNumber")}
+                            />
+                        </Label>
+                        <div className="grid col-gap-3 lg:grid-cols-2">
+                            <Label className="mt-3">
+                                <span>Status<small className='text-red-600'>*</small></span>
+                                <Select className="mt-1" required {...register("status")}>
+                                    <option value="" >-- Choose one --</option>
+                                    <option value="Standby" >Standby</option>
+                                    <option value="In Use" >In Use</option>
+                                    <option value="In Repair" >In Repair</option>
+                                    <option value="Dispose" >Dispose</option>
+                                </Select>
+                            </Label>
+                            <Label className="mt-3">
+                                <span>Visibility<small className='text-red-600'>*</small></span>
+                                <Select className="mt-1" required {...register("visibility")}>
+                                    <option value="Unarchived">Unarchived</option>
+                                    <option value="Archived" >Archived</option>
+                                    <option value="Draft" >Draft</option>
+                                </Select>
+                            </Label>
                         </div>
-                    </Label>
-                    <Label className="mt-3">
-                        <span>Department<small className='text-red-600'>*</small></span>
-                        <Input className="mt-1" placeholder="Type here..." />
-                    </Label>
-                    <Label className="mt-3">
-                        <span>Status<small className='text-red-600'>*</small></span>
-                        <Select className="mt-1">
-                            <option>Option 1</option>
-                            <option>Option 2</option>
-                            <option>Option 3</option>
-                            <option>Option 4</option>
-                            <option>Option 5</option>
-                        </Select>
-                    </Label>
-                </ModalBody>
-                <ModalFooter>
-                    {/* I don't like this approach. Consider passing a prop to ModalFooter
-           * that if present, would duplicate the buttons in a way similar to this.
-           * Or, maybe find some way to pass something like size="large md:regular"
-           * to Button
-           */}
-                    <div className="hidden sm:block">
-                        <Button layout="outline" onClick={closeModal}>
-                            Cancel
-                        </Button>
-                    </div>
-                    <div className="hidden sm:block">
-                        <Button>Save</Button>
-                    </div>
-                    <div className="block w-full sm:hidden">
-                        <Button block size="large" layout="outline" onClick={closeModal}>
-                            Cancel
-                        </Button>
-                    </div>
-                    <div className="block w-full sm:hidden">
-                        <Button block size="large">
-                            Save
-                        </Button>
-                    </div>
-                </ModalFooter>
+                    </ModalBody>
+                    <ModalFooter>
+                        {/* I don't like this approach. Consider passing a prop to ModalFooter
+                        * that if present, would duplicate the buttons in a way similar to this.
+                        * Or, maybe find some way to pass something like size="large md:regular"
+                        * to Button
+                        */}
+                        <div className="hidden sm:block">
+                            <Button layout="outline" onClick={closeModal}>
+                                Cancel
+                            </Button>
+                        </div>
+                        <div className="hidden sm:block">
+                            <Button type="submit">Save</Button>
+                        </div>
+                        <div className="block w-full sm:hidden">
+                            <Button block size="large" layout="outline" onClick={closeModal}>
+                                Cancel
+                            </Button>
+                        </div>
+                        <div className="block w-full sm:hidden">
+                            <Button type="submit" block size="large">
+                                Save
+                            </Button>
+                        </div>
+                    </ModalFooter>
+                </form>
             </Modal>
         </>
     )

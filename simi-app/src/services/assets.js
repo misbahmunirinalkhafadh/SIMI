@@ -19,7 +19,7 @@ export const assetsServices = {
         const list = snapshot.docs.map(doc => doc.data());
         return list;
     },
-    
+
     async getNonITAsset() {
         const col = collection(db, 'assets');
         const q = query(col, where('category', '==', 'Printer'))
@@ -31,7 +31,7 @@ export const assetsServices = {
     // Get a list of assets from database
     async getAllITAsset() {
         const col = collection(db, 'assets');
-        const q = query(col, where('category', 'in', ['Laptop', 'Desktop']))
+        const q = query(col, where('category', 'in', ['Laptop', 'Desktop', 'Printer']))
         const get = await getDocs(q);
         const list = get.docs.map(doc => ({
             id: doc.id,
@@ -43,7 +43,7 @@ export const assetsServices = {
     // Get a list of assets from database
     async getAllNonITAsset() {
         const col = collection(db, 'assets');
-        const q = query(col, where('category', '==', 'Printer'))
+        const q = query(col, where('category', 'in', ['Projector', 'Scanner']))
         const get = await getDocs(q);
         const list = get.docs.map(doc => ({
             id: doc.id,

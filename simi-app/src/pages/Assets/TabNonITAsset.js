@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { AddIcon, SearchIcon } from '../../assets/icons';
 import { Input, Button, Select } from '@windmill/react-ui';
 import TableNonITAsset from './TableNonITAsset';
 import ModalFormNonITAsset from './ModalFormNonITAsset';
+import { assetsServices } from '../../services/assets';
 
 function TabNonITAsset() {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [selected, setSelected] = useState('')
+    const [category, setCategory] = useState([])
 
     function openModal() {
         setIsModalOpen(true)
@@ -20,7 +22,23 @@ function TabNonITAsset() {
     function onSelect(event) {
         setSelected(event.target.value)
     }
-    
+
+    useEffect(() => {
+        try {
+            assetsServices.getAllNonITAsset().then(data => {
+                const uniqueTags = [];
+                data.forEach(asd => {
+                    if (uniqueTags.indexOf(asd.data.category) === -1) {
+                        uniqueTags.push(asd.data.category)
+                    }
+                });
+                setCategory(uniqueTags)
+            })
+        } catch (error) {
+            console.log(error)
+        }
+    }, [])
+
     return (
         <>
             {/* Action  */}
@@ -38,11 +56,18 @@ function TabNonITAsset() {
                         />
                     </div>
                     {/* Filter  */}
-                    <div>
-                        <Select className="ml-3" onChange={onSelect} >
-                            <option value='unarchived' >Unarchived</option>
-                            <option value='archived' >Archived</option>
-                            <option value='draft' >Draft</option>
+                    <div className="ml-3">
+                        <Select onChange={onSelect} >
+                            <option value="Unarchived" >Unarchived</option>
+                            <option value="Archived" >Archived</option>
+                            <option value="Draft" >Draft</option>
+                        </Select>
+                    </div>
+                    {/* Type  */}
+                    <div className="ml-3" >
+                        <Select>
+                            <option value="" >All Category</option>
+                            {category.map((data, i) => <option value={data} key={i}>{data}</option>)}
                         </Select>
                     </div>
                 </div>
@@ -53,7 +78,7 @@ function TabNonITAsset() {
             </div>
 
             {/* Table Data */}
-            <TableNonITAsset archive={selected} />
+            <TableNonITAsset selected={selected} />
 
             <ModalFormNonITAsset isModalOpen={isModalOpen} closeModal={closeModal} />
         </>
