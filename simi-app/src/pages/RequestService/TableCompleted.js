@@ -29,7 +29,6 @@ export default function TableCompleted() {
 
     // pagination setup
     const resultsPerPage = 10
-    const totalResults = response.length
 
     // pagination change control
     function onPageChangeTable(p) {
@@ -132,12 +131,14 @@ export default function TableCompleted() {
                     </TableBody>
                 </Table>
                 <TableFooter>
-                    <Pagination
-                        totalResults={totalResults}
-                        resultsPerPage={resultsPerPage}
-                        onChange={onPageChangeTable}
-                        label="Table navigation"
-                    />
+                    {response?.length !== 0 && (
+                        <Pagination
+                            totalResults={response.length}
+                            resultsPerPage={resultsPerPage}
+                            onChange={onPageChangeTable}
+                            label="Table navigation"
+                        />
+                    )}
                 </TableFooter>
             </TableContainer>
             <ModalFormRequest isModalOpen={isModalOpen} closeModal={closeModal} />

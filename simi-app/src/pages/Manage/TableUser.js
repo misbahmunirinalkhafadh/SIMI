@@ -13,11 +13,12 @@ import {
     Button,
     Pagination,
 } from '@windmill/react-ui'
-import { EditIcon, TrashIcon } from '../../assets/icons'
+import { EditIcon, InformationIcon, TrashIcon } from '../../assets/icons'
 
 import { usersServices } from '../../services/users';
 import ModalFormUser from './ModalFormUser';
 import Swal from 'sweetalert2';
+import ModalDetailUser from './ModalDetailUser';
 // make a copy of the data, for the second table
 
 function TableUser() {
@@ -30,13 +31,13 @@ function TableUser() {
     const [dataTable, setDataTable] = useState([])
 
     const [isModalOpen, setIsModalOpen] = useState(false)
+    const [isModalDetailOpen, setIsModalDetailOpen] = useState(false)
 
     const [userId, setUserId] = useState(null)
-    const [userData, setUserData] = useState([])
+    const [userData, setUserData] = useState({})
 
     // pagination setup
     const resultsPerPage = 10
-    const totalResults = response.length
 
     // pagination change control
     function onPageChangeTable(p) {
@@ -51,6 +52,15 @@ function TableUser() {
 
     function closeModal() {
         setIsModalOpen(false)
+    }
+
+    function openModalDetail(value) {
+        setIsModalDetailOpen(true)
+        setUserData(value)
+    }
+
+    function closeModalDetail() {
+        setIsModalDetailOpen(false)
     }
 
     const handleDelete = (id) => {
@@ -103,6 +113,7 @@ function TableUser() {
                         <tr>
                             <TableCell>User</TableCell>
                             <TableCell>Username</TableCell>
+                            <TableCell>Job Title</TableCell>
                             <TableCell>Role</TableCell>
                             <TableCell>Status</TableCell>
                             <TableCell>Actions</TableCell>
@@ -113,15 +124,18 @@ function TableUser() {
                             <TableRow key={user.id}>
                                 <TableCell>
                                     <div className="flex items-center text-sm">
-                                        <Avatar className="hidden mr-3 md:block" src={user.data.avatar} alt="User avatar" />
+                                        <Avatar className="hidden mr-3 md:block" src={user.data.photoURL} alt="User avatar" />
                                         <div>
-                                            <p className="font-semibold">{user.data.fullName}</p>
+                                            <p className="font-semibold">{user.data.displayName}</p>
                                             <p className="text-xs text-gray-600 dark:text-gray-400">{user.data.email}</p>
                                         </div>
                                     </div>
                                 </TableCell>
                                 <TableCell>
                                     {user.data.username}
+                                </TableCell>
+                                <TableCell>
+                                    {user.data.job}
                                 </TableCell>
                                 <TableCell>
                                     {user.data.role}
@@ -134,6 +148,9 @@ function TableUser() {
                                         <Button layout="link" size="icon" aria-label="Edit">
                                             <EditIcon className="w-5 h-5" aria-hidden="true" onClick={() => openModal(user)} />
                                         </Button>
+                                        <Button layout="link" size="icon" aria-label="Detail">
+                                            <InformationIcon className="w-5 h-5" aria-hidden="true" onClick={() => openModalDetail(user.data)} />
+                                        </Button>
                                         <Button layout="link" size="icon" aria-label="Delete" onClick={() => handleDelete(user.id)}>
                                             <TrashIcon className="w-5 h-5" aria-hidden="true" />
                                         </Button>
@@ -144,15 +161,18 @@ function TableUser() {
                     </TableBody>
                 </Table>
                 <TableFooter>
-                    <Pagination
-                        totalResults={totalResults}
-                        resultsPerPage={resultsPerPage}
-                        onChange={onPageChangeTable}
-                        label="Table navigation"
-                    />
+                    {response?.length !== 0 && (
+                        <Pagination
+                            totalResults={response.length}
+                            resultsPerPage={resultsPerPage}
+                            onChange={onPageChangeTable}
+                            label="Table navigation"
+                        />
+                    )}
                 </TableFooter>
             </TableContainer>
             <ModalFormUser isModalOpen={isModalOpen} closeModal={closeModal} id={userId} data={userData} />
+            <ModalDetailUser isModalOpen={isModalDetailOpen} closeModal={closeModalDetail} data={userData} />
         </>
     )
 }

@@ -36,7 +36,6 @@ function TableNonITAsset({ selected }) {
 
     // pagination setup
     const resultsPerPage = 10
-    const totalResults = response.length
 
     // pagination change control
     function onPageChangeTable(p) {
@@ -123,11 +122,12 @@ function TableNonITAsset({ selected }) {
                 <Table>
                     <TableHeader>
                         <tr>
-                            <TableCell>Asset Name</TableCell>
+                            <TableCell>Site</TableCell>
+                            <TableCell>SO Number</TableCell>
                             <TableCell>Category</TableCell>
                             <TableCell>Type</TableCell>
                             <TableCell>Serial Number</TableCell>
-                            <TableCell>Status</TableCell>
+                            <TableCell className="text-center">Status</TableCell>
                             <TableCell>Actions</TableCell>
                         </tr>
                     </TableHeader>
@@ -135,26 +135,42 @@ function TableNonITAsset({ selected }) {
                         {dataTable.map((asset) => (
                             <TableRow className="dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600" key={asset.id}>
                                 <TableCell>
-                                    <Link className="text-blue-500" to='/app/assets/detail'>{asset.data.assetName}</Link>
+                                    {asset.data.site}
+                                </TableCell>
+                                <TableCell>
+                                    {asset.data.salesOrder}
                                 </TableCell>
                                 <TableCell>
                                     {asset.data.category}
                                 </TableCell>
                                 <TableCell>
-                                    {asset.data.type}
+                                    <Link className="text-blue-500" to={`/app/assets/detail/${asset.id}`}>{asset.data.brand} {asset.data.model}</Link>
                                 </TableCell>
                                 <TableCell>
                                     {asset.data.serialNumber}
                                 </TableCell>
-                                <TableCell>
-                                    <Badge type={asset.data.status === 'Standby' ? 'success' : 'primary'}>{asset.data.status}</Badge>
+                                <TableCell className="text-center" >
+                                    {(() => {
+                                        switch (asset.data.status) {
+                                            case 'In Use':
+                                                return <Badge type="warning" >{asset.data.status}</Badge>;
+                                            case 'Broken':
+                                                return <Badge type="danger"  >{asset.data.status}</Badge>;
+                                            case 'Ready':
+                                                return <Badge type="success" >{asset.data.status}</Badge>;
+                                            case 'On Service':
+                                                return <Badge type="neutral" >{asset.data.status}</Badge>;
+                                            default:
+                                                return <Badge type="primary" >{asset.data.status}</Badge>;
+                                        }
+                                    })()}
                                 </TableCell>
                                 <TableCell>
                                     <div className="flex items-center space-x-4">
                                         <Button layout="link" size="icon" aria-label="Edit" onClick={() => openModal(asset)}>
                                             <EditIcon className="w-5 h-5" aria-hidden="true" color="#7e3af2" />
                                         </Button>
-                                        {selected === "Archived" || selected === "Draft" ?
+                                        {selected === "Archived" ?
                                             (<Button layout="link" size="icon" aria-label="Delete" onClick={() => handleDelete(asset.id)}>
                                                 <TrashIcon className="w-5 h-5" aria-hidden="true" color='#c81e1e' />
                                             </Button>)
@@ -170,12 +186,14 @@ function TableNonITAsset({ selected }) {
                     </TableBody>
                 </Table>
                 <TableFooter>
-                    <Pagination
-                        totalResults={totalResults}
-                        resultsPerPage={resultsPerPage}
-                        onChange={onPageChangeTable}
-                        label="Table navigation"
-                    />
+                    {response?.length !== 0 && (
+                        <Pagination
+                            totalResults={response.length}
+                            resultsPerPage={resultsPerPage}
+                            onChange={onPageChangeTable}
+                            label="Table navigation"
+                        />
+                    )}
                 </TableFooter>
             </TableContainer>
             <ModalFormNonITAsset isModalOpen={isModalOpen} closeModal={closeModal} id={assetId} data={assetData} />

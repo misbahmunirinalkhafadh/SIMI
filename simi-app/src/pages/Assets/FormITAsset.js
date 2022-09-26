@@ -1,166 +1,269 @@
-import React, { useEffect } from 'react'
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Input, Label, Select } from '@windmill/react-ui'
+import React, { useEffect, useState } from 'react'
+import { Card, CardBody, Button, Input, Label, Select, Textarea } from '@windmill/react-ui'
+import { useAuthState } from "react-firebase-hooks/auth";
+
+import { PageTitle } from '../../components'
 import { useForm } from 'react-hook-form'
 import { assetsServices } from '../../services/assets'
-import { Timestamp } from 'firebase/firestore'
 import Swal from 'sweetalert2'
+import { Timestamp } from 'firebase/firestore'
+import { useHistory, useParams } from 'react-router-dom'
+import { sitesServices } from '../../services/sites'
+import { auth } from '../../utils/firebase';
 
-function FormITAsset({ closeModal, id, data }) {
-    const { register, handleSubmit, reset } = useForm({ defaultValues: data })
+function FormITAsset() {
+    const { id } = useParams();
+    const [assetInfo, setAssetInfo] = useState({})
+    const { register, handleSubmit, reset } = useForm()
+
+    const [site, setSite] = useState([])
+    const [disabled, setDisabled] = useState(true)
+    const [requiredStatusDetail, setRequiredStatusDetail] = useState(false)
+    const history = useHistory()
+    const [user, loading] = useAuthState(auth);
+
+    const handleChange = (e) => {
+        if (e.target.value === "In Use") {
+            setDisabled(false)
+            setRequiredStatusDetail(true)
+        } else {
+            setDisabled(true)
+            setRequiredStatusDetail(false)
+        }
+    }
 
     const onSubmit = (value) => {
-        const dataAsset = {
-            assetName: value.assetName,
-            category: value.category,
-            type: value.type,
-            serialNumber: value.serialNumber,
-            storageCapacity: value.storageCapacity,
-            storageType: value.storageType,
-            visibility: value.visibility,
-            status: 'Standby',
-            createdAt: Timestamp.now()
-        }
-
         try {
-            if (id == null) {
-                Swal.fire({
-                    title: 'Do you want to save the New IT Asset?',
-                    showDenyButton: false,
-                    showCancelButton: true,
-                    confirmButtonText: 'Save',
-                }).then((result) => {
-                    /* Read more about isConfirmed, isDenied below */
-                    if (result.isConfirmed) {
-                        assetsServices.add(dataAsset)
-                        Swal.fire('Saved!', '', 'success')
-                            .then(() => window.location.reload())
-                        closeModal()
-                    }
-                })
-            } else {
-                Swal.fire({
-                    title: 'Do you want to save the changes?',
-                    showDenyButton: true,
-                    showCancelButton: true,
-                    confirmButtonText: 'Save',
-                    denyButtonText: `Don't save`,
-                }).then((result) => {
-                    /* Read more about isConfirmed, isDenied below */
-                    if (result.isConfirmed) {
-                        assetsServices.update(id, {
-                            assetName: value.assetName,
-                            category: value.category,
-                            type: value.type,
-                            serialNumber: value.serialNumber,
-                            storageCapacity: value.storageCapacity,
-                            storageType: value.storageType,
-                            status: value.status,
-                            visibility: value.visibility,
-                        })
-                        // console.log("Edit : ",dataAsset);
-                        Swal.fire('Saved!', '', 'success')
-                            .then(() => window.location.reload())
-                        closeModal()
-                    } else if (result.isDenied) {
-                        Swal.fire('Changes are not saved', '', 'info')
-                        closeModal()
-                    }
-                })
-            }
+            Swal.fire({
+                title: 'Do you want to save the changes?',
+                showDenyButton: true,
+                showCancelButton: true,
+                confirmButtonText: 'Save',
+                denyButtonText: `Don't save`,
+            }).then((result) => {
+                /* Read more about isConfirmed, isDenied below */
+                if (result.isConfirmed) {
+                    assetsServices.update(id, {
+                        site: value.site,
+                        salesOrder: value.salesOrder,
+                        brand: value.brand,
+                        model: value.model,
+                        serialNumber: value.serialNumber.toUpperCase(),
+                        category: value.category,
+                        information: {
+                            operatingSystem: value.operatingSystem,
+                            processor: value.processor,
+                            ram: value.ram.toUpperCase().replace(/\s+/g, ''),
+                            storageCapacity: value.storageCapacity.toUpperCase().replace(/\s+/g, ''),
+                            storageType: value.storageType
+                        },
+                        visibility: value.visibility,
+                        status: value.status,
+                        statusDetail: value.statusDetail,
+                        description: value.description,
+                        modifiedAt: Timestamp.now(),
+                        modifiedBy: user.email
+                    })
+                    Swal.fire('Saved!', '', 'success')
+                        .then(() => window.location.reload(history.replace('/app/assets')))
+                } else if (result.isDenied) {
+                    Swal.fire('Changes are not saved', '', 'info')
+                }
+            })
         } catch (err) {
             alert(err)
         }
     }
 
     useEffect(() => {
-        reset(data)
-    }, [reset, data])
+        if (loading) return;
+    }, [loading])
+
+    useEffect(() => {
+        try {
+            sitesServices.getAll().then(data => {
+                setSite(data)
+            })
+        } catch (error) {
+            console.log(error)
+        }
+    }, [])
+
+    useEffect(() => {
+        try {
+            assetsServices.getById(id).then(data => {
+                setAssetInfo(data.information)
+                reset(data)
+                if (data.status === "In Use") {
+                    setDisabled(false)
+                    setRequiredStatusDetail(true)
+                } else {
+                    setDisabled(true)
+                    setRequiredStatusDetail(false)
+                }
+            })
+        } catch (error) {
+            console.log(error)
+        }
+    }, [id, reset])
 
     return (
         <>
+            <PageTitle>Form IT Asset</PageTitle>
+
             <form onSubmit={handleSubmit(onSubmit)}>
-                <Label className="mt-3">
-                    <span>Asset Name<small className='text-red-600'>*</small></span>
-                    <Input
-                        className="mt-1"
-                        placeholder="Type here..."
-                        required
-                        {...register("assetName")}
-                    />
-                </Label>
-                <Label className="mt-3">
-                    <span>Category<small className='text-red-600'>*</small></span>
-                    <Select className="mt-1" required {...register("category")}>
-                        <option value="" >-- Choose one --</option>
-                        <option value="Laptop" >Laptop</option>
-                        <option value="Desktop" >Desktop</option>
-                    </Select>
-                </Label>
-                <Label className="mt-3">
-                    <span>Type<small className='text-red-600'>*</small></span>
-                    <Input
-                        className="mt-1"
-                        placeholder="Type here..."
-                        required
-                        {...register("type")}
-                    />
-                </Label>
-                <Label className="mt-3">
-                    <span>Serial Number<small className='text-red-600'>*</small></span>
-                    <Input
-                        className="mt-1"
-                        placeholder="Type here..."
-                        required
-                        {...register("serialNumber")}
-                    />
-                </Label>
-                <Label className="mt-3">
-                    <span>Storage Capacity<small className='text-red-600'>*</small></span>
-                    <div className="relative mt-1 rounded-md shadow-sm">
-                        <Input
-                            className="block w-full pl-48 mt-1"
-                            placeholder="Type here..."
-                            required
-                            {...register("storageCapacity")}
-                        />
-                        <div className="absolute inset-y-0 left-0 flex items-center">
-                            <Select className="h-full py-0" required {...register("storageType")}>
-                                <option value="" >-- Choose one --</option>
-                                <option value="SSD" >SSD</option>
-                                <option value="HDD" >HDD</option>
-                            </Select>
-                        </div>
-                    </div>
-                </Label>
-                <div className="grid col-gap-3 lg:grid-cols-2">
-                    <Label className="mt-3">
-                        <span>Status<small className='text-red-600'>*</small></span>
-                        <Select className="mt-1" required {...register("status")}>
-                            <option value="" >-- Choose one --</option>
-                            <option value="Standby" >Standby</option>
-                            <option value="In Use" >In Use</option>
-                            <option value="In Repair" >In Repair</option>
-                            <option value="Dispose" >Dispose</option>
-                        </Select>
-                    </Label>
-                    <Label className="mt-3">
-                        <span>Visibility<small className='text-red-600'>*</small></span>
-                        <Select className="mt-1" required {...register("visibility")}>
-                            <option value="Unarchived">Unarchived</option>
-                            <option value="Archived" >Archived</option>
-                            <option value="Draft" >Draft</option>
-                        </Select>
-                    </Label>
+                <div className="grid gap-6 mb-8 md:grid-cols-2">
+                    <Card>
+                        <CardBody>
+                            <p className="mb-4 font-semibold text-gray-600 dark:text-gray-300">Asset Detail</p>
+                            <Label>
+                                <span>Site<small className='text-red-600'>*</small></span>
+                                <Select className="mt-1" required {...register("site")} onChange={handleChange}>
+                                    <option value="" >-- Choose one --</option>
+                                    {site.map((site, i) => (
+                                        <option key={i} value={site.data.name}>{site.data.name}</option>
+                                    ))}
+                                </Select>
+                            </Label>
+                            <Label className="mt-3">
+                                <span>SO Number<small className='text-red-600'>*</small></span>
+                                <Input
+                                    className="mt-1"
+                                    placeholder="Type here..."
+                                    required
+                                    {...register("salesOrder")}
+                                />
+                            </Label>
+                            <div className="grid col-gap-3 lg:grid-cols-2">
+                                <Label className="mt-3">
+                                    <span>Brand<small className='text-red-600'>*</small></span>
+                                    <Input
+                                        className="mt-1"
+                                        placeholder="Type here..."
+                                        required
+                                        {...register("brand")}
+                                    />
+                                </Label>
+                                <Label className="mt-3">
+                                    <span>Model<small className='text-red-600'>*</small></span>
+                                    <Input
+                                        className="mt-1"
+                                        placeholder="Type here..."
+                                        required
+                                        {...register("model")}
+                                    />
+                                </Label>
+                                <Label className="mt-3">
+                                    <span>Serial Number<small className='text-red-600'>*</small></span>
+                                    <Input
+                                        className="mt-1"
+                                        placeholder="Type here..."
+                                        required
+                                        {...register("serialNumber")}
+                                    />
+                                </Label>
+                                <Label className="mt-3">
+                                    <span>Category<small className='text-red-600'>*</small></span>
+                                    <Select className="mt-1" required {...register("category")}>
+                                        <option value="" >-- Choose one --</option>
+                                        <option value="Laptop" >Laptop</option>
+                                        <option value="Desktop" >Desktop</option>
+                                        <option value="Printer" >Printer</option>
+                                    </Select>
+                                </Label>
+                                <Label className="mt-3">
+                                    <span>Status<small className='text-red-600'>*</small></span>
+                                    <Select className="mt-1" required {...register("status")} onChange={handleChange} >
+                                        <option value="" >-- Choose one --</option>
+                                        <option value="Ready" >Ready</option>
+                                        <option value="In Use" >In Use</option>
+                                        <option value="Broken" >Broken</option>
+                                        <option value="On Service" >On Service</option>
+                                    </Select>
+                                </Label>
+                                <Label className="mt-3">
+                                    <span>Status Detail<small className='text-red-600'>*</small></span>
+                                    <Select className="mt-1" required={requiredStatusDetail} {...register("statusDetail")} disabled={disabled} >
+                                        <option value="" >-- Choose one --</option>
+                                        <option value="In Use Employee" >In Use Employee</option>
+                                        <option value="In Use Loan" >In Use Loan</option>
+                                        <option value="In Use Backup" >In Use Backup</option>
+                                    </Select>
+                                </Label>
+                            </div>
+                            <Label className="mt-3">
+                                <span>Visibility<small className='text-red-600'>*</small></span>
+                                <Select className="mt-1" required {...register("visibility")} onChange={handleChange}>
+                                    <option value="Unarchived">Unarchived</option>
+                                    <option value="Archived" >Archived</option>
+                                </Select>
+                            </Label>
+                        </CardBody>
+                    </Card>
+
+                    <Card>
+                        <CardBody>
+                            <p className="mb-4 font-semibold text-gray-600 dark:text-gray-300">Asset Information</p>
+                            <Label className="mt-3">
+                                <span>Operating System<small className='text-red-600'>*</small></span>
+                                <Input
+                                    className="mt-1"
+                                    placeholder="Type here..."
+                                    defaultValue={assetInfo.operatingSystem}
+                                    required
+                                    {...register("operatingSystem")}
+                                />
+                            </Label>
+                            <Label className="mt-3">
+                                <span>Processor<small className='text-red-600'>*</small></span>
+                                <Input
+                                    className="mt-1"
+                                    placeholder="Type here..."
+                                    defaultValue={assetInfo.processor}
+                                    required
+                                    {...register("processor")}
+                                />
+                            </Label>
+                            <Label className="mt-3">
+                                <span>RAM (GB)<small className='text-red-600'>*</small></span>
+                                <Input
+                                    className="mt-1"
+                                    placeholder="Type here..."
+                                    defaultValue={assetInfo.ram}
+                                    required
+                                    {...register("ram")}
+                                />
+                            </Label>
+                            <Label className="mt-3">
+                                <span>Storage Capacity (GB)<small className='text-red-600'>*</small></span>
+                                <div className="relative mt-1 rounded-md shadow-sm">
+                                    <Input
+                                        className="block w-full pl-48 mt-1"
+                                        placeholder="Type here..."
+                                        defaultValue={assetInfo.storageCapacity}
+                                        required
+                                        {...register("storageCapacity")}
+                                    />
+                                    <div className="absolute inset-y-0 left-0 flex items-center">
+                                        <Select className="h-full py-0" required defaultValue={assetInfo.storageType} {...register("storageType")} >
+                                            <option value="" >-- Choose one --</option>
+                                            <option value="SSD" >SSD</option>
+                                            <option value="HDD" >HDD</option>
+                                        </Select>
+                                    </div>
+                                </div>
+                            </Label>
+                            <Label className="mt-3">
+                                <span>Description</span>
+                                <Textarea className="mt-1" rows="3" placeholder="Enter description about asset" {...register("description")} />
+                            </Label>
+                        </CardBody>
+                    </Card>
                 </div>
-                <div className="hidden sm:block">
-                    <Button layout="outline" onClick={closeModal}>
-                        Cancel
-                    </Button>
-                </div>
-                <div className="hidden sm:block">
+                <div className="flex justify-center space-x-4 text-center">
+                    <Button layout="outline" onClick={history.goBack}>Cancel</Button>
                     <Button type="submit">Save</Button>
                 </div>
-
             </form>
         </>
     )

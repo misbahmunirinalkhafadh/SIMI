@@ -10,33 +10,20 @@ import { Timestamp } from 'firebase/firestore'
 function ModalFormUser({ closeModal, isModalOpen, id, data }) {
     const { register, handleSubmit, reset } = useForm({ defaultValues: data })
     const [role, setRole] = useState([])
-    const [avatar, setAvatar] = useState("")
-
-    const handleGender = (event) => {
-        const gen = event.target.value
-        const maleAva = "https://firebasestorage.googleapis.com/v0/b/simi-51185.appspot.com/o/avatar%2Fundraw_male_avatar_323b.png?alt=media&token=1cfb30ff-404c-4421-b926-3be8d41bb485"
-        const femaleAva = "https://firebasestorage.googleapis.com/v0/b/simi-51185.appspot.com/o/avatar%2Fundraw_female_avatar_w3jk.png?alt=media&token=39f66648-443d-4a43-9711-7a76b5ecbacd"
-        if (gen === "Male") {
-            setAvatar(maleAva)
-        } else if (gen === "Female") {
-            setAvatar(femaleAva)
-        }
-    }
 
     const onSubmit = (value) => {
         const dataUser = {
-            avatar: avatar,
             username: value.username,
-            fullName: value.fullName,
+            displayName: value.displayName,
             department: value.department,
             site: value.site,
             job: value.job,
             email: value.email,
-            password: value.password,
             gender: value.gender,
             role: value.role,
-            status: value.status,
-            createdAt: Timestamp.now()
+            status: "Unverified",
+            photoURL: 'https://firebasestorage.googleapis.com/v0/b/simi-51185.appspot.com/o/blank-profile-picture.png?alt=media&token=edc1d1d5-df02-4922-892a-35d2c36a50d5',
+            createdAt: Timestamp.now(),
         }
         try {
             if (id == null) {
@@ -66,15 +53,13 @@ function ModalFormUser({ closeModal, isModalOpen, id, data }) {
                     if (result.isConfirmed) {
                         usersServices.update(id, {
                             username: value.username,
-                            fullName: value.fullName,
+                            displayName: value.displayName,
                             department: value.department,
                             site: value.site,
                             job: value.job,
                             email: value.email,
-                            password: value.password,
                             gender: value.gender,
                             role: value.role,
-                            status: value.status,
                         })
                         Swal.fire('Saved!', '', 'success')
                             .then(() => window.location.reload())
@@ -110,14 +95,13 @@ function ModalFormUser({ closeModal, isModalOpen, id, data }) {
                 <ModalHeader>Form Data User</ModalHeader>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <ModalBody>
-
                         <Label className="mt-3">
                             <span>Full Name<small className='text-red-600'>*</small></span>
                             <Input
                                 className="mt-1"
                                 placeholder="Type here..."
                                 required
-                                {...register("fullName")}
+                                {...register("displayName")}
                             />
                         </Label>
 
@@ -143,7 +127,7 @@ function ModalFormUser({ closeModal, isModalOpen, id, data }) {
                         </Label>
                         <div className="grid col-gap-3 lg:grid-cols-2">
                             <Label className="mt-3">
-                                <span>User Name<small className='text-red-600'>*</small></span>
+                                <span>Username<small className='text-red-600'>*</small></span>
                                 <Input
                                     className="mt-1"
                                     placeholder="Type here..."
@@ -178,30 +162,11 @@ function ModalFormUser({ closeModal, isModalOpen, id, data }) {
                                     {...register("job")}
                                 />
                             </Label>
-                            <Label className="mt-3">
-                                <span>Password<small className='text-red-600'>*</small></span>
-                                <Input
-                                    className="mt-1"
-                                    placeholder="Type here..."
-                                    type="password"
-                                    required
-                                    {...register("password")}
-                                />
-                            </Label>
-                            <Label className="mt-3">
-                                <span>Confirm Password<small className='text-red-600'>*</small></span>
-                                <Input
-                                    className="mt-1"
-                                    placeholder="Type here..."
-                                    type="password"
-                                    required
-                                />
-                            </Label>
                         </div>
-                        <div className="grid col-gap-3 lg:grid-cols-3">
+                        <div className="grid col-gap-3 lg:grid-cols-2">
                             <Label className="mt-3">
                                 <span>Gender<small className='text-red-600'>*</small></span>
-                                <Select className="mt-1" {...register("gender")} onChange={handleGender}>
+                                <Select className="mt-1" {...register("gender")}>
                                     <option value="">-- Choose One --</option>
                                     <option value="Male">Male</option>
                                     <option value="Female">Female</option>
@@ -215,16 +180,6 @@ function ModalFormUser({ closeModal, isModalOpen, id, data }) {
                                     {role.map((role, i) => (
                                         <option key={i} value={role.data.roleName}>{role.data.roleName}</option>
                                     ))}
-                                </Select>
-                            </Label>
-                            <Label className="mt-3">
-                                <span>Status<small className='text-red-600'>*</small></span>
-                                <Select className="mt-1" {...register("status")} >
-                                    <option value="">-- Choose One --</option>
-                                    <option>Active</option>
-                                    <option>Banned</option>
-                                    <option>Not Active</option>
-                                    <option>Not Comfirmed</option>
                                 </Select>
                             </Label>
                         </div>

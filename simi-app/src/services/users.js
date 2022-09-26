@@ -1,4 +1,4 @@
-import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, updateDoc } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore";
 import { db } from "../utils/firebase";
 
 export const usersServices = {
@@ -19,6 +19,18 @@ export const usersServices = {
         const get = await getDoc(col);
         const data = get.data();
         return data;
+    },
+
+    // Get by email of roles from database
+    async getByEmail(email) {
+        const col = doc(db, 'users');
+        const q = query(col, where('email', '==', email))
+        const get = await getDocs(q);
+        const list = get.docs.map(doc => ({
+            id: doc.id,
+            data: doc.data()
+        }));
+        return list;
     },
 
     // Create a list of users from database

@@ -17,7 +17,7 @@ import Swal from 'sweetalert2'
 import { requestsServices } from '../../services/requests'
 import { Link } from 'react-router-dom'
 
-export default function TableInProgress() {
+export default function TablePending() {
     const [response, setResponse] = useState([])
 
     // setup pages control for every table
@@ -29,7 +29,6 @@ export default function TableInProgress() {
 
     // pagination setup
     const resultsPerPage = 10
-    const totalResults = response.length
 
     // pagination change control
     function onPageChangeTable(p) {
@@ -132,12 +131,14 @@ export default function TableInProgress() {
                     </TableBody>
                 </Table>
                 <TableFooter>
-                    <Pagination
-                        totalResults={totalResults}
-                        resultsPerPage={resultsPerPage}
-                        onChange={onPageChangeTable}
-                        label="Table navigation"
-                    />
+                    {response?.length !== 0 && (
+                        <Pagination
+                            totalResults={response.length}
+                            resultsPerPage={resultsPerPage}
+                            onChange={onPageChangeTable}
+                            label="Table navigation"
+                        />
+                    )}
                 </TableFooter>
             </TableContainer>
             <ModalFormRequest isModalOpen={isModalOpen} closeModal={closeModal} />

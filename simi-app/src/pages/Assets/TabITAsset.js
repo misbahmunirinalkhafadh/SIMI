@@ -10,6 +10,7 @@ function TabITAsset() {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [selected, setSelected] = useState('')
     const [category, setCategory] = useState([])
+    const [status, setStatus] = useState([])
 
     function openModal() {
         setIsModalOpen(true)
@@ -27,12 +28,19 @@ function TabITAsset() {
         try {
             assetsServices.getAllITAsset().then(data => {
                 const uniqueTags = [];
+                const uniqueStatus = [];
                 data.forEach(asd => {
                     if (uniqueTags.indexOf(asd.data.category) === -1) {
                         uniqueTags.push(asd.data.category)
                     }
                 });
+                data.forEach(sts => {
+                    if (uniqueStatus.indexOf(sts.data.status) === -1) {
+                        uniqueStatus.push(sts.data.status)
+                    }
+                });
                 setCategory(uniqueTags)
+                setStatus(uniqueStatus)
             })
         } catch (error) {
             console.log(error)
@@ -60,7 +68,6 @@ function TabITAsset() {
                         <Select onChange={onSelect} >
                             <option value="Unarchived" >Unarchived</option>
                             <option value="Archived" >Archived</option>
-                            <option value="Draft" >Draft</option>
                         </Select>
                     </div>
                     {/* Type  */}
@@ -68,6 +75,13 @@ function TabITAsset() {
                         <Select>
                             <option value="" >All Category</option>
                             {category.map((data, i) => <option value={data} key={i}>{data}</option>)}
+                        </Select>
+                    </div>
+                    {/* Status  */}
+                    <div className="ml-3" >
+                        <Select>
+                            <option value="" >All Status</option>
+                            {status.map((data, i) => <option value={data} key={i}>{data}</option>)}
                         </Select>
                     </div>
                 </div>

@@ -1,22 +1,51 @@
-import React, { useEffect } from 'react'
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Input, Label, Select } from '@windmill/react-ui'
+import React, { useEffect, useState } from 'react'
+import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Input, Label, Select, Textarea } from '@windmill/react-ui'
 import { useForm } from 'react-hook-form'
 import Swal from 'sweetalert2'
-import { assetsServices } from '../../services/assets'
 import { Timestamp } from 'firebase/firestore'
+import { useAuthState } from "react-firebase-hooks/auth";
+
+import { assetsServices } from '../../services/assets'
+import { auth } from '../../utils/firebase'
+import { sitesServices } from '../../services/sites'
 
 function ModalFormNonITAsset({ closeModal, isModalOpen, id, data }) {
     const { register, handleSubmit, reset } = useForm({ defaultValues: data })
+    const [siteLabel, setSiteLabel] = useState('')
+    const [user, loading] = useAuthState(auth);
+    const [requiredStatusDetail, setRequiredStatusDetail] = useState(false)
+    const [disabled, setDisabled] = useState(true)
+    const [site, setSite] = useState([])
+
+    const handleChange = (e) => {
+        let index = e.nativeEvent.target.selectedIndex;
+        let label = e.nativeEvent.target[index].text;
+        setSiteLabel(label)
+        if (e.target.value === "In Use") {
+            setDisabled(false)
+            setRequiredStatusDetail(true)
+        } else {
+            setDisabled(true)
+            setRequiredStatusDetail(false)
+        }
+    }
 
     const onSubmit = (value) => {
         const dataAsset = {
-            assetName: value.assetName,
+            site: siteLabel,
+            salesOrder: value.salesOrder,
+            brand: value.brand,
+            model: value.model,
+            serialNumber: value.serialNumber.toUpperCase(),
             category: value.category,
-            type: value.type,
-            serialNumber: value.serialNumber,
-            status: 'Standby',
-            archived: false,
-            createdAt: Timestamp.now()
+            visibility: 'Unarchived',
+            status: 'Ready',
+            statusDetail: '',
+            description: value.description,
+            modifiedBy: '',
+            modifiedAt: '',
+            createdBy: user.email,
+            createdAt: Timestamp.now(),
         }
 
         try {
@@ -46,14 +75,19 @@ function ModalFormNonITAsset({ closeModal, isModalOpen, id, data }) {
                     /* Read more about isConfirmed, isDenied below */
                     if (result.isConfirmed) {
                         assetsServices.update(id, {
-                            assetName: value.assetName,
+                            site: value.site,
+                            salesOrder: value.salesOrder,
+                            brand: value.brand,
+                            model: value.model,
+                            serialNumber: value.serialNumber.toUpperCase(),
                             category: value.category,
-                            type: value.type,
-                            serialNumber: value.serialNumber,
+                            visibility: value.visibility,
                             status: value.status,
-                            archived: value.archived,
+                            statusDetail: value.statusDetail,
+                            description: value.description,
+                            modifiedBy: user.email,
+                            modifiedAt: Timestamp.now(),
                         })
-                        // console.log("Edit : ",dataAsset);
                         Swal.fire('Saved!', '', 'success')
                             .then(() => window.location.reload())
                         closeModal()
@@ -69,8 +103,22 @@ function ModalFormNonITAsset({ closeModal, isModalOpen, id, data }) {
     }
 
     useEffect(() => {
+        if (loading) return;
+    }, [loading])
+
+    useEffect(() => {
         reset(data)
     }, [reset, data])
+
+    useEffect(() => {
+        try {
+            sitesServices.getAll().then(data => {
+                setSite(data)
+            })
+        } catch (error) {
+            console.log(error)
+        }
+    }, [])
 
     return (
         <>
@@ -78,61 +126,95 @@ function ModalFormNonITAsset({ closeModal, isModalOpen, id, data }) {
                 <ModalHeader>Form Data Non IT Asset</ModalHeader>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <ModalBody>
-                        <Label className="mt-3">
-                            <span>Asset Name<small className='text-red-600'>*</small></span>
-                            <Input
-                                className="mt-1"
-                                placeholder="Type here..."
-                                required
-                                {...register("assetName")}
-                            />
-                        </Label>
-                        <Label className="mt-3">
-                            <span>Category<small className='text-red-600'>*</small></span>
-                            <Select className="mt-1" required {...register("category")}>
+                        <Label>
+                            <span>Site<small className='text-red-600'>*</small></span>
+                            <Select className="mt-1" required {...register("site")} onChange={handleChange}>
                                 <option value="" >-- Choose one --</option>
-                                <option value="Projector" >Projector</option>
-                                <option value="Scanner" >Scanner</option>
+                                {site.map((site, i) => (
+                                    <option key={i} value={site.data.name}>{site.data.name}</option>
+                                ))}
                             </Select>
                         </Label>
                         <Label className="mt-3">
-                            <span>Type<small className='text-red-600'>*</small></span>
+                            <span>SO Number<small className='text-red-600'>*</small></span>
                             <Input
                                 className="mt-1"
                                 placeholder="Type here..."
                                 required
-                                {...register("type")}
-                            />
-                        </Label>
-                        <Label className="mt-3">
-                            <span>Serial Number<small className='text-red-600'>*</small></span>
-                            <Input
-                                className="mt-1"
-                                placeholder="Type here..."
-                                required
-                                {...register("serialNumber")}
+                                {...register("salesOrder")}
                             />
                         </Label>
                         <div className="grid col-gap-3 lg:grid-cols-2">
                             <Label className="mt-3">
-                                <span>Status<small className='text-red-600'>*</small></span>
-                                <Select className="mt-1" required {...register("status")}>
-                                    <option value="" >-- Choose one --</option>
-                                    <option value="Standby" >Standby</option>
-                                    <option value="In Use" >In Use</option>
-                                    <option value="In Repair" >In Repair</option>
-                                    <option value="Dispose" >Dispose</option>
-                                </Select>
+                                <span>Brand<small className='text-red-600'>*</small></span>
+                                <Input
+                                    className="mt-1"
+                                    placeholder="Type here..."
+                                    required
+                                    {...register("brand")}
+                                />
                             </Label>
                             <Label className="mt-3">
-                                <span>Visibility<small className='text-red-600'>*</small></span>
-                                <Select className="mt-1" required {...register("visibility")}>
-                                    <option value="Unarchived">Unarchived</option>
-                                    <option value="Archived" >Archived</option>
-                                    <option value="Draft" >Draft</option>
+                                <span>Model<small className='text-red-600'>*</small></span>
+                                <Input
+                                    className="mt-1"
+                                    placeholder="Type here..."
+                                    required
+                                    {...register("model")}
+                                />
+                            </Label>
+                            <Label className="mt-3">
+                                <span>Serial Number<small className='text-red-600'>*</small></span>
+                                <Input
+                                    className="mt-1"
+                                    placeholder="Type here..."
+                                    required
+                                    {...register("serialNumber")}
+                                />
+                            </Label>
+                            <Label className="mt-3">
+                                <span>Category<small className='text-red-600'>*</small></span>
+                                <Select className="mt-1" required {...register("category")}>
+                                    <option value="" >-- Choose one --</option>
+                                    <option value="Printer" >Printer</option>
+                                    <option value="Projector" >Projector</option>
                                 </Select>
                             </Label>
                         </div>
+                        <div hidden={!id ? true : false}>
+                            <div className="grid col-gap-3 lg:grid-cols-2">
+                                <Label className="mt-3">
+                                    <span>Status<small className='text-red-600'>*</small></span>
+                                    <Select className="mt-1" required={!id ? false : true} {...register("status")} onChange={handleChange} >
+                                        <option value="" >-- Choose one --</option>
+                                        <option value="Ready" >Ready</option>
+                                        <option value="In Use" >In Use</option>
+                                        <option value="Broken" >Broken</option>
+                                        <option value="On Service" >On Service</option>
+                                    </Select>
+                                </Label>
+                                <Label className="mt-3">
+                                    <span>Status Detail<small className='text-red-600'>*</small></span>
+                                    <Select className="mt-1" required={requiredStatusDetail} {...register("statusDetail")} disabled={disabled} >
+                                        <option value="" >-- Choose one --</option>
+                                        <option value="In Use Employee" >In Use Employee</option>
+                                        <option value="In Use Loan" >In Use Loan</option>
+                                        <option value="In Use Backup" >In Use Backup</option>
+                                    </Select>
+                                </Label>
+                            </div>
+                            <Label className="mt-3">
+                                <span>Visibility<small className='text-red-600'>*</small></span>
+                                <Select className="mt-1" required={!id ? false : true} {...register("visibility")} onChange={handleChange}>
+                                    <option value="Unarchived">Unarchived</option>
+                                    <option value="Archived" >Archived</option>
+                                </Select>
+                            </Label>
+                        </div>
+                        <Label className="mt-3">
+                            <span>Description</span>
+                            <Textarea className="mt-1" rows="3" placeholder="Enter description about asset" {...register("description")} />
+                        </Label>
                     </ModalBody>
                     <ModalFooter>
                         {/* I don't like this approach. Consider passing a prop to ModalFooter

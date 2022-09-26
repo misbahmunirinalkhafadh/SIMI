@@ -4,6 +4,8 @@ import {
     createUserWithEmailAndPassword,
     sendPasswordResetEmail,
     signOut,
+    sendEmailVerification,
+    updateProfile
 } from "firebase/auth";
 import { query, getDocs, collection, where, addDoc } from "firebase/firestore";
 import { auth, db, googleProvider } from "../utils/firebase";
@@ -28,7 +30,8 @@ const signInWithGoogle = async () => {
     }
 };
 
-const logInWithEmailAndPassword = async (email, password) => {
+const logInWithEmailAndPassword = async (value) => {
+    const { email, password } = value
     try {
         await signInWithEmailAndPassword(auth, email, password);
     } catch (err) {
@@ -37,15 +40,20 @@ const logInWithEmailAndPassword = async (email, password) => {
     }
 };
 
-const registerWithEmailAndPassword = async (name, email, password) => {
+const registerWithEmailAndPassword = async (value) => {
+    const { email, password, displayName } = value
     try {
         const res = await createUserWithEmailAndPassword(auth, email, password);
         const user = res.user;
         await addDoc(collection(db, "users"), {
-            id: user.id,
-            name,
-            authProvider: "local",
+            uid: user.uid,
+            displayName,
             email,
+            job:"Application Developer",
+            role:"User",
+            status:"Unverified",
+            authProvider: "local",
+            photoURL: 'https://firebasestorage.googleapis.com/v0/b/simi-51185.appspot.com/o/blank-profile-picture.png?alt=media&token=edc1d1d5-df02-4922-892a-35d2c36a50d5',
         });
     } catch (err) {
         console.error(err);

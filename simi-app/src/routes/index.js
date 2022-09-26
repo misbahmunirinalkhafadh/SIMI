@@ -13,7 +13,8 @@ import {
   Page404,
   RequestService,
   Tables,
-  Permission
+  Permission,
+  FormITAsset
 } from '../pages'
 
 // use lazy for better code splitting, a.k.a. load faster
@@ -49,6 +50,10 @@ const routes = [
   {
     path: '/assets', // the url
     component: Assets, // view rendered
+  },
+  {
+    path: '/assets/form/itasset/:id', // the url
+    component: FormITAsset, // view rendered
   },
   {
     path: '/assets/detail/:id', // the url

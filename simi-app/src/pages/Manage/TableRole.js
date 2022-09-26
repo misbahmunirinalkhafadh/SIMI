@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-
 import {
     Table,
     TableHeader,
@@ -11,11 +10,12 @@ import {
     Button,
     Pagination,
 } from '@windmill/react-ui'
+import Swal from 'sweetalert2'
+import { Link } from 'react-router-dom'
+
 import { EditIcon, TrashIcon } from '../../assets/icons'
 import { rolesServices } from '../../services/roles'
-import { Link } from 'react-router-dom'
 import ModalFormRole from './ModalFormRole'
-import Swal from 'sweetalert2'
 
 function TableRole() {
     const [response, setResponse] = useState([])
@@ -33,7 +33,6 @@ function TableRole() {
 
     // pagination setups
     const resultsPerPage = 10
-    const totalResults = response.length
 
     // pagination change control
     function onPageChangeTable(p) {
@@ -126,12 +125,14 @@ function TableRole() {
                     </TableBody>
                 </Table>
                 <TableFooter>
-                    <Pagination
-                        totalResults={totalResults}
-                        resultsPerPage={resultsPerPage}
-                        onChange={onPageChangeTable}
-                        label="Table navigation"
-                    />
+                    {response?.length !== 0 && (
+                        <Pagination
+                            totalResults={response.length}
+                            resultsPerPage={resultsPerPage}
+                            onChange={onPageChangeTable}
+                            label="Table navigation"
+                        />
+                    )}
                 </TableFooter>
             </TableContainer>
             <ModalFormRole isModalOpen={isModalOpen} closeModal={closeModal} id={roleId} data={roleData} />

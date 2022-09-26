@@ -1,9 +1,9 @@
 import React from 'react'
 import { Input, Select } from '@windmill/react-ui';
 import { SearchIcon } from '../../assets/icons';
-import TableInProgress from './TableInProgress';
+import TablePending from './TablePending';
 
-function TabInProgress() {
+function TabPending() {
   return (
     <>
       {/* Action  */}
@@ -40,9 +40,9 @@ function TabInProgress() {
         </div>
       </div>
 
-      <TableInProgress />
+      <TablePending />
     </>
   )
 }
 
-export default TabInProgress
+export default TabPending
