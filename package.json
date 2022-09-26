@@ -6,6 +6,7 @@
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
     "@testing-library/user-event": "^13.2.1",
+    "@svgr/webpack": "5.4.0",
     "@windmill/react-ui": "0.3.1",
     "chart.js": "2.9.3",
     "classnames": "2.2.6",
