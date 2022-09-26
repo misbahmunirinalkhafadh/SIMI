@@ -2,7 +2,6 @@ import Login from './Login';
 import Home from './Home';
 import Dashboard from './Dashboard';
 import Assets from './Assets';
-import ITAsset from './FormAsset/ITAsset';
 import FormITAsset from './Assets/FormITAsset';
 import DetailAsset from './DetailAsset';
 import Manage from './Manage';
@@ -28,7 +27,6 @@ export {
     Home,
     Dashboard,
     Assets,
-    ITAsset,
     FormITAsset,
     DetailAsset,
     RequestService,
