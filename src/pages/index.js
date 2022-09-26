@@ -2,8 +2,11 @@ import Login from './Login';
 import Home from './Home';
 import Dashboard from './Dashboard';
 import Assets from './Assets';
+import ITAsset from './FormAsset/ITAsset';
+import FormITAsset from './Assets/FormITAsset';
 import DetailAsset from './DetailAsset';
 import Manage from './Manage';
+import Permission from './Permission';
 import RequestService from './RequestService';
 import Page404 from './404';
 
@@ -25,9 +28,12 @@ export {
     Home,
     Dashboard,
     Assets,
+    ITAsset,
+    FormITAsset,
     DetailAsset,
     RequestService,
     Manage,
+    Permission,
     Page404,
 
     // Sample Page

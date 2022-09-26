@@ -7,6 +7,7 @@ import { ArrowLeftIcon } from '../../assets/icons'
 
 function DetailAsset() {
     const history = useHistory();
+
     return (
         <>
             <div className='mt-5'>
