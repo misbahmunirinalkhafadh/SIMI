@@ -1,4 +1,5 @@
 import React from 'react';
+import TabRole from './TabRole';
 import TabTechnician from './TabUser';
 
 export const Tabs = ({ color }) => {
@@ -49,7 +50,7 @@ export const Tabs = ({ color }) => {
                                 Role
                             </a>
                         </li>
-                        <li className="flex-auto mr-2 -mb-px text-center last:mr-0">
+                        {/* <li className="flex-auto mr-2 -mb-px text-center last:mr-0">
                             <a
                                 className={
                                     "text-xs font-bold uppercase px-5 py-3 shadow-lg rounded block leading-normal " +
@@ -67,29 +68,21 @@ export const Tabs = ({ color }) => {
                             >
                                 Tab3
                             </a>
-                        </li>
+                        </li> */}
                     </ul>
                     <div className="relative flex flex-col w-full min-w-0 mb-6 break-words ">
                         <div className="flex-auto pt-5">
                             <div className="tab-content tab-space">
                                 <div className={openTab === 1 ? "block" : "hidden"} id="link1">
-                                    
+
                                     {/* Tab Content */}
                                     <TabTechnician />
-                                    
+
                                 </div>
                                 <div className={openTab === 2 ? "block" : "hidden"} id="link2">
-                                    <p>
-                                        Completely synergize resource taxing relationships via
-                                        premier niche markets. Professionally cultivate one-to-one
-                                        customer service with robust ideas.
-                                        <br />
-                                        <br />
-                                        Dynamically innovate resource-leveling customer service for
-                                        state of the art customer service.
-                                    </p>
+                                    <TabRole />
                                 </div>
-                                <div className={openTab === 3 ? "block" : "hidden"} id="link3">
+                                {/* <div className={openTab === 3 ? "block" : "hidden"} id="link3">
                                     <p>
                                         Efficiently unleash cross-media information without
                                         cross-media value. Quickly maximize timely deliverables for
@@ -98,7 +91,7 @@ export const Tabs = ({ color }) => {
                                         <br /> Dramatically maintain clicks-and-mortar solutions
                                         without functional solutions.
                                     </p>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                     </div>

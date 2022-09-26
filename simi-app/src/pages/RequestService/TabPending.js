@@ -1,9 +1,9 @@
 import React from 'react'
 import { Input, Select } from '@windmill/react-ui';
 import { SearchIcon } from '../../assets/icons';
-import TableCompleted from './TableCompleted';
+import TablePending from './TablePending';
 
-function TabCompleted() {
+function TabPending() {
   return (
     <>
       {/* Action  */}
@@ -40,9 +40,9 @@ function TabCompleted() {
         </div>
       </div>
 
-      <TableCompleted />
+      <TablePending />
     </>
   )
 }
 
-export default TabCompleted
+export default TabPending

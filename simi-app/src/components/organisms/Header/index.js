@@ -8,6 +8,7 @@ import {
   OutlineLogoutIcon
 } from '../../../assets/icons'
 import { Input, WindmillContext } from '@windmill/react-ui'
+import { logout } from '../../../services/auth'
 
 function Header() {
   const { mode, toggleMode } = useContext(WindmillContext)
@@ -56,7 +57,7 @@ function Header() {
             <div className="block w-px h-6 bg-purple-400"></div>
           </li>
           <li>
-            <a onClick={() => alert('Log out!')} href='/login' className="flex items-center">
+            <a onClick={logout} href='/login' className="flex items-center">
               <span className="inline-flex mr-1">
                 <OutlineLogoutIcon className="w-5 h-5" aria-hidden="true" />
               </span>

@@ -12,7 +12,9 @@ import {
   Modals,
   Page404,
   RequestService,
-  Tables
+  Tables,
+  Permission,
+  FormITAsset
 } from '../pages'
 
 // use lazy for better code splitting, a.k.a. load faster
@@ -50,7 +52,11 @@ const routes = [
     component: Assets, // view rendered
   },
   {
-    path: '/assets/detail', // the url
+    path: '/assets/form/itasset/:id', // the url
+    component: FormITAsset, // view rendered
+  },
+  {
+    path: '/assets/detail/:id', // the url
     component: DetailAsset, // view rendered
   },
   {
@@ -60,6 +66,10 @@ const routes = [
   {
     path: '/manage', // the url
     component: Manage, // view rendered
+  },
+  {
+    path: '/manage/role/permission/:id', // the url
+    component: Permission, // view rendered
   },
   {
     path: '/404',

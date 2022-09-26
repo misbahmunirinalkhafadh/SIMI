@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { AddIcon, SearchIcon } from '../../assets/icons';
-import { Input, Button } from '@windmill/react-ui';
+import { Input, Button, Select } from '@windmill/react-ui';
 import ModalFormUser from './ModalFormUser';
 import TableUser from './TableUser';
+import { usersServices } from '../../services/users';
 
 function TabUser() {
     const [isModalOpen, setIsModalOpen] = useState(false)
+    const [listRole, setListRole] = useState([])
 
     function openModal() {
         setIsModalOpen(true)
@@ -15,24 +17,58 @@ function TabUser() {
     function closeModal() {
         setIsModalOpen(false)
     }
+
+    useEffect(() => {
+        try {
+            usersServices.getAll().then(data => {
+                const uniqueTags = [];
+                data.forEach(asd => {
+                    if (uniqueTags.indexOf(asd.data.role) === -1) {
+                        uniqueTags.push(asd.data.role)
+                    }
+                });
+                setListRole(uniqueTags)
+            })
+        } catch (error) {
+            console.log(error)
+        }
+    }, [])
+
     return (
         <>
-            {/* <!-- Search input --> */}
-            <div className="flex justify-center flex-1 mb-3">
-                <div className="relative w-full focus-within:text-purple-500">
-                    <div className="absolute inset-y-0 flex items-center pl-2">
-                        <SearchIcon className="w-4 h-4 text-purple-600" aria-hidden="true" />
+            {/* Action  */}
+            <div className='flex justify-between mx-4 mb-4'>
+                <div className='flex justify-start'>
+                    {/* Search */}
+                    <div className="relative w-64 focus-within:text-purple-500">
+                        <div className="absolute inset-y-0 flex items-center pl-2">
+                            <SearchIcon className="w-4 h-4 text-purple-600" aria-hidden="true" />
+                        </div>
+                        <Input
+                            className="pl-8 text-gray-700"
+                            placeholder="Search for data"
+                            aria-label="Search"
+                        />
                     </div>
-                    <Input
-                        className="pl-8 text-gray-700"
-                        placeholder="Search for data"
-                        aria-label="Search"
-                    />
+                    {/* Filter  */}
+                    <div className="ml-3">
+                        <Select>
+                            <option value="" >All Role</option>
+                            {listRole.map((data, i) => <option value={data} key={i}>{data}</option>)}
+                        </Select>
+                    </div>
+                    {/* Type  */}
+                    <div className="ml-3" >
+                        <Select>
+                            <option value="" >All Status</option>
+                            <option value="">Active</option>
+                            <option value="">Banned</option>
+                            <option value="">Not Active</option>
+                            <option value="">Not Comfirmed</option>
+                        </Select>
+                    </div>
                 </div>
-            </div>
-
-            {/* Button Add */}
-            <div className='flex justify-end mx-4 mb-3'>
+                {/* Button Add */}
                 <Button iconLeft={AddIcon} onClick={openModal}>
                     <span>Add New</span>
                 </Button>

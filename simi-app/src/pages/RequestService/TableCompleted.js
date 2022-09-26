@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react'
-
 import {
-    Avatar,
     Table,
     TableHeader,
     TableCell,
@@ -9,19 +7,17 @@ import {
     TableRow,
     TableFooter,
     TableContainer,
-    Badge,
     Button,
     Pagination,
+    Badge
 } from '@windmill/react-ui'
-import { EditIcon, InformationIcon, TrashIcon } from '../../assets/icons'
+import ModalFormRequest from './ModalFormRequest'
+import { EditIcon, TrashIcon } from '../../assets/icons'
+import Swal from 'sweetalert2'
+import { requestsServices } from '../../services/requests'
+import { Link } from 'react-router-dom'
 
-import { usersServices } from '../../services/users';
-import ModalFormUser from './ModalFormUser';
-import Swal from 'sweetalert2';
-import ModalDetailUser from './ModalDetailUser';
-// make a copy of the data, for the second table
-
-function TableUser() {
+export default function TableCompleted() {
     const [response, setResponse] = useState([])
 
     // setup pages control for every table
@@ -29,12 +25,7 @@ function TableUser() {
 
     // setup data for every table
     const [dataTable, setDataTable] = useState([])
-
     const [isModalOpen, setIsModalOpen] = useState(false)
-    const [isModalDetailOpen, setIsModalDetailOpen] = useState(false)
-
-    const [userId, setUserId] = useState(null)
-    const [userData, setUserData] = useState({})
 
     // pagination setup
     const resultsPerPage = 10
@@ -44,23 +35,12 @@ function TableUser() {
         setPageTable(p)
     }
 
-    function openModal(value) {
+    function openModal() {
         setIsModalOpen(true)
-        setUserId(value.id)
-        setUserData(value.data)
     }
 
     function closeModal() {
         setIsModalOpen(false)
-    }
-
-    function openModalDetail(value) {
-        setIsModalDetailOpen(true)
-        setUserData(value)
-    }
-
-    function closeModalDetail() {
-        setIsModalDetailOpen(false)
     }
 
     const handleDelete = (id) => {
@@ -75,7 +55,7 @@ function TableUser() {
                 confirmButtonText: 'Yes, delete it!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    usersServices.delete(id)
+                    // assetsServices.delete(id)
                     Swal.fire(
                         'Deleted!',
                         'Your file has been deleted.',
@@ -89,9 +69,8 @@ function TableUser() {
     }
 
     useEffect(() => {
-        // setDataTable(response.slice((pageTable - 1) * resultsPerPage, pageTable * resultsPerPage))
         try {
-            usersServices.getAll().then(data => {
+            requestsServices.getAll().then(data => {
                 setResponse(data)
             })
         } catch (error) {
@@ -111,48 +90,39 @@ function TableUser() {
                 <Table>
                     <TableHeader>
                         <tr>
-                            <TableCell>User</TableCell>
-                            <TableCell>Username</TableCell>
-                            <TableCell>Job Title</TableCell>
-                            <TableCell>Role</TableCell>
-                            <TableCell>Status</TableCell>
+                            <TableCell>Asset Name</TableCell>
+                            <TableCell>Category</TableCell>
+                            <TableCell>Type</TableCell>
+                            <TableCell>Serial Number</TableCell>
+                            <TableCell className="text-center">Status</TableCell>
                             <TableCell>Actions</TableCell>
                         </tr>
                     </TableHeader>
                     <TableBody>
-                        {dataTable.map((user) => (
-                            <TableRow key={user.id}>
+                        {dataTable.map((req) => (
+                            <TableRow className="dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600" key={req?.id}>
                                 <TableCell>
-                                    <div className="flex items-center text-sm">
-                                        <Avatar className="hidden mr-3 md:block" src={user.data.photoURL} alt="User avatar" />
-                                        <div>
-                                            <p className="font-semibold">{user.data.displayName}</p>
-                                            <p className="text-xs text-gray-600 dark:text-gray-400">{user.data.email}</p>
-                                        </div>
-                                    </div>
+                                    <Link className="text-blue-500" to='/app/assets/detail'>{req?.data.assetName}</Link>
                                 </TableCell>
                                 <TableCell>
-                                    {user.data.username}
+                                    {req?.data.category}
                                 </TableCell>
                                 <TableCell>
-                                    {user.data.job}
+                                    {req?.data.type}
                                 </TableCell>
                                 <TableCell>
-                                    {user.data.role}
+                                    {req?.data.serialNumber}
                                 </TableCell>
-                                <TableCell>
-                                    <Badge type="success">{user.data.status}</Badge>
+                                <TableCell className="text-center" >
+                                    <Badge type={req?.data.status === 'Standby' ? 'success' : 'primary'}></Badge>
                                 </TableCell>
                                 <TableCell>
                                     <div className="flex items-center space-x-4">
-                                        <Button layout="link" size="icon" aria-label="Edit">
-                                            <EditIcon className="w-5 h-5" aria-hidden="true" onClick={() => openModal(user)} />
+                                        <Button layout="link" size="icon" aria-label="Edit" onClick={() => openModal()}>
+                                            <EditIcon className="w-5 h-5" aria-hidden="true" color="#7e3af2" />
                                         </Button>
-                                        <Button layout="link" size="icon" aria-label="Detail">
-                                            <InformationIcon className="w-5 h-5" aria-hidden="true" onClick={() => openModalDetail(user.data)} />
-                                        </Button>
-                                        <Button layout="link" size="icon" aria-label="Delete" onClick={() => handleDelete(user.id)}>
-                                            <TrashIcon className="w-5 h-5" aria-hidden="true" />
+                                        <Button layout="link" size="icon" aria-label="Delete" onClick={() => handleDelete()}>
+                                            <TrashIcon className="w-5 h-5" aria-hidden="true" color='#c81e1e' />
                                         </Button>
                                     </div>
                                 </TableCell>
@@ -171,10 +141,7 @@ function TableUser() {
                     )}
                 </TableFooter>
             </TableContainer>
-            <ModalFormUser isModalOpen={isModalOpen} closeModal={closeModal} id={userId} data={userData} />
-            <ModalDetailUser isModalOpen={isModalDetailOpen} closeModal={closeModalDetail} data={userData} />
+            <ModalFormRequest isModalOpen={isModalOpen} closeModal={closeModal} />
         </>
     )
 }
-
-export default TableUser
