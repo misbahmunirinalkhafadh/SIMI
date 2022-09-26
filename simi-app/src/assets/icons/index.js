@@ -1,4 +1,5 @@
 import { ReactComponent as AddIcon } from './add.svg'
+import { ReactComponent as ArchiveIcon } from './archive.svg'
 import { ReactComponent as ArrowLeftIcon } from './arrowLeft.svg'
 import { ReactComponent as ButtonsIcon } from './buttons.svg'
 import { ReactComponent as CardsIcon } from './cards.svg'
@@ -16,6 +17,7 @@ import { ReactComponent as EditIcon } from './edit.svg'
 import { ReactComponent as TrashIcon } from './trash.svg'
 import { ReactComponent as ForbiddenIcon } from './forbidden.svg'
 import { ReactComponent as GithubIcon } from './github.svg'
+import { ReactComponent as GoogleIcon } from './google.svg'
 import { ReactComponent as TwitterIcon } from './twitter.svg'
 import { ReactComponent as MailIcon } from './mail.svg'
 import { ReactComponent as CartIcon } from './cart.svg'
@@ -34,6 +36,7 @@ import { ReactComponent as OutlineLogoutIcon } from './outlineLogout.svg'
 
 export {
   AddIcon,
+  ArchiveIcon,
   ArrowLeftIcon,
   ButtonsIcon,
   CardsIcon,
@@ -51,6 +54,7 @@ export {
   TrashIcon,
   ForbiddenIcon,
   GithubIcon,
+  GoogleIcon,
   TwitterIcon,
   MailIcon,
   CartIcon,
