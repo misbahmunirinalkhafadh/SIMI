@@ -6,8 +6,8 @@ import * as Icons from '../../../assets/icons'
 import SidebarSubmenu from './SidebarSubmenu'
 import routes from '../../../routes/sidebar'
 import ModalFormRequest from '../../../pages/RequestService/ModalFormRequest'
-import { collection, getDocs, query, where } from 'firebase/firestore';
-import { auth, db } from '../../../utils/firebase';
+// import { collection, getDocs, query, where } from 'firebase/firestore';
+import { auth } from '../../../utils/firebase';
 import { usersServices } from '../../../services/users';
 
 
@@ -55,16 +55,16 @@ function SidebarContent() {
     // fetchUserName();
   }, [user, loading, history]);
 
+  // const email = user?.email
   useEffect(() => {
-    const email = user?.email
     try {
-      usersServices.getByEmail(email).then(data => {
+      usersServices.getByEmail(user.email).then(data => {
         console.log(data)
       })
     } catch (error) {
       console.log(error)
     }
-  }, [])
+  }, [user])
 
   const photoURL = "https://firebasestorage.googleapis.com/v0/b/simi-51185.appspot.com/o/blank-profile-picture.png?alt=media&token=edc1d1d5-df02-4922-892a-35d2c36a50d5"
 

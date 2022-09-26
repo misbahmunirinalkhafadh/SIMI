@@ -20,7 +20,7 @@ export const Tabs = () => {
         } catch (error) {
             console.log(error);
         }
-    }, [])
+    }, [id])
 
     return (
         <>

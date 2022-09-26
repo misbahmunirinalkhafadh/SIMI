@@ -4,8 +4,6 @@ import {
     createUserWithEmailAndPassword,
     sendPasswordResetEmail,
     signOut,
-    sendEmailVerification,
-    updateProfile
 } from "firebase/auth";
 import { query, getDocs, collection, where, addDoc } from "firebase/firestore";
 import { auth, db, googleProvider } from "../utils/firebase";

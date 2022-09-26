@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Input, Label } from '@windmill/react-ui'
+import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Label, Input } from '@windmill/react-ui'
 import { Timestamp } from 'firebase/firestore'
 import Swal from 'sweetalert2'
 import { requestsServices } from '../../services/requests'
@@ -10,7 +10,7 @@ function ModalFormRequest({ closeModal, isModalOpen, id, data }) {
 
     const onSubmit = (value) => {
         const dataRequest = {
-            
+
             createdAt: Timestamp.now()
         }
         try {
@@ -58,7 +58,7 @@ function ModalFormRequest({ closeModal, isModalOpen, id, data }) {
     }
 
     useEffect(() => {
-      reset(data)
+        reset(data)
     }, [reset, data])
 
     return (
@@ -67,7 +67,7 @@ function ModalFormRequest({ closeModal, isModalOpen, id, data }) {
                 <ModalHeader>Form Data Request</ModalHeader>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <ModalBody>
-                        {/* <Label>
+                        <Label>
                             <span>Role Name<small className='text-red-600'>*</small></span>
                             <Input
                                 className="mt-1"
@@ -84,7 +84,7 @@ function ModalFormRequest({ closeModal, isModalOpen, id, data }) {
                                 required
                                 {...register("description")}
                             />
-                        </Label> */}
+                        </Label>
                     </ModalBody>
                     <ModalFooter>
                         {/* I don't like this approach. Consider passing a prop to ModalFooter
