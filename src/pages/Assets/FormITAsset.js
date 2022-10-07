@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { Card, CardBody, Button, Input, Label, Select, Textarea } from '@windmill/react-ui'
 import { useAuthState } from "react-firebase-hooks/auth";
 
-import { PageTitle } from '../../components'
 import { useForm } from 'react-hook-form'
 import { assetsServices } from '../../services/assets'
 import Swal from 'sweetalert2'
@@ -10,6 +9,7 @@ import { Timestamp } from 'firebase/firestore'
 import { useHistory, useParams } from 'react-router-dom'
 import { sitesServices } from '../../services/sites'
 import { auth } from '../../utils/firebase';
+import { ArrowLeftIcon } from '../../assets/icons';
 
 function FormITAsset() {
     const { id } = useParams();
@@ -109,9 +109,17 @@ function FormITAsset() {
 
     return (
         <>
-            <PageTitle>Form IT Asset</PageTitle>
+            <div className="mt-5">
+                <Button
+                    layout="outline"
+                    iconLeft={ArrowLeftIcon}
+                    onClick={history.goBack}
+                >
+                    Go Back
+                </Button>
+            </div>
 
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form onSubmit={handleSubmit(onSubmit)} className="my-8">
                 <div className="grid gap-6 mb-8 md:grid-cols-2">
                     <Card>
                         <CardBody>
@@ -168,7 +176,6 @@ function FormITAsset() {
                                         <option value="" >-- Choose one --</option>
                                         <option value="Laptop" >Laptop</option>
                                         <option value="Desktop" >Desktop</option>
-                                        <option value="Printer" >Printer</option>
                                     </Select>
                                 </Label>
                                 <Label className="mt-3">

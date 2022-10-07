@@ -12,12 +12,13 @@ import {
     Button,
     Pagination,
 } from '@windmill/react-ui'
-import { ArchiveIcon, EditIcon, TrashIcon } from '../../assets/icons'
+import { ArchiveIcon, EditIcon, FormsIcon, TrashIcon } from '../../assets/icons'
 
 import { Link } from 'react-router-dom'
 import { assetsServices } from '../../services/assets'
 import Swal from 'sweetalert2'
 import ModalFormNonITAsset from './ModalFormNonITAsset'
+import ModalFormRequest from '../RequestService/ModalFormRequest'
 // make a copy of the data, for the second table
 // const response2 = response.concat([])
 
@@ -30,6 +31,7 @@ function TableNonITAsset({ selected }) {
     // setup data for every table
     const [dataTable, setDataTable] = useState([])
     const [isModalOpen, setIsModalOpen] = useState(false)
+    const [isModalRequestOpen, setIsModalRequestOpen] = useState(false)
     // const [textBlue, setTextBlue] = useState(false)
     const [assetId, setAssetId] = useState(null)
     const [assetData, setAssetData] = useState([])
@@ -50,6 +52,16 @@ function TableNonITAsset({ selected }) {
 
     function closeModal() {
         setIsModalOpen(false)
+    }
+
+    function openModalRequest(value) {
+        setIsModalRequestOpen(true)
+        setAssetId(value.id)
+        setAssetData(value.data)
+    }
+
+    function closeModalRequest() {
+        setIsModalRequestOpen(false)
     }
 
     const handleArchive = (id) => {
@@ -128,7 +140,7 @@ function TableNonITAsset({ selected }) {
                             <TableCell>Type</TableCell>
                             <TableCell>Serial Number</TableCell>
                             <TableCell className="text-center">Status</TableCell>
-                            <TableCell>Actions</TableCell>
+                            <TableCell className="text-center">Actions</TableCell>
                         </tr>
                     </TableHeader>
                     <TableBody>
@@ -165,11 +177,16 @@ function TableNonITAsset({ selected }) {
                                         }
                                     })()}
                                 </TableCell>
-                                <TableCell>
-                                    <div className="flex items-center space-x-4">
+                                <TableCell className="text-center">
+                                    <div className="flex items-center space-x-2">
                                         <Button layout="link" size="icon" aria-label="Edit" onClick={() => openModal(asset)}>
                                             <EditIcon className="w-5 h-5" aria-hidden="true" color="#7e3af2" />
                                         </Button>
+                                        <div hidden={selected === "Archived" ? true : false}>
+                                            <Button disabled={asset.data.status === 'Ready' ? false : true} layout="link" size="icon" aria-label="Assign" onClick={() => openModalRequest(asset)}>
+                                                <FormsIcon className="w-5 h-5" aria-hidden="true" color="#7e3af2" />
+                                            </Button>
+                                        </div>
                                         {selected === "Archived" ?
                                             (<Button layout="link" size="icon" aria-label="Delete" onClick={() => handleDelete(asset.id)}>
                                                 <TrashIcon className="w-5 h-5" aria-hidden="true" color='#c81e1e' />
@@ -197,6 +214,7 @@ function TableNonITAsset({ selected }) {
                 </TableFooter>
             </TableContainer>
             <ModalFormNonITAsset isModalOpen={isModalOpen} closeModal={closeModal} id={assetId} data={assetData} />
+            <ModalFormRequest isModalOpen={isModalRequestOpen} closeModal={closeModalRequest} id={assetId} data={assetData} />
         </>
     )
 }

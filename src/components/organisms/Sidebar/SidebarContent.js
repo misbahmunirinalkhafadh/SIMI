@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useAuthState } from "react-firebase-hooks/auth";
 import { Link, NavLink, Route, useHistory } from 'react-router-dom'
-import { Avatar, Button } from '@windmill/react-ui'
+import { Avatar, Button, Badge } from '@windmill/react-ui'
 import * as Icons from '../../../assets/icons'
 import SidebarSubmenu from './SidebarSubmenu'
 import routes from '../../../routes/sidebar'
@@ -16,17 +16,10 @@ function Icon({ icon, ...props }) {
   return <Icon {...props} />
 }
 
-// const userData = {
-//   avatar:
-//     "https://robohash.org/dictavoluptatessimilique.jpg?size=50x50&set=set1",
-//   name: "Lissi Meir",
-//   job: "Geologist III"
-// }
-
 function SidebarContent() {
   const [user, loading] = useAuthState(auth);
   const [isModalOpen, setIsModalOpen] = useState(false)
-  // const [dataUser, setDataUser] = useState([])
+  const [dataUser, setDataUser] = useState([])
   const history = useHistory()
 
   function openModal() {
@@ -37,34 +30,25 @@ function SidebarContent() {
     setIsModalOpen(false)
   }
 
-  // const fetchUserName = async () => {
-  //   try {
-  //     const q = query(collection(db, "users"), where("uid", "==", user?.uid));
-  //     // const doc = await getDocs(q);
-  //     // const data = doc.docs[0].data();
-  //     // setDataUser(data);
-  //   } catch (err) {
-  //     console.error(err);
-  //     alert("An error occured while fetching user data");
-  //   }
-  // };
-
   useEffect(() => {
     if (loading) return;
     if (!user) return history.push("/");
-    // fetchUserName();
   }, [user, loading, history]);
 
-  // const email = user?.email
   useEffect(() => {
-    try {
-      usersServices.getByEmail(user.email).then(data => {
-        console.log(data)
-      })
-    } catch (error) {
-      console.log(error)
+    const id = user?.uid
+    if (id) {
+      try {
+        usersServices.getById(id).then(data => {
+          setDataUser(data)
+        })
+      } catch (error) {
+        console.log(error)
+      }
     }
   }, [user])
+
+  console.log("Res Auth: ",user);
 
   const photoURL = "https://firebasestorage.googleapis.com/v0/b/simi-51185.appspot.com/o/blank-profile-picture.png?alt=media&token=edc1d1d5-df02-4922-892a-35d2c36a50d5"
 
@@ -83,12 +67,12 @@ function SidebarContent() {
           />
         </div>
         <div className='pt-3'>
-          {/* <h2
+          <h2
             className="text-xs font-medium text-center text-teal-500 md:text-sm"
           >
-            {user?.email}
-          </h2> */}
-          <p className="text-xs text-center text-gray-500">{user?.email}</p>
+            {dataUser?.displayName}
+          </h2>
+          <p className="text-xs text-center text-gray-500">{dataUser?.email}</p>
         </div>
       </div>
       <ul className="mt-6">
@@ -111,7 +95,8 @@ function SidebarContent() {
                 </Route>
                 <Icon className="w-5 h-5" aria-hidden="true" icon={route.icon} />
                 <span className="ml-4">{route.name}</span>
-                {route.name === 'Request Service' ? <span className="px-2 py-0.5 ml-auto text-xs font-medium tracking-wide text-red-500 bg-red-50 rounded-full">10</span> : ''}
+                {route.name === 'Assets' ? <Badge type="success" className="px-2 py-0.5 ml-auto tracking-wide">New</Badge> : ''}
+                {route.name === 'Request Service' ? <Badge type="danger" className="px-2 py-0.5 ml-auto tracking-wide">10</Badge> : ''}
               </NavLink>
             </li>
           )

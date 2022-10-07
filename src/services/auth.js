@@ -5,7 +5,7 @@ import {
     sendPasswordResetEmail,
     signOut,
 } from "firebase/auth";
-import { query, getDocs, collection, where, addDoc } from "firebase/firestore";
+import { query, getDocs, collection, where, addDoc, setDoc, doc } from "firebase/firestore";
 import { auth, db, googleProvider } from "../utils/firebase";
 
 const signInWithGoogle = async () => {
@@ -40,18 +40,19 @@ const logInWithEmailAndPassword = async (value) => {
 
 const registerWithEmailAndPassword = async (value) => {
     const { email, password, displayName } = value
+    const username = email.substring(0, email.lastIndexOf("@"));
     try {
         const res = await createUserWithEmailAndPassword(auth, email, password);
         const user = res.user;
-        await addDoc(collection(db, "users"), {
+        await setDoc(doc(db, "users", user.uid), {
             uid: user.uid,
+            username,
             displayName,
             email,
-            job:"Application Developer",
-            role:"User",
-            status:"Unverified",
+            job: "Application Developer",
+            role: "User",
+            status: "Unverified",
             authProvider: "local",
-            photoURL: 'https://firebasestorage.googleapis.com/v0/b/simi-51185.appspot.com/o/blank-profile-picture.png?alt=media&token=edc1d1d5-df02-4922-892a-35d2c36a50d5',
         });
     } catch (err) {
         console.error(err);

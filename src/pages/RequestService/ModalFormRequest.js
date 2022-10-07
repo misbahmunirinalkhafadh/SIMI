@@ -3,6 +3,9 @@ import { useForm } from 'react-hook-form'
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Label, Input } from '@windmill/react-ui'
 import { Timestamp } from 'firebase/firestore'
 import Swal from 'sweetalert2'
+import Select from 'react-select'
+import AsyncSelect from 'react-select/async';
+
 import { requestsServices } from '../../services/requests'
 
 function ModalFormRequest({ closeModal, isModalOpen, id, data }) {
@@ -61,6 +64,12 @@ function ModalFormRequest({ closeModal, isModalOpen, id, data }) {
         reset(data)
     }, [reset, data])
 
+    const options = [
+        { value: 'chocolate', label: 'Chocolate' },
+        { value: 'strawberry', label: 'Strawberry' },
+        { value: 'vanilla', label: 'Vanilla' }
+    ]
+
     return (
         <>
             <Modal isOpen={isModalOpen} onClose={closeModal}>
@@ -68,12 +77,13 @@ function ModalFormRequest({ closeModal, isModalOpen, id, data }) {
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <ModalBody>
                         <Label>
-                            <span>Role Name<small className='text-red-600'>*</small></span>
-                            <Input
+                            <span>Serial Number<small className='text-red-600'>*</small></span>
+
+                            <Select
+                                options={options} 
                                 className="mt-1"
                                 placeholder="Type here..."
                                 required
-                                {...register("roleName")}
                             />
                         </Label>
                         <Label className="mt-3">

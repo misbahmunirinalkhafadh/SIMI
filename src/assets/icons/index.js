@@ -6,6 +6,8 @@ import { ReactComponent as CardsIcon } from './cards.svg'
 import { ReactComponent as ChartsIcon } from './charts.svg'
 import { ReactComponent as ChipIcon } from './chip.svg'
 import { ReactComponent as CodeIcon } from './code.svg'
+import { ReactComponent as DeskCompIcon } from './deskComp.svg'
+import { ReactComponent as PrinterIcon } from './printer.svg'
 import { ReactComponent as InformationIcon } from './information.svg'
 import { ReactComponent as FormsIcon } from './forms.svg'
 import { ReactComponent as HomeIcon } from './home.svg'
@@ -43,6 +45,8 @@ export {
   ChartsIcon,
   ChipIcon,
   CodeIcon,
+  DeskCompIcon,
+  PrinterIcon,
   InformationIcon,
   FormsIcon,
   HomeIcon,

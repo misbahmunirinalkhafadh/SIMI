@@ -2,7 +2,6 @@ import React from 'react'
 import { Modal, ModalHeader, ModalBody } from '@windmill/react-ui'
 
 function ModalDetailUser({ closeModal, isModalOpen, data }) {
-    console.log(data);
     return (
         <>
             <Modal isOpen={isModalOpen} onClose={closeModal}>

@@ -2,8 +2,9 @@ import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Input, Label } from '@windmill/react-ui'
 import { Timestamp } from 'firebase/firestore'
-import { rolesServices } from '../../services/roles'
 import Swal from 'sweetalert2'
+
+import { rolesServices } from '../../services/roles'
 
 function ModalFormRole({ closeModal, isModalOpen, id, data }) {
     const { register, handleSubmit, reset } = useForm({ defaultValues: data })

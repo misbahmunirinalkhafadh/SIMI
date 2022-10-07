@@ -117,7 +117,7 @@ export default function TablePending() {
                                     <Badge type={req?.data.status === 'Standby' ? 'success' : 'primary'}></Badge>
                                 </TableCell>
                                 <TableCell>
-                                    <div className="flex items-center space-x-4">
+                                    <div className="flex items-center space-x-2">
                                         <Button layout="link" size="icon" aria-label="Edit" onClick={() => openModal()}>
                                             <EditIcon className="w-5 h-5" aria-hidden="true" color="#7e3af2" />
                                         </Button>

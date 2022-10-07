@@ -1,9 +1,25 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { Badge } from '@windmill/react-ui';
 
 import { SectionTitle } from '../../components/atoms';
+import { usersServices } from '../../services/users';
 
 function TabDetail(data) {
-    const { site, salesOrder, category, brand, model, serialNumber, visibility, status, statusDetail, description, information } = data.data;
+    const [currentUser, setCurrentUser] = useState({})
+    const { site, salesOrder, category, brand, model, serialNumber, visibility, status, statusDetail, description, createdAt, information, uid } = data.data;
+
+    useEffect(() => {
+        if (uid) {
+            try {
+                usersServices.getById(uid).then(data => {
+                    setCurrentUser(data);
+                })
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }, [uid])
+
     return (
         <>
             <div className="grid col-gap-6 lg:grid-cols-2">
@@ -52,7 +68,7 @@ function TabDetail(data) {
                                     {model}
                                 </td>
                             </tr>
-                            <tr className="border-b border-gray-200 dark:border-gray-700">
+                            <tr className="border-b border-gray-200 dark:border-gray-700" hidden={!information?.operatingSystem ? true : false}>
                                 <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap bg-gray-50 dark:text-white dark:bg-gray-800">
                                     Operating System
                                 </th>
@@ -81,7 +97,20 @@ function TabDetail(data) {
                                     Status
                                 </th>
                                 <td className="px-6 py-4">
-                                    {status}
+                                    {(() => {
+                                        switch (status) {
+                                            case 'In Use':
+                                                return <Badge type="warning" >{status}</Badge>;
+                                            case 'Broken':
+                                                return <Badge type="danger"  >{status}</Badge>;
+                                            case 'Ready':
+                                                return <Badge type="success" >{status}</Badge>;
+                                            case 'On Service':
+                                                return <Badge type="neutral" >{status}</Badge>;
+                                            default:
+                                                return <Badge type="primary" >{status}</Badge>;
+                                        }
+                                    })()}
                                 </td>
                             </tr>
                             <tr className="border-b border-gray-200 dark:border-gray-700">
@@ -90,6 +119,14 @@ function TabDetail(data) {
                                 </th>
                                 <td className="px-6 py-4">
                                     {!statusDetail ? '-' : statusDetail}
+                                </td>
+                            </tr>
+                            <tr className="border-b border-gray-200 dark:border-gray-700">
+                                <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap bg-gray-50 dark:text-white dark:bg-gray-800">
+                                    Create Date
+                                </th>
+                                <td className="px-6 py-4">
+                                    {new Date(createdAt?.seconds * 1000).toLocaleDateString("in-ID")}
                                 </td>
                             </tr>
                             <tr className="border-b border-gray-200 dark:border-gray-700">
@@ -115,7 +152,7 @@ function TabDetail(data) {
                                     Full Name
                                 </th>
                                 <td className="px-6 py-4">
-                                    -
+                                    {!currentUser.displayName ? '-' : currentUser.displayName}
                                 </td>
                             </tr>
                             <tr className="border-b border-gray-200 dark:border-gray-700">
@@ -123,7 +160,7 @@ function TabDetail(data) {
                                     Email Address
                                 </th>
                                 <td className="px-6 py-4">
-                                    -
+                                    {!currentUser.email ? '-' : currentUser.email}
                                 </td>
                             </tr>
                             <tr className="border-b border-gray-200 dark:border-gray-700">
@@ -131,7 +168,7 @@ function TabDetail(data) {
                                     Username
                                 </th>
                                 <td className="px-6 py-4">
-                                    -
+                                    {!currentUser.username ? '-' : currentUser.username}
                                 </td>
                             </tr>
                             <tr className="border-b border-gray-200 dark:border-gray-700">
@@ -139,15 +176,7 @@ function TabDetail(data) {
                                     Employee ID
                                 </th>
                                 <td className="px-6 py-4">
-                                    -
-                                </td>
-                            </tr>
-                            <tr className="border-b border-gray-200 dark:border-gray-700">
-                                <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap bg-gray-50 dark:text-white dark:bg-gray-800">
-                                    Assign Date
-                                </th>
-                                <td className="px-6 py-4">
-                                    -
+                                    {!currentUser.employeeId ? '-' : currentUser.employeeId}
                                 </td>
                             </tr>
                             <tr className="border-b border-gray-200 dark:border-gray-700">
@@ -155,7 +184,7 @@ function TabDetail(data) {
                                     Job Title
                                 </th>
                                 <td className="px-6 py-4">
-                                    -
+                                    {!currentUser.job ? '-' : currentUser.job}
                                 </td>
                             </tr>
                             <tr className="border-b border-gray-200 dark:border-gray-700">
@@ -163,7 +192,7 @@ function TabDetail(data) {
                                     Site
                                 </th>
                                 <td className="px-6 py-4">
-                                    -
+                                    {!currentUser.site ? '-' : currentUser.site}
                                 </td>
                             </tr>
                             <tr className="border-b border-gray-200 dark:border-gray-700">
@@ -171,7 +200,7 @@ function TabDetail(data) {
                                     Department
                                 </th>
                                 <td className="px-6 py-4">
-                                    -
+                                    {!currentUser.department ? '-' : currentUser.department}
                                 </td>
                             </tr>
                         </tbody>

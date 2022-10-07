@@ -22,7 +22,6 @@ function ModalFormUser({ closeModal, isModalOpen, id, data }) {
             gender: value.gender,
             role: value.role,
             status: "Unverified",
-            photoURL: 'https://firebasestorage.googleapis.com/v0/b/simi-51185.appspot.com/o/blank-profile-picture.png?alt=media&token=edc1d1d5-df02-4922-892a-35d2c36a50d5',
             createdAt: Timestamp.now(),
         }
         try {

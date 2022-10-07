@@ -105,6 +105,8 @@ function TableUser() {
         setDataTable(response.slice((pageTable - 1) * resultsPerPage, pageTable * resultsPerPage))
     }, [response, pageTable])
 
+    const photoURL = "https://firebasestorage.googleapis.com/v0/b/simi-51185.appspot.com/o/blank-profile-picture.png?alt=media&token=edc1d1d5-df02-4922-892a-35d2c36a50d5"
+
     return (
         <>
             <TableContainer className="mb-8">
@@ -121,10 +123,10 @@ function TableUser() {
                     </TableHeader>
                     <TableBody>
                         {dataTable.map((user) => (
-                            <TableRow key={user.id}>
+                            <TableRow key={user.id} className="dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                 <TableCell>
                                     <div className="flex items-center text-sm">
-                                        <Avatar className="hidden mr-3 md:block" src={user.data.photoURL} alt="User avatar" />
+                                        <Avatar className="hidden mr-3 md:block" src={photoURL} alt="User avatar" />
                                         <div>
                                             <p className="font-semibold">{user.data.displayName}</p>
                                             <p className="text-xs text-gray-600 dark:text-gray-400">{user.data.email}</p>
@@ -144,15 +146,15 @@ function TableUser() {
                                     <Badge type="success">{user.data.status}</Badge>
                                 </TableCell>
                                 <TableCell>
-                                    <div className="flex items-center space-x-4">
+                                    <div className="flex items-center space-x-2">
                                         <Button layout="link" size="icon" aria-label="Edit">
-                                            <EditIcon className="w-5 h-5" aria-hidden="true" onClick={() => openModal(user)} />
+                                            <EditIcon className="w-5 h-5" aria-hidden="true" color="#7e3af2" onClick={() => openModal(user)} />
                                         </Button>
                                         <Button layout="link" size="icon" aria-label="Detail">
-                                            <InformationIcon className="w-5 h-5" aria-hidden="true" onClick={() => openModalDetail(user.data)} />
+                                            <InformationIcon className="w-5 h-5" aria-hidden="true" color="#7e3af2" onClick={() => openModalDetail(user.data)} />
                                         </Button>
                                         <Button layout="link" size="icon" aria-label="Delete" onClick={() => handleDelete(user.id)}>
-                                            <TrashIcon className="w-5 h-5" aria-hidden="true" />
+                                            <TrashIcon className="w-5 h-5" aria-hidden="true" color='#c81e1e' />
                                         </Button>
                                     </div>
                                 </TableCell>

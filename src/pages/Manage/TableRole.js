@@ -111,12 +111,12 @@ function TableRole() {
                                     {role.data.description}
                                 </TableCell>
                                 <TableCell>
-                                    <div className="flex items-center space-x-4">
+                                    <div className="flex items-center space-x-2">
                                         <Button layout="link" size="icon" aria-label="Edit" onClick={() => openModal(role)}>
-                                            <EditIcon className="w-5 h-5" aria-hidden="true" />
+                                            <EditIcon className="w-5 h-5" aria-hidden="true" color="#7e3af2" />
                                         </Button>
                                         <Button layout="link" size="icon" aria-label="Delete" onClick={() => handleDelete(role.id)}>
-                                            <TrashIcon className="w-5 h-5" aria-hidden="true" />
+                                            <TrashIcon className="w-5 h-5" aria-hidden="true" color='#c81e1e' />
                                         </Button>
                                     </div>
                                 </TableCell>
