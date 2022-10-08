@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from "react";
 
 import {
   Table,
@@ -10,45 +10,52 @@ import {
   TableContainer,
   Badge,
   Button,
-  Pagination
-} from '@windmill/react-ui'
-import { ArchiveIcon, EditIcon, FormsIcon, TrashIcon } from '../../assets/icons'
-import { Link } from 'react-router-dom'
-import Swal from 'sweetalert2'
+  Pagination,
+} from "@windmill/react-ui";
+import {
+  ArchiveIcon,
+  EditIcon,
+  FormsIcon,
+  TrashIcon,
+} from "../../assets/icons";
+import { Link, useHistory } from "react-router-dom";
+import Swal from "sweetalert2";
 
-import { assetsServices } from '../../services/assets'
-import ModalFormRequest from '../RequestService/ModalFormRequest'
+import { assetsServices } from "../../services/assets";
+import ModalFormRequest from "../RequestService/ModalFormRequest";
 // make a copy of the data, for the second table
 
-function TableITAsset({ selected }) {
-  const [response, setResponse] = useState([])
+function TableITAsset({ selected, priviledges }) {
+  const [response, setResponse] = useState([]);
 
   // setup pages control for every table
-  const [pageTable, setPageTable] = useState(1)
+  const [pageTable, setPageTable] = useState(1);
 
   // setup data for every table
-  const [dataTable, setDataTable] = useState([])
+  const [dataTable, setDataTable] = useState([]);
 
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [assetId, setAssetId] = useState(null)
-  const [assetData, setAssetData] = useState([])
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [assetId, setAssetId] = useState(null);
+  const [assetData, setAssetData] = useState([]);
+
+  const history = useHistory();
 
   // pagination setup
-  const resultsPerPage = 10
+  const resultsPerPage = 10;
 
   // pagination change control
   function onPageChangeTable(p) {
-    setPageTable(p)
+    setPageTable(p);
   }
 
   function openModal(value) {
-    setIsModalOpen(true)
-    setAssetId(value.id)
-    setAssetData(value.data)
+    setIsModalOpen(true);
+    setAssetId(value.id);
+    setAssetData(value.data);
   }
 
   function closeModal() {
-    setIsModalOpen(false)
+    setIsModalOpen(false);
   }
 
   const handleArchive = (id) => {
@@ -56,64 +63,67 @@ function TableITAsset({ selected }) {
       Swal.fire({
         text: "Do you want to move in Archive?",
         showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, archive it!'
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, archive it!",
       }).then((result) => {
         if (result.isConfirmed) {
-          assetsServices.update(id, { "visibility": "Archived", })
+          assetsServices.update(id, { visibility: "Archived" });
           Swal.fire(
-            'Archived!',
-            'Your file has been archived.',
-            'success',
-          ).then(() => window.location.reload())
+            "Archived!",
+            "Your file has been archived.",
+            "success"
+          ).then(() => window.location.reload());
         }
-      })
+      });
     } catch (err) {
-      alert(err)
+      alert(err);
     }
-  }
+  };
 
   const handleDelete = (id) => {
     try {
       Swal.fire({
-        title: 'Are you sure?',
+        title: "Are you sure?",
         text: "You won't be able to revert this!",
-        icon: 'warning',
+        icon: "warning",
         showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!'
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
       }).then((result) => {
         if (result.isConfirmed) {
-          assetsServices.delete(id)
-          Swal.fire(
-            'Deleted!',
-            'Your file has been deleted.',
-            'success',
-          ).then(() => window.location.reload())
+          assetsServices.delete(id);
+          Swal.fire("Deleted!", "Your file has been deleted.", "success").then(
+            () => window.location.reload()
+          );
         }
-      })
+      });
     } catch (err) {
-      alert(err)
+      alert(err);
     }
-  }
+  };
 
   useEffect(() => {
     try {
-      assetsServices.getAllITAsset().then(data => {
-        setResponse(data)
-      })
+      assetsServices.getAllITAsset().then((data) => {
+        setResponse(data);
+      });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }, [])
+  }, []);
 
   // on page change, load new sliced data
   // here you would make another server request for new data
   useEffect(() => {
-    setDataTable(response.slice((pageTable - 1) * resultsPerPage, pageTable * resultsPerPage))
-  }, [response, pageTable])
+    setDataTable(
+      response.slice(
+        (pageTable - 1) * resultsPerPage,
+        pageTable * resultsPerPage
+      )
+    );
+  }, [response, pageTable]);
 
   return (
     <>
@@ -132,59 +142,108 @@ function TableITAsset({ selected }) {
           </TableHeader>
           <TableBody>
             {dataTable.map((asset) => (
-              <TableRow className="dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600" key={asset.id}>
+              <TableRow
+                className="dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                key={asset.id}
+              >
+                <TableCell>{asset.data.site}</TableCell>
+                <TableCell>{asset.data.salesOrder}</TableCell>
+                <TableCell>{asset.data.category}</TableCell>
                 <TableCell>
-                  {asset.data.site}
+                  <Link
+                    className="text-blue-500"
+                    to={`/app/assets/detail/${asset.id}`}
+                  >
+                    {asset.data.brand} {asset.data.model}
+                  </Link>
                 </TableCell>
-                <TableCell>
-                  {asset.data.salesOrder}
-                </TableCell>
-                <TableCell>
-                  {asset.data.category}
-                </TableCell>
-                <TableCell>
-                  <Link className="text-blue-500" to={`/app/assets/detail/${asset.id}`}>{asset.data.brand} {asset.data.model}</Link>
-                </TableCell>
-                <TableCell>
-                  {asset.data.serialNumber}
-                </TableCell>
-                <TableCell className="text-center" >
+                <TableCell>{asset.data.serialNumber}</TableCell>
+                <TableCell className="text-center">
                   {(() => {
                     switch (asset.data.status) {
-                      case 'In Use':
-                        return <Badge type="warning" >{asset.data.status}</Badge>;
-                      case 'Broken':
-                        return <Badge type="danger"  >{asset.data.status}</Badge>;
-                      case 'Ready':
-                        return <Badge type="success" >{asset.data.status}</Badge>;
-                      case 'On Service':
-                        return <Badge type="neutral" >{asset.data.status}</Badge>;
+                      case "In Use":
+                        return (
+                          <Badge type="warning">{asset.data.status}</Badge>
+                        );
+                      case "Broken":
+                        return <Badge type="danger">{asset.data.status}</Badge>;
+                      case "Ready":
+                        return (
+                          <Badge type="success">{asset.data.status}</Badge>
+                        );
+                      case "On Service":
+                        return (
+                          <Badge type="neutral">{asset.data.status}</Badge>
+                        );
                       default:
-                        return <Badge type="primary" >{asset.data.status}</Badge>;
+                        return (
+                          <Badge type="primary">{asset.data.status}</Badge>
+                        );
                     }
                   })()}
                 </TableCell>
                 <TableCell className="text-center">
                   <div className="flex items-center space-x-2">
-                    <Link to={`/app/assets/form/itasset/${asset.id}`}>
-                      <Button layout="link" size="icon" aria-label="Edit">
-                        <EditIcon className="w-5 h-5" aria-hidden="true" color="#7e3af2" />
-                      </Button>
-                    </Link>
+                    <Button
+                      layout="link"
+                      size="icon"
+                      aria-label="Edit"
+                      disabled={!priviledges[0]?.edit}
+                      onClick={() =>
+                        history.push(`/app/assets/form/itasset/${asset.id}`)
+                      }
+                    >
+                      {/* <Link to={`/app/assets/form/itasset/${asset.id}`}> */}
+                      <EditIcon
+                        className="w-5 h-5"
+                        aria-hidden="true"
+                        color="#7e3af2"
+                      />
+                      {/* </Link> */}
+                    </Button>
                     <div hidden={selected === "Archived" ? true : false}>
-                      <Button disabled={asset.data.status === 'Ready' ? false : true} layout="link" size="icon" aria-label="Assign" onClick={() => openModal(asset)}>
-                        <FormsIcon className="w-5 h-5" aria-hidden="true" color="#7e3af2" />
+                      <Button
+                        disabled={asset.data.status === "Ready" ? false : true}
+                        layout="link"
+                        size="icon"
+                        aria-label="Assign"
+                        onClick={() => openModal(asset)}
+                      >
+                        <FormsIcon
+                          className="w-5 h-5"
+                          aria-hidden="true"
+                          color="#7e3af2"
+                        />
                       </Button>
                     </div>
-                    {selected === "Archived" ?
-                      (<Button layout="link" size="icon" aria-label="Delete" onClick={() => handleDelete(asset.id)}>
-                        <TrashIcon className="w-5 h-5" aria-hidden="true" color='#c81e1e' />
-                      </Button>)
-                      :
-                      (<Button layout="link" size="icon" aria-label="Archive" onClick={() => handleArchive(asset.id)}>
-                        <ArchiveIcon className="w-5 h-5" aria-hidden="true" color="#7e3af2" />
-                      </Button>)
-                    }
+                    {selected === "Archived" ? (
+                      <Button
+                        layout="link"
+                        size="icon"
+                        aria-label="Delete"
+                        onClick={() => handleDelete(asset.id)}
+                        disabled={!priviledges[0]?.delete}
+                      >
+                        <TrashIcon
+                          className="w-5 h-5"
+                          aria-hidden="true"
+                          color="#c81e1e"
+                        />
+                      </Button>
+                    ) : (
+                      <Button
+                        layout="link"
+                        size="icon"
+                        aria-label="Archive"
+                        onClick={() => handleArchive(asset.id)}
+                      >
+                        <ArchiveIcon
+                          className="w-5 h-5"
+                          aria-hidden="true"
+                          color="#7e3af2"
+                        />
+                      </Button>
+                    )}
                   </div>
                 </TableCell>
               </TableRow>
@@ -202,9 +261,14 @@ function TableITAsset({ selected }) {
           )}
         </TableFooter>
       </TableContainer>
-      <ModalFormRequest isModalOpen={isModalOpen} closeModal={closeModal} id={assetId} data={assetData} />
+      <ModalFormRequest
+        isModalOpen={isModalOpen}
+        closeModal={closeModal}
+        id={assetId}
+        data={assetData}
+      />
     </>
-  )
+  );
 }
 
-export default TableITAsset
+export default TableITAsset;
