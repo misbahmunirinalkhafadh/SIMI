@@ -140,7 +140,7 @@ function TableUser() {
                                     {user.data.job}
                                 </TableCell>
                                 <TableCell>
-                                    {user.data.role}
+                                    {user.data.role.roleName}
                                 </TableCell>
                                 <TableCell>
                                     <Badge type="success">{user.data.status}</Badge>

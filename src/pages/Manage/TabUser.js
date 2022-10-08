@@ -54,7 +54,7 @@ function TabUser() {
                     <div className="ml-3">
                         <Select>
                             <option value="" >All Role</option>
-                            {listRole.map((data, i) => <option value={data} key={i}>{data}</option>)}
+                            {listRole.map((data, i) => <option value={data.id} key={i}>{data.roleName}</option>)}
                         </Select>
                     </div>
                     {/* Type  */}
