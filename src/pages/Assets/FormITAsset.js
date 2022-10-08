@@ -51,11 +51,11 @@ function FormITAsset() {
                         serialNumber: value.serialNumber.toUpperCase(),
                         category: value.category,
                         information: {
-                            operatingSystem: value.operatingSystem,
-                            processor: value.processor,
-                            ram: value.ram.toUpperCase().replace(/\s+/g, ''),
-                            storageCapacity: value.storageCapacity.toUpperCase().replace(/\s+/g, ''),
-                            storageType: value.storageType
+                            operatingSystem: value.information.operatingSystem,
+                            processor: value.information.processor,
+                            ram: value.information.ram.toUpperCase().replace(/\s+/g, ''),
+                            storageCapacity: value.information.storageCapacity.toUpperCase().replace(/\s+/g, ''),
+                            storageType: value.information.storageType,
                         },
                         isArchive: value.isArchive,
                         status: value.status,
@@ -218,7 +218,7 @@ function FormITAsset() {
                                     placeholder="Type here..."
                                     defaultValue={assetInfo.operatingSystem}
                                     required
-                                    {...register("operatingSystem")}
+                                    {...register("information.operatingSystem")}
                                 />
                             </Label>
                             <Label className="mt-3">
@@ -228,7 +228,7 @@ function FormITAsset() {
                                     placeholder="Type here..."
                                     defaultValue={assetInfo.processor}
                                     required
-                                    {...register("processor")}
+                                    {...register("information.processor")}
                                 />
                             </Label>
                             <Label className="mt-3">
@@ -238,7 +238,7 @@ function FormITAsset() {
                                     placeholder="Type here..."
                                     defaultValue={assetInfo.ram}
                                     required
-                                    {...register("ram")}
+                                    {...register("information.ram")}
                                 />
                             </Label>
                             <Label className="mt-3">
@@ -249,10 +249,10 @@ function FormITAsset() {
                                         placeholder="Type here..."
                                         defaultValue={assetInfo.storageCapacity}
                                         required
-                                        {...register("storageCapacity")}
+                                        {...register("information.storageCapacity")}
                                     />
                                     <div className="absolute inset-y-0 left-0 flex items-center">
-                                        <Select className="h-full py-0" required defaultValue={assetInfo.storageType} {...register("storageType")} >
+                                        <Select className="h-full py-0" required defaultValue={assetInfo.storageType} {...register("information.storageType")} >
                                             <option value="" >-- Choose one --</option>
                                             <option value="SSD" >SSD</option>
                                             <option value="HDD" >HDD</option>

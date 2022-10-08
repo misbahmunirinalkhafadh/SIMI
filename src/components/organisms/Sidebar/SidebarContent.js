@@ -1,15 +1,11 @@
 /* eslint-disable */
 import React, { useEffect, useState } from "react";
-import { useAuthState } from "react-firebase-hooks/auth";
 import { Link, NavLink, Route, useHistory } from "react-router-dom";
 import { Avatar, Button, Badge } from "@windmill/react-ui";
 import * as Icons from "../../../assets/icons";
 import SidebarSubmenu from "./SidebarSubmenu";
 import routes from "../../../routes/sidebar";
 import ModalFormRequest from "../../../pages/RequestService/ModalFormRequest";
-// import { collection, getDocs, query, where } from 'firebase/firestore';
-import { auth } from "../../../utils/firebase";
-import { usersServices } from "../../../services/users";
 import useDataUser from "../../../hooks/useDataUser";
 
 function Icon({ icon, ...props }) {
@@ -18,9 +14,7 @@ function Icon({ icon, ...props }) {
 }
 
 function SidebarContent() {
-  // const [user, loading] = useAuthState(auth);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  // const [dataUser, setDataUser] = useState([]);
   const history = useHistory();
   const { user, role, dataUser, loading } = useDataUser();
 
@@ -36,21 +30,6 @@ function SidebarContent() {
     if (loading) return;
     if (!user) return history.push("/");
   }, [user, loading, history]);
-
-  // useEffect(() => {
-  //   const id = user?.uid;
-  //   if (id) {
-  //     try {
-  //       usersServices.getById(id).then((data) => {
-  //         setDataUser(data);
-  //       });
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   }
-  // }, [user]);
-
-  // console.log("Res Auth: ",user);
 
   const photoURL =
     "https://firebasestorage.googleapis.com/v0/b/simi-51185.appspot.com/o/blank-profile-picture.png?alt=media&token=edc1d1d5-df02-4922-892a-35d2c36a50d5";

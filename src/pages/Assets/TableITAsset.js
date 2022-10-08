@@ -37,7 +37,6 @@ function TableITAsset({ archived, priviledges }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [assetId, setAssetId] = useState(null);
   const [assetData, setAssetData] = useState([]);
-
   const history = useHistory();
 
   // pagination setup

@@ -50,7 +50,10 @@ const registerWithEmailAndPassword = async (value) => {
             displayName,
             email,
             job: "Application Developer",
-            role: "User",
+            role: {
+                id: "",
+                roleName: ""
+            },
             status: "Unverified",
             authProvider: "local",
         });

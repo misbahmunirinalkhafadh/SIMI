@@ -23,8 +23,8 @@ function TabUser() {
             usersServices.getAll().then(data => {
                 const uniqueTags = [];
                 data.forEach(asd => {
-                    if (uniqueTags.indexOf(asd.data.role) === -1) {
-                        uniqueTags.push(asd.data.role)
+                    if (uniqueTags.indexOf(asd.data.role.roleName) === -1) {
+                        uniqueTags.push(asd.data.role.roleName)
                     }
                 });
                 setListRole(uniqueTags)
@@ -54,7 +54,7 @@ function TabUser() {
                     <div className="ml-3">
                         <Select>
                             <option value="" >All Role</option>
-                            {listRole.map((data, i) => <option value={data.id} key={i}>{data.roleName}</option>)}
+                            {listRole.map((data, i) => <option value={data} key={i}>{data}</option>)}
                         </Select>
                     </div>
                     {/* Type  */}

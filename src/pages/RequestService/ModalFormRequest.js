@@ -4,7 +4,6 @@ import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Label, Input } from
 import { Timestamp } from 'firebase/firestore'
 import Swal from 'sweetalert2'
 import Select from 'react-select'
-import AsyncSelect from 'react-select/async';
 
 import { requestsServices } from '../../services/requests'
 

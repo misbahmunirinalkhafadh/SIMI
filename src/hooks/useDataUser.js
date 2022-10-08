@@ -27,9 +27,7 @@ const useDataUser = () => {
       const { uid } = user;
 
       if (uid) {
-        usersServices
-          .getById(uid)
-          .then((res) => {
+        usersServices.getById(uid).then((res) => {
             setDataUser(res);
           })
           .catch((err) => console.log(err));
@@ -40,8 +38,9 @@ const useDataUser = () => {
   // useEffect need to be added
 
   useEffect(() => {
+    let id = dataUser?.role.id
     if (dataUser) {
-      rolesServices.getById(dataUser?.role).then((res) => {
+      rolesServices.getById(id).then((res) => {
         setRole(res);
         // console.log(res);
         // console.log(dataUser?.role);

@@ -8,8 +8,16 @@ import { usersServices } from '../../services/users'
 import { Timestamp } from 'firebase/firestore'
 
 function ModalFormUser({ closeModal, isModalOpen, id, data }) {
-    const { register, handleSubmit, reset } = useForm({ defaultValues: data })
+    const { register, handleSubmit, reset } = useForm({ defaultValues: data, })
     const [role, setRole] = useState([])
+    const [roleSelected, setRoleSelected] = useState({})
+
+    const handleChange = (e) => {
+        let index = e.nativeEvent.target.selectedIndex;
+        let label = e.nativeEvent.target[index].text;
+        let value = e.target.value;
+        setRoleSelected({ value: value, label: label })
+    }
 
     const onSubmit = (value) => {
         const dataUser = {
@@ -20,7 +28,10 @@ function ModalFormUser({ closeModal, isModalOpen, id, data }) {
             job: value.job,
             email: value.email,
             gender: value.gender,
-            role: value.role,
+            role: {
+                id: roleSelected.value,
+                roleName: roleSelected.label
+            },
             status: "Unverified",
             createdAt: Timestamp.now(),
         }
@@ -55,10 +66,12 @@ function ModalFormUser({ closeModal, isModalOpen, id, data }) {
                             displayName: value.displayName,
                             department: value.department,
                             site: value.site,
-                            job: value.job,
+                            role: {
+                                id: roleSelected.value,
+                                roleName: roleSelected.label
+                            },
                             email: value.email,
                             gender: value.gender,
-                            role: value.role,
                         })
                         Swal.fire('Saved!', '', 'success')
                             .then(() => window.location.reload())
@@ -173,11 +186,10 @@ function ModalFormUser({ closeModal, isModalOpen, id, data }) {
                             </Label>
                             <Label className="mt-3">
                                 <span>Role<small className='text-red-600'>*</small></span>
-                                <Select className="mt-1" {...register("role")}>
+                                <Select className="mt-1" {...register("role.id")} onChange={handleChange}>
                                     <option value="">-- Choose One --</option>
-                                    <option value="User">User</option>
                                     {role.map((role, i) => (
-                                        <option key={i} value={role.data.roleName}>{role.data.roleName}</option>
+                                        <option key={i} value={role.id}>{role.data.roleName}</option>
                                     ))}
                                 </Select>
                             </Label>

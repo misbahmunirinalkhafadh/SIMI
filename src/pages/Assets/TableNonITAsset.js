@@ -20,7 +20,6 @@ import Swal from 'sweetalert2'
 import ModalFormNonITAsset from './ModalFormNonITAsset'
 import ModalFormRequest from '../RequestService/ModalFormRequest'
 // make a copy of the data, for the second table
-// const response2 = response.concat([])
 
 function TableNonITAsset({ archived }) {
     const [response, setResponse] = useState([])
@@ -32,7 +31,6 @@ function TableNonITAsset({ archived }) {
     const [dataTable, setDataTable] = useState([])
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [isModalRequestOpen, setIsModalRequestOpen] = useState(false)
-    // const [textBlue, setTextBlue] = useState(false)
     const [assetId, setAssetId] = useState(null)
     const [assetData, setAssetData] = useState([])
 
