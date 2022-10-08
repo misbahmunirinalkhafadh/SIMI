@@ -22,7 +22,7 @@ import ModalFormRequest from '../RequestService/ModalFormRequest'
 // make a copy of the data, for the second table
 // const response2 = response.concat([])
 
-function TableNonITAsset({ selected }) {
+function TableNonITAsset({ archived }) {
     const [response, setResponse] = useState([])
 
     // setup pages control for every table
@@ -182,12 +182,12 @@ function TableNonITAsset({ selected }) {
                                         <Button layout="link" size="icon" aria-label="Edit" onClick={() => openModal(asset)}>
                                             <EditIcon className="w-5 h-5" aria-hidden="true" color="#7e3af2" />
                                         </Button>
-                                        <div hidden={selected === "Archived" ? true : false}>
+                                        <div hidden={archived === "Archived" ? true : false}>
                                             <Button disabled={asset.data.status === 'Ready' ? false : true} layout="link" size="icon" aria-label="Assign" onClick={() => openModalRequest(asset)}>
                                                 <FormsIcon className="w-5 h-5" aria-hidden="true" color="#7e3af2" />
                                             </Button>
                                         </div>
-                                        {selected === "Archived" ?
+                                        {archived === "Archived" ?
                                             (<Button layout="link" size="icon" aria-label="Delete" onClick={() => handleDelete(asset.id)}>
                                                 <TrashIcon className="w-5 h-5" aria-hidden="true" color='#c81e1e' />
                                             </Button>)

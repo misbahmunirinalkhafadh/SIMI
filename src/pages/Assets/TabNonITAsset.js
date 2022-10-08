@@ -8,7 +8,7 @@ import { assetsServices } from '../../services/assets';
 
 function TabNonITAsset() {
     const [isModalOpen, setIsModalOpen] = useState(false)
-    const [selected, setSelected] = useState('')
+    const [archive, setArchived] = useState('')
     const [category, setCategory] = useState([])
     const [status, setStatus] = useState([])
 
@@ -21,7 +21,7 @@ function TabNonITAsset() {
     }
 
     function onSelect(event) {
-        setSelected(event.target.value)
+        setArchived(event.target.value)
     }
 
     useEffect(() => {
@@ -92,7 +92,7 @@ function TabNonITAsset() {
             </div>
 
             {/* Table Data */}
-            <TableNonITAsset selected={selected} />
+            <TableNonITAsset archived={archive} />
 
             <ModalFormNonITAsset isModalOpen={isModalOpen} closeModal={closeModal} />
         </>

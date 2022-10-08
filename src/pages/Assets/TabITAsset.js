@@ -8,7 +8,7 @@ import { assetsServices } from "../../services/assets";
 
 function TabITAsset({ priviledges }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selected, setSelected] = useState("");
+  const [archive, setArchive] = useState('');
   const [category, setCategory] = useState([]);
   const [status, setStatus] = useState([]);
 
@@ -21,7 +21,7 @@ function TabITAsset({ priviledges }) {
   }
 
   function onSelect(event) {
-    setSelected(event.target.value);
+    setArchive(event.target.value);
   }
 
   useEffect(() => {
@@ -62,7 +62,7 @@ function TabITAsset({ priviledges }) {
     );
 
     tableITAsset = (
-      <TableITAsset selected={selected} priviledges={priviledges} />
+      <TableITAsset archived={archive} priviledges={priviledges} />
     );
   }
 
@@ -120,7 +120,6 @@ function TabITAsset({ priviledges }) {
       </div>
 
       {/* Table Data */}
-      {/* <TableITAsset selected={selected} /> */}
       {tableITAsset}
 
       <ModalFormITAsset isModalOpen={isModalOpen} closeModal={closeModal} />

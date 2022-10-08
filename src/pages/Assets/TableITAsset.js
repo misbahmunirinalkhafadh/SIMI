@@ -25,7 +25,7 @@ import { assetsServices } from "../../services/assets";
 import ModalFormRequest from "../RequestService/ModalFormRequest";
 // make a copy of the data, for the second table
 
-function TableITAsset({ selected, priviledges }) {
+function TableITAsset({ archived, priviledges }) {
   const [response, setResponse] = useState([]);
 
   // setup pages control for every table
@@ -201,7 +201,7 @@ function TableITAsset({ selected, priviledges }) {
                       />
                       {/* </Link> */}
                     </Button>
-                    <div hidden={selected === "Archived" ? true : false}>
+                    <div hidden={archived === "Archived" ? true : false}>
                       <Button
                         disabled={asset.data.status === "Ready" ? false : true}
                         layout="link"
@@ -216,7 +216,7 @@ function TableITAsset({ selected, priviledges }) {
                         />
                       </Button>
                     </div>
-                    {selected === "Archived" ? (
+                    {archived === "Archived" ? (
                       <Button
                         layout="link"
                         size="icon"
