@@ -35,7 +35,7 @@ function ModalFormITAsset({ closeModal, isModalOpen }) {
                 storageCapacity: value.storageCapacity.toUpperCase().replace(/\s+/g, ''),
                 storageType: value.storageType
             },
-            visibility: 'Unarchived',
+            isArchive: false,
             status: 'Ready',
             statusDetail: '',
             description: value.description,

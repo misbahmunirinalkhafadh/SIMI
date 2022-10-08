@@ -68,7 +68,7 @@ function TableITAsset({ selected, priviledges }) {
         confirmButtonText: "Yes, archive it!",
       }).then((result) => {
         if (result.isConfirmed) {
-          assetsServices.update(id, { visibility: "Archived" });
+          assetsServices.update(id, { isArchive: true });
           Swal.fire(
             "Archived!",
             "Your file has been archived.",

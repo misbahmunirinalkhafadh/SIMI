@@ -74,7 +74,7 @@ function TableNonITAsset({ selected }) {
                 confirmButtonText: 'Yes, archive it!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    assetsServices.update(id, { "archived": true, })
+                    assetsServices.update(id, { isArchive: true })
                     Swal.fire(
                         'Archived!',
                         'Your file has been archived.',
