@@ -14,7 +14,8 @@ import {
   RequestService,
   Tables,
   Permission,
-  FormITAsset
+  FormITAsset,
+  Deployments
 } from '../pages'
 
 // use lazy for better code splitting, a.k.a. load faster
@@ -62,6 +63,10 @@ const routes = [
   {
     path: '/requestservice', // the url
     component: RequestService, // view rendered
+  },
+  {
+    path: '/deployments', // the url
+    component: Deployments, // view rendered
   },
   {
     path: '/manage', // the url

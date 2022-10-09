@@ -8,9 +8,9 @@ import { assetsServices } from "../../services/assets";
 
 function TabITAsset({ priviledges }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [archive, setArchive] = useState('');
   const [category, setCategory] = useState([]);
   const [status, setStatus] = useState([]);
+  const [filter, setFilter] = useState({ search: '', archive: 'Unarchived', category: '', status: '' });
 
   function openModal() {
     setIsModalOpen(true);
@@ -20,8 +20,11 @@ function TabITAsset({ priviledges }) {
     setIsModalOpen(false);
   }
 
-  function onSelect(event) {
-    setArchive(event.target.value);
+  function handleChange(e) {
+    setFilter({
+      ...filter,
+      [e.target.name]: e.target.value
+    })
   }
 
   useEffect(() => {
@@ -62,7 +65,7 @@ function TabITAsset({ priviledges }) {
     );
 
     tableITAsset = (
-      <TableITAsset archived={archive} priviledges={priviledges} />
+      <TableITAsset filter={filter} priviledges={priviledges} />
     );
   }
 
@@ -83,18 +86,20 @@ function TabITAsset({ priviledges }) {
               className="pl-8 text-gray-700"
               placeholder="Search for data"
               aria-label="Search"
+              name="search"
+              onChange={handleChange}
             />
           </div>
           {/* Filter  */}
           <div className="ml-3">
-            <Select onChange={onSelect}>
+            <Select name="archive" onChange={handleChange} >
               <option value="Unarchived">Unarchived</option>
               <option value="Archived">Archived</option>
             </Select>
           </div>
           {/* Type  */}
           <div className="ml-3">
-            <Select>
+            <Select name="category" onChange={handleChange} >
               <option value="">All Category</option>
               {category.map((data, i) => (
                 <option value={data} key={i}>
@@ -105,7 +110,7 @@ function TabITAsset({ priviledges }) {
           </div>
           {/* Status  */}
           <div className="ml-3">
-            <Select>
+            <Select name="status" onChange={handleChange} >
               <option value="">All Status</option>
               {status.map((data, i) => (
                 <option value={data} key={i}>

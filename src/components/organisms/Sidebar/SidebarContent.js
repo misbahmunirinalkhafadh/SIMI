@@ -17,6 +17,8 @@ function SidebarContent() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const history = useHistory();
   const { user, role, dataUser, loading } = useDataUser();
+  const [disabledBtnReq, setDisabledBtnReq] = useState(false)
+  const [hiddenBtnReq, setHiddenBtnReq] = useState(false)
 
   function openModal() {
     setIsModalOpen(true);
@@ -33,6 +35,23 @@ function SidebarContent() {
 
   const photoURL =
     "https://firebasestorage.googleapis.com/v0/b/simi-51185.appspot.com/o/blank-profile-picture.png?alt=media&token=edc1d1d5-df02-4922-892a-35d2c36a50d5";
+
+
+  let btnRequest = null
+  const priviledges = role?.priviledges?.filter(
+    (e) => e.permission === "Request Service"
+  );
+
+  if (priviledges) {
+    btnRequest = (
+      <div className="px-6 my-6" hidden={dataUser?.role.roleName === 'End User' ? true : false}>
+        <Button iconLeft={Icons.AddIcon} onClick={openModal} disabled={!priviledges[0]?.add}>
+          <span>Create New Request</span>
+        </Button>
+        <ModalFormRequest isModalOpen={isModalOpen} closeModal={closeModal} />
+      </div>
+    );
+  }
 
   return (
     <div className="py-4 text-gray-500 dark:text-gray-400">
@@ -112,12 +131,7 @@ function SidebarContent() {
             )
           )}
       </ul>
-      <div className="px-6 my-6">
-        <Button iconLeft={Icons.AddIcon} onClick={openModal}>
-          <span>Create New Request</span>
-        </Button>
-        <ModalFormRequest isModalOpen={isModalOpen} closeModal={closeModal} />
-      </div>
+      {btnRequest}
     </div>
   );
 }

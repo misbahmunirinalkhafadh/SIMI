@@ -25,7 +25,7 @@ import { assetsServices } from "../../services/assets";
 import ModalFormRequest from "../RequestService/ModalFormRequest";
 // make a copy of the data, for the second table
 
-function TableITAsset({ archived, priviledges }) {
+function TableITAsset({ filter, priviledges }) {
   const [response, setResponse] = useState([]);
 
   // setup pages control for every table
@@ -33,6 +33,7 @@ function TableITAsset({ archived, priviledges }) {
 
   // setup data for every table
   const [dataTable, setDataTable] = useState([]);
+  // const [archived, setArchive] = useState([]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [assetId, setAssetId] = useState(null);
@@ -104,22 +105,31 @@ function TableITAsset({ archived, priviledges }) {
   };
 
   useEffect(() => {
+    let archived = false
+    if (filter.archive === "Archived") {
+      archived = true
+    }
+
     try {
       assetsServices.getAllITAsset().then((data) => {
-        setResponse(data);
+        const resultFilter  = data?.filter((e) =>
+          e.data.isArchive === archived
+          // && e.data.category === filter.category
+          // && e.data.status === filter.status
+        );
+        setResponse(resultFilter);
       });
     } catch (error) {
       console.log(error);
     }
-  }, []);
+  }, [filter]);
 
   // on page change, load new sliced data
   // here you would make another server request for new data
   useEffect(() => {
     setDataTable(
       response.slice(
-        (pageTable - 1) * resultsPerPage,
-        pageTable * resultsPerPage
+        (pageTable - 1) * resultsPerPage, pageTable * resultsPerPage
       )
     );
   }, [response, pageTable]);
@@ -200,7 +210,7 @@ function TableITAsset({ archived, priviledges }) {
                       />
                       {/* </Link> */}
                     </Button>
-                    <div hidden={archived === "Archived" ? true : false}>
+                    <div hidden={filter.archive === "Archived" ? true : false}>
                       <Button
                         disabled={asset.data.status === "Ready" ? false : true}
                         layout="link"
@@ -215,7 +225,7 @@ function TableITAsset({ archived, priviledges }) {
                         />
                       </Button>
                     </div>
-                    {archived === "Archived" ? (
+                    {filter.archive === "Archived" ? (
                       <Button
                         layout="link"
                         size="icon"

@@ -7,6 +7,7 @@ import DetailAsset from './DetailAsset';
 import Manage from './Manage';
 import Permission from './Permission';
 import RequestService from './RequestService';
+import Deployments from './Deployments';
 import Page404 from './404';
 
 // Sample Page
@@ -32,6 +33,7 @@ export {
     RequestService,
     Manage,
     Permission,
+    Deployments,
     Page404,
 
     // Sample Page

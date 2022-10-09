@@ -36,7 +36,7 @@ function ModalFormRole({ closeModal, isModalOpen, id, data }) {
                     delete: false,
                 },
                 {
-                    permission: 'Request',
+                    permission: 'Request Service',
                     view: false,
                     add: false,
                     edit: false,
@@ -44,6 +44,13 @@ function ModalFormRole({ closeModal, isModalOpen, id, data }) {
                 },
                 {
                     permission: 'Manage',
+                    view: false,
+                    add: false,
+                    edit: false,
+                    delete: false,
+                },
+                {
+                    permission: 'Deployments',
                     view: false,
                     add: false,
                     edit: false,
