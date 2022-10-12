@@ -1,9 +1,17 @@
 import React from "react";
+import useDataUser from "../../hooks/useDataUser";
 import TabITAsset from "./TabITAsset";
 import TabNonITAsset from "./TabNonITAsset";
 
-export const Tabs = ({ color, priviledges }) => {
+export const Tabs = ({ color }) => {
   const [openTab, setOpenTab] = React.useState(1);
+  const { role } = useDataUser();
+
+  const priviledges = role?.priviledges?.filter((e) =>
+    e.permission === "Assets"
+    || e.permission === "Deployments"
+  );
+
   return (
     <>
       <div className="flex flex-wrap">

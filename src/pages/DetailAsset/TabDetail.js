@@ -6,7 +6,7 @@ import { usersServices } from '../../services/users';
 
 function TabDetail(data) {
     const [currentUser, setCurrentUser] = useState({})
-    const { site, salesOrder, category, brand, model, serialNumber, visibility, status, statusDetail, description, createdAt, information, uid } = data.data;
+    const { site, salesOrder, category, brand, model, serialNumber, isArchived, status, statusDetail, description, createdAt, information, uid } = data.data;
 
     useEffect(() => {
         if (uid) {
@@ -89,7 +89,7 @@ function TabDetail(data) {
                                     Visibility
                                 </th>
                                 <td className="px-6 py-4">
-                                    {visibility}
+                                    {isArchived ? 'Archived' : 'Unarchived'}
                                 </td>
                             </tr>
                             <tr className="border-b border-gray-200 dark:border-gray-700">

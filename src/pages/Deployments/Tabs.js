@@ -1,5 +1,5 @@
 import React from 'react';
-import TabCompleted from './TabCompleted';
+import TabDeployed from './TabDeployed';
 import TabPending from './TabPending';
 
 export const Tabs = ({ color }) => {
@@ -28,7 +28,7 @@ export const Tabs = ({ color }) => {
                                 href="#link1"
                                 role="tablist"
                             >
-                                New Request
+                                Pending Deploy
                             </a>
                         </li>
                         <li className="flex-auto mr-2 -mb-px text-center last:mr-0">
@@ -47,7 +47,7 @@ export const Tabs = ({ color }) => {
                                 href="#link2"
                                 role="tablist"
                             >
-                                Completed Request
+                                Asset Deployed
                             </a>
                         </li>
                     </ul>
@@ -58,7 +58,7 @@ export const Tabs = ({ color }) => {
                                     <TabPending/>
                                 </div>
                                 <div className={openTab === 2 ? "block" : "hidden"} id="link2">
-                                    <TabCompleted />
+                                    <TabDeployed />
                                 </div>
                             </div>
                         </div>

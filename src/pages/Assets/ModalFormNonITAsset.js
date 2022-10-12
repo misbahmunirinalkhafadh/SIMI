@@ -11,16 +11,12 @@ import { sitesServices } from '../../services/sites'
 
 function ModalFormNonITAsset({ closeModal, isModalOpen, id, data }) {
     const { register, handleSubmit, reset } = useForm({ defaultValues: data })
-    const [siteLabel, setSiteLabel] = useState('')
     const [user, loading] = useAuthState(auth);
     const [requiredStatusDetail, setRequiredStatusDetail] = useState(false)
     const [disabled, setDisabled] = useState(true)
     const [site, setSite] = useState([])
 
     const handleChange = (e) => {
-        let index = e.nativeEvent.target.selectedIndex;
-        let label = e.nativeEvent.target[index].text;
-        setSiteLabel(label)
         if (e.target.value === "In Use") {
             setDisabled(false)
             setRequiredStatusDetail(true)
@@ -32,13 +28,13 @@ function ModalFormNonITAsset({ closeModal, isModalOpen, id, data }) {
 
     const onSubmit = (value) => {
         const dataAsset = {
-            site: siteLabel,
+            site: value.site,
             salesOrder: value.salesOrder,
             brand: value.brand,
             model: value.model,
             serialNumber: value.serialNumber.toUpperCase(),
             category: value.category,
-            isArchive: value.isArchive,
+            isArchived: value.isArchived,
             status: 'Ready',
             statusDetail: '',
             description: value.description,
@@ -81,7 +77,7 @@ function ModalFormNonITAsset({ closeModal, isModalOpen, id, data }) {
                             model: value.model,
                             serialNumber: value.serialNumber.toUpperCase(),
                             category: value.category,
-                            isArchive: value.isArchive,
+                            isArchived: value.isArchived,
                             status: value.status,
                             statusDetail: value.statusDetail,
                             description: value.description,
@@ -131,7 +127,7 @@ function ModalFormNonITAsset({ closeModal, isModalOpen, id, data }) {
                             <Select className="mt-1" required {...register("site")} onChange={handleChange}>
                                 <option value="" >-- Choose one --</option>
                                 {site.map((site, i) => (
-                                    <option key={i} value={site.data.name}>{site.data.name}</option>
+                                    <option key={i} value={site.id}>{site.data.name}</option>
                                 ))}
                             </Select>
                         </Label>
@@ -204,10 +200,10 @@ function ModalFormNonITAsset({ closeModal, isModalOpen, id, data }) {
                                 </Label>
                             </div>
                             <Label className="mt-3">
-                                <span>Archived<small className='text-red-600'>*</small></span>
-                                <Select className="mt-1" required={!id ? false : true} {...register("isArchive")} onChange={handleChange}>
-                                    <option value={false}>False</option>
-                                    <option value={true} >True</option>
+                                <span>Visibility<small className='text-red-600'>*</small></span>
+                                <Select className="mt-1" required={!id ? false : true} {...register("isArchived")} onChange={handleChange}>
+                                    <option value={false}>Unarchived</option>
+                                    <option value={true} >Archived</option>
                                 </Select>
                             </Label>
                         </div>

@@ -2,31 +2,16 @@ import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, updateDoc, 
 import { db } from "../utils/firebase";
 
 export const assetsServices = {
-    // Get a reference to the cities collection
-    // async getITAssetUnarchive() {
-    //     const col = collection(db, 'assets');
-    //     const q1 = query(col, where('category', '==', 'Laptop'))
-    //     const q2 = query(col, where('archived', '==', false))
-    //     const snapshot = await getDocs(q1, q2);
-    //     const list = snapshot.docs.map(doc => doc.data());
-    //     return list;
-    // },
-    // async getITAssetArchive() {
-    //     const col = collection(db, 'assets');
-    //     const q1 = query(col, where('category', '==', 'Laptop'))
-    //     const q2 = query(col, where('archived', '==', true))
-    //     const snapshot = await getDocs(q1, q2);
-    //     const list = snapshot.docs.map(doc => doc.data());
-    //     return list;
-    // },
-
-    // async getNonITAsset() {
-    //     const col = collection(db, 'assets');
-    //     const q = query(col, where('category', '==', 'Printer'))
-    //     const snapshot = await getDocs(q);
-    //     const list = snapshot.docs.map(doc => doc.data());
-    //     return list;
-    // },
+    // Get a list of assets from database
+    async getAll() {
+        const col = collection(db, 'assets');
+        const get = await getDocs(col);
+        const list = get.docs.map(doc => ({
+            id: doc.id,
+            data: doc.data()
+        }));
+        return list;
+    },
 
     // Get a list of assets from database
     async getAllITAsset() {

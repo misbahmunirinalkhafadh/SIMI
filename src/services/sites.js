@@ -1,4 +1,4 @@
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import { db } from "../utils/firebase";
 
 export const sitesServices = {
@@ -13,12 +13,4 @@ export const sitesServices = {
         return list;
     },
 
-    // Get by Id of roles from database
-    async getByName(name) {
-        const col = collection(db, 'sites');
-        const q = query(col, where('name', '==', name))
-        const get = await getDocs(q);
-        const data = get.data();
-        return data;
-    },
 }

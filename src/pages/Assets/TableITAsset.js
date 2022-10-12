@@ -22,7 +22,8 @@ import { Link, useHistory } from "react-router-dom";
 import Swal from "sweetalert2";
 
 import { assetsServices } from "../../services/assets";
-import ModalFormRequest from "../RequestService/ModalFormRequest";
+import ModalFormDeploy from "../Deployments/ModalFormDeploy";
+import useDataSite from "../../hooks/useDataSite";
 // make a copy of the data, for the second table
 
 function TableITAsset({ filter, priviledges }) {
@@ -33,12 +34,12 @@ function TableITAsset({ filter, priviledges }) {
 
   // setup data for every table
   const [dataTable, setDataTable] = useState([]);
-  // const [archived, setArchive] = useState([]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [assetId, setAssetId] = useState(null);
   const [assetData, setAssetData] = useState([]);
   const history = useHistory();
+  const { dataSite } = useDataSite()
 
   // pagination setup
   const resultsPerPage = 10;
@@ -48,10 +49,10 @@ function TableITAsset({ filter, priviledges }) {
     setPageTable(p);
   }
 
-  function openModal(value) {
+  function openModal({ id, data }) {
     setIsModalOpen(true);
-    setAssetId(value.id);
-    setAssetData(value.data);
+    setAssetId(id);
+    setAssetData(data);
   }
 
   function closeModal() {
@@ -68,7 +69,7 @@ function TableITAsset({ filter, priviledges }) {
         confirmButtonText: "Yes, archive it!",
       }).then((result) => {
         if (result.isConfirmed) {
-          assetsServices.update(id, { isArchive: true });
+          assetsServices.update(id, { isArchived: true });
           Swal.fire(
             "Archived!",
             "Your file has been archived.",
@@ -112,17 +113,40 @@ function TableITAsset({ filter, priviledges }) {
 
     try {
       assetsServices.getAllITAsset().then((data) => {
-        const resultFilter  = data?.filter((e) =>
-          e.data.isArchive === archived
-          // && e.data.category === filter.category
-          // && e.data.status === filter.status
-        );
-        setResponse(resultFilter);
+        let resultFilter = [];
+        resultFilter.push(data?.filter((e) => {
+          let search =
+            filter.search !== ""
+              ? e.data.serialNumber
+                .toLowerCase()
+                .search(filter.search.toLowerCase()) !== -1
+              : true;
+
+          let archive = e.data.isArchived === archived
+
+          let category =
+            filter.category !== "all"
+              ? e.data.category
+                .toLowerCase()
+                .search(filter.category.toLowerCase()) !== -1
+              : true;
+
+          let status =
+            filter.status !== "all"
+              ? e.data.status
+                .toLowerCase()
+                .search(filter.status.toLowerCase()) !== -1
+              : true;
+
+          return search && archive && category && status
+        }));
+        setResponse(resultFilter[0]);
       });
     } catch (error) {
       console.log(error);
     }
   }, [filter]);
+
 
   // on page change, load new sliced data
   // here you would make another server request for new data
@@ -133,6 +157,17 @@ function TableITAsset({ filter, priviledges }) {
       )
     );
   }, [response, pageTable]);
+
+  // function Site(site) {
+  //   // let data
+  //   // // console.log(dataSite?.filter((e) => e.data.site === site));
+  //   // console.log(data);
+  //   return site
+  // }
+
+  // console.log("Data: ", dataSite?.filter((e) => e.data.name === "uAhAJgCeR1nu6WfMGMJs")[0].data)
+
+  // console.log(dataSite?.filter(e => e.data.name === 'uAhAJgCeR1nu6WfMGMJs')[0].data);
 
   return (
     <>
@@ -150,44 +185,36 @@ function TableITAsset({ filter, priviledges }) {
             </tr>
           </TableHeader>
           <TableBody>
-            {dataTable.map((asset) => (
+            {dataTable.map(({ id, data }) => (
               <TableRow
                 className="dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-                key={asset.id}
+                key={id}
               >
-                <TableCell>{asset.data.site}</TableCell>
-                <TableCell>{asset.data.salesOrder}</TableCell>
-                <TableCell>{asset.data.category}</TableCell>
+                <TableCell>{dataSite?.filter((e) => e.id === data.site)[0]?.data.name}</TableCell>
+                <TableCell>{data.salesOrder}</TableCell>
+                <TableCell>{data.category}</TableCell>
                 <TableCell>
                   <Link
                     className="text-blue-500"
-                    to={`/app/assets/detail/${asset.id}`}
+                    to={`/app/assets/detail/${id}`}
                   >
-                    {asset.data.brand} {asset.data.model}
+                    {data.brand} {data.model}
                   </Link>
                 </TableCell>
-                <TableCell>{asset.data.serialNumber}</TableCell>
+                <TableCell>{data.serialNumber}</TableCell>
                 <TableCell className="text-center">
                   {(() => {
-                    switch (asset.data.status) {
+                    switch (data.status) {
                       case "In Use":
-                        return (
-                          <Badge type="warning">{asset.data.status}</Badge>
-                        );
+                        return <Badge type="warning">{data.status}</Badge>
                       case "Broken":
-                        return <Badge type="danger">{asset.data.status}</Badge>;
+                        return <Badge type="danger">{data.status}</Badge>
                       case "Ready":
-                        return (
-                          <Badge type="success">{asset.data.status}</Badge>
-                        );
+                        return <Badge type="success">{data.status}</Badge>
                       case "On Service":
-                        return (
-                          <Badge type="neutral">{asset.data.status}</Badge>
-                        );
+                        return <Badge type="neutral">{data.status}</Badge>
                       default:
-                        return (
-                          <Badge type="primary">{asset.data.status}</Badge>
-                        );
+                        return <Badge type="primary">{data.status}</Badge>
                     }
                   })()}
                 </TableCell>
@@ -199,24 +226,22 @@ function TableITAsset({ filter, priviledges }) {
                       aria-label="Edit"
                       disabled={!priviledges[0]?.edit}
                       onClick={() =>
-                        history.push(`/app/assets/form/itasset/${asset.id}`)
+                        history.push(`/app/assets/form/itasset/${id}`)
                       }
                     >
-                      {/* <Link to={`/app/assets/form/itasset/${asset.id}`}> */}
                       <EditIcon
                         className="w-5 h-5"
                         aria-hidden="true"
                         color="#7e3af2"
                       />
-                      {/* </Link> */}
                     </Button>
                     <div hidden={filter.archive === "Archived" ? true : false}>
                       <Button
-                        disabled={asset.data.status === "Ready" ? false : true}
                         layout="link"
                         size="icon"
                         aria-label="Assign"
-                        onClick={() => openModal(asset)}
+                        disabled={data.status === "Ready" ? (!priviledges[1]?.add) : true}
+                        onClick={() => openModal({ id, data })}
                       >
                         <FormsIcon
                           className="w-5 h-5"
@@ -230,8 +255,8 @@ function TableITAsset({ filter, priviledges }) {
                         layout="link"
                         size="icon"
                         aria-label="Delete"
-                        onClick={() => handleDelete(asset.id)}
                         disabled={!priviledges[0]?.delete}
+                        onClick={() => handleDelete(id)}
                       >
                         <TrashIcon
                           className="w-5 h-5"
@@ -244,7 +269,8 @@ function TableITAsset({ filter, priviledges }) {
                         layout="link"
                         size="icon"
                         aria-label="Archive"
-                        onClick={() => handleArchive(asset.id)}
+                        disabled={!priviledges[0]?.edit}
+                        onClick={() => handleArchive(id)}
                       >
                         <ArchiveIcon
                           className="w-5 h-5"
@@ -270,7 +296,7 @@ function TableITAsset({ filter, priviledges }) {
           )}
         </TableFooter>
       </TableContainer>
-      <ModalFormRequest
+      <ModalFormDeploy
         isModalOpen={isModalOpen}
         closeModal={closeModal}
         id={assetId}

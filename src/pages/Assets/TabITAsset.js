@@ -10,7 +10,7 @@ function TabITAsset({ priviledges }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [category, setCategory] = useState([]);
   const [status, setStatus] = useState([]);
-  const [filter, setFilter] = useState({ search: '', archive: 'Unarchived', category: '', status: '' });
+  const [filter, setFilter] = useState({ search: '', archive: 'Unarchived', category: 'all', status: 'all' });
 
   function openModal() {
     setIsModalOpen(true);
@@ -100,7 +100,7 @@ function TabITAsset({ priviledges }) {
           {/* Type  */}
           <div className="ml-3">
             <Select name="category" onChange={handleChange} >
-              <option value="">All Category</option>
+              <option value="all">All Category</option>
               {category.map((data, i) => (
                 <option value={data} key={i}>
                   {data}
@@ -111,7 +111,7 @@ function TabITAsset({ priviledges }) {
           {/* Status  */}
           <div className="ml-3">
             <Select name="status" onChange={handleChange} >
-              <option value="">All Status</option>
+              <option value="all">All Status</option>
               {status.map((data, i) => (
                 <option value={data} key={i}>
                   {data}

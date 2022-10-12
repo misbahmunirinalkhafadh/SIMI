@@ -57,7 +57,7 @@ function FormITAsset() {
                             storageCapacity: value.information.storageCapacity.toUpperCase().replace(/\s+/g, ''),
                             storageType: value.information.storageType,
                         },
-                        isArchive: value.isArchive,
+                        isArchived: value.isArchived,
                         status: value.status,
                         statusDetail: value.statusDetail,
                         description: value.description,
@@ -129,7 +129,7 @@ function FormITAsset() {
                                 <Select className="mt-1" required {...register("site")} onChange={handleChange}>
                                     <option value="" >-- Choose one --</option>
                                     {site.map((site, i) => (
-                                        <option key={i} value={site.data.name}>{site.data.name}</option>
+                                        <option key={i} value={site.id}>{site.data.name}</option>
                                     ))}
                                 </Select>
                             </Label>
@@ -199,10 +199,10 @@ function FormITAsset() {
                                 </Label>
                             </div>
                             <Label className="mt-3">
-                                <span>Archived<small className='text-red-600'>*</small></span>
-                                <Select className="mt-1" required {...register("isArchive")} onChange={handleChange}>
-                                    <option value={false}>False</option>
-                                    <option value={true} >True</option>
+                                <span>Visibility<small className='text-red-600'>*</small></span>
+                                <Select className="mt-1" required {...register("isArchived")} onChange={handleChange}>
+                                    <option value={false}>Unarchived</option>
+                                    <option value={true} >Archived</option>
                                 </Select>
                             </Label>
                         </CardBody>

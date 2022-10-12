@@ -12,17 +12,11 @@ import { auth } from '../../utils/firebase'
 function ModalFormITAsset({ closeModal, isModalOpen }) {
     const { register, handleSubmit } = useForm({})
     const [site, setSite] = useState([])
-    const [siteLabel, setSiteLabel] = useState('')
     const [user, loading] = useAuthState(auth);
 
-    const handleChange = (e) => {
-        let index = e.nativeEvent.target.selectedIndex;
-        let label = e.nativeEvent.target[index].text;
-        setSiteLabel(label)
-    }
     const onSubmit = (value) => {
         const dataAsset = {
-            site: siteLabel,
+            site: value.site,
             salesOrder: value.salesOrder,
             brand: value.brand,
             model: value.model,
@@ -35,7 +29,7 @@ function ModalFormITAsset({ closeModal, isModalOpen }) {
                 storageCapacity: value.storageCapacity.toUpperCase().replace(/\s+/g, ''),
                 storageType: value.storageType
             },
-            isArchive: false,
+            isArchived: false,
             status: 'Ready',
             statusDetail: '',
             description: value.description,
@@ -88,10 +82,10 @@ function ModalFormITAsset({ closeModal, isModalOpen }) {
                     <ModalBody>
                         <Label>
                             <span>Site<small className='text-red-600'>*</small></span>
-                            <Select className="mt-1" required {...register("site")} onChange={handleChange}>
+                            <Select className="mt-1" required {...register("site")}>
                                 <option value="" >-- Choose one --</option>
                                 {site.map((site, i) => (
-                                    <option key={i} value={site.data._id}>{site.data.name}</option>
+                                    <option key={i} value={site.id}>{site.data.name}</option>
                                 ))}
                             </Select>
                         </Label>

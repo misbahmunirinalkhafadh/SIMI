@@ -8,19 +8,7 @@ const useDataUser = () => {
   const [user, loading] = useAuthState(auth);
   const [dataUser, setDataUser] = useState(null);
   const [role, setRole] = useState(null);
-
-  // useEffect(() => {
-  //     const id = user?.uid;
-  //     if (id) {
-  //       try {
-  //         usersServices.getById(id).then((data) => {
-  //           setDataUser(data);
-  //         });
-  //       } catch (error) {
-  //         console.log(error);
-  //       }
-  //     }
-  //   }, [user]);
+  const [allUser, setAllUser] = useState(null);
 
   useEffect(() => {
     if (user) {
@@ -28,27 +16,29 @@ const useDataUser = () => {
 
       if (uid) {
         usersServices.getById(uid).then((res) => {
-            setDataUser(res);
-          })
+          setDataUser(res);
+        })
           .catch((err) => console.log(err));
       }
     }
   }, [user]);
-
-  // useEffect need to be added
 
   useEffect(() => {
     let id = dataUser?.role.id
     if (dataUser) {
       rolesServices.getById(id).then((res) => {
         setRole(res);
-        // console.log(res);
-        // console.log(dataUser?.role);
       });
     }
   }, [dataUser]);
 
-  return { user, role, dataUser, loading };
+  useEffect(() => {
+    usersServices.getAll()
+      .then((res) => setAllUser(res))
+      .catch((err) => console.log(err));
+  }, []);
+
+  return { user, role, dataUser, allUser, loading };
 };
 
 export default useDataUser;

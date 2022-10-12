@@ -2,11 +2,12 @@
 import React, { useEffect, useState } from "react";
 import { Link, NavLink, Route, useHistory } from "react-router-dom";
 import { Avatar, Button, Badge } from "@windmill/react-ui";
+
 import * as Icons from "../../../assets/icons";
 import SidebarSubmenu from "./SidebarSubmenu";
 import routes from "../../../routes/sidebar";
-import ModalFormRequest from "../../../pages/RequestService/ModalFormRequest";
 import useDataUser from "../../../hooks/useDataUser";
+import ModalFormDeploy from "../../../pages/Deployments/ModalFormDeploy";
 
 function Icon({ icon, ...props }) {
   const Icon = Icons[icon];
@@ -17,8 +18,6 @@ function SidebarContent() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const history = useHistory();
   const { user, role, dataUser, loading } = useDataUser();
-  const [disabledBtnReq, setDisabledBtnReq] = useState(false)
-  const [hiddenBtnReq, setHiddenBtnReq] = useState(false)
 
   function openModal() {
     setIsModalOpen(true);
@@ -39,16 +38,16 @@ function SidebarContent() {
 
   let btnRequest = null
   const priviledges = role?.priviledges?.filter(
-    (e) => e.permission === "Request Service"
+    (e) => e.permission === "Deployments"
   );
 
   if (priviledges) {
     btnRequest = (
       <div className="px-6 my-6" hidden={dataUser?.role.roleName === 'End User' ? true : false}>
         <Button iconLeft={Icons.AddIcon} onClick={openModal} disabled={!priviledges[0]?.add}>
-          <span>Create New Request</span>
+          <span>New Deployment</span>
         </Button>
-        <ModalFormRequest isModalOpen={isModalOpen} closeModal={closeModal} />
+        <ModalFormDeploy isModalOpen={isModalOpen} closeModal={closeModal} />
       </div>
     );
   }

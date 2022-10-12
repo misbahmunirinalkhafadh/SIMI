@@ -18,10 +18,11 @@ import { Link } from 'react-router-dom'
 import { assetsServices } from '../../services/assets'
 import Swal from 'sweetalert2'
 import ModalFormNonITAsset from './ModalFormNonITAsset'
-import ModalFormRequest from '../RequestService/ModalFormRequest'
+import ModalFormDeploy from '../Deployments/ModalFormDeploy'
+import useDataSite from '../../hooks/useDataSite'
 // make a copy of the data, for the second table
 
-function TableNonITAsset({ archived }) {
+function TableNonITAsset({ filter, priviledges }) {
     const [response, setResponse] = useState([])
 
     // setup pages control for every table
@@ -33,6 +34,7 @@ function TableNonITAsset({ archived }) {
     const [isModalRequestOpen, setIsModalRequestOpen] = useState(false)
     const [assetId, setAssetId] = useState(null)
     const [assetData, setAssetData] = useState([])
+    const { dataSite } = useDataSite()
 
     // pagination setup
     const resultsPerPage = 10
@@ -42,20 +44,20 @@ function TableNonITAsset({ archived }) {
         setPageTable(p)
     }
 
-    function openModal(value) {
+    function openModal({ id, data }) {
         setIsModalOpen(true)
-        setAssetId(value.id)
-        setAssetData(value.data)
+        setAssetId(id)
+        setAssetData(data)
     }
 
     function closeModal() {
         setIsModalOpen(false)
     }
 
-    function openModalRequest(value) {
+    function openModalRequest({ id, data }) {
         setIsModalRequestOpen(true)
-        setAssetId(value.id)
-        setAssetData(value.data)
+        setAssetId(id)
+        setAssetData(data)
     }
 
     function closeModalRequest() {
@@ -72,7 +74,7 @@ function TableNonITAsset({ archived }) {
                 confirmButtonText: 'Yes, archive it!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    assetsServices.update(id, { isArchive: true })
+                    assetsServices.update(id, { isArchived: true })
                     Swal.fire(
                         'Archived!',
                         'Your file has been archived.',
@@ -111,14 +113,23 @@ function TableNonITAsset({ archived }) {
     }
 
     useEffect(() => {
+        let archived = false
+        if (filter.archive === "Archived") {
+            archived = true
+        }
         try {
             assetsServices.getAllNonITAsset().then(data => {
-                setResponse(data)
+                const resultFilter = data?.filter((e) =>
+                    e.data.isArchived === archived
+                    // && e.data.category === filter.category
+                    // && e.data.status === filter.status
+                );
+                setResponse(resultFilter);
             })
         } catch (error) {
             console.log(error)
         }
-    }, [])
+    }, [filter])
 
     // on page change, load new sliced data
     // here you would make another server request for new data
@@ -142,55 +153,45 @@ function TableNonITAsset({ archived }) {
                         </tr>
                     </TableHeader>
                     <TableBody>
-                        {dataTable.map((asset) => (
-                            <TableRow className="dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600" key={asset.id}>
-                                <TableCell>
-                                    {asset.data.site}
-                                </TableCell>
-                                <TableCell>
-                                    {asset.data.salesOrder}
-                                </TableCell>
-                                <TableCell>
-                                    {asset.data.category}
-                                </TableCell>
-                                <TableCell>
-                                    <Link className="text-blue-500" to={`/app/assets/detail/${asset.id}`}>{asset.data.brand} {asset.data.model}</Link>
-                                </TableCell>
-                                <TableCell>
-                                    {asset.data.serialNumber}
-                                </TableCell>
+                        {dataTable.map(({ id, data }) => (
+                            <TableRow className="dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600" key={id}>
+                                <TableCell>{dataSite?.filter((e) => e.id === data.site)[0]?.data.name}</TableCell>
+                                <TableCell>{data.salesOrder}</TableCell>
+                                <TableCell>{data.category}</TableCell>
+                                <TableCell><Link className="text-blue-500" to={`/app/assets/detail/${id}`}>{data.brand} {data.model}</Link></TableCell>
+                                <TableCell>{data.serialNumber}</TableCell>
                                 <TableCell className="text-center" >
                                     {(() => {
-                                        switch (asset.data.status) {
+                                        switch (data.status) {
                                             case 'In Use':
-                                                return <Badge type="warning" >{asset.data.status}</Badge>;
+                                                return <Badge type="warning" >{data.status}</Badge>
                                             case 'Broken':
-                                                return <Badge type="danger"  >{asset.data.status}</Badge>;
+                                                return <Badge type="danger"  >{data.status}</Badge>
                                             case 'Ready':
-                                                return <Badge type="success" >{asset.data.status}</Badge>;
+                                                return <Badge type="success" >{data.status}</Badge>
                                             case 'On Service':
-                                                return <Badge type="neutral" >{asset.data.status}</Badge>;
+                                                return <Badge type="neutral" >{data.status}</Badge>
                                             default:
-                                                return <Badge type="primary" >{asset.data.status}</Badge>;
+                                                return <Badge type="primary" >{data.status}</Badge>
                                         }
                                     })()}
                                 </TableCell>
                                 <TableCell className="text-center">
                                     <div className="flex items-center space-x-2">
-                                        <Button layout="link" size="icon" aria-label="Edit" onClick={() => openModal(asset)}>
+                                        <Button layout="link" size="icon" aria-label="Edit" disabled={!priviledges[0]?.edit} onClick={() => openModal({ id, data })} >
                                             <EditIcon className="w-5 h-5" aria-hidden="true" color="#7e3af2" />
                                         </Button>
-                                        <div hidden={archived === "Archived" ? true : false}>
-                                            <Button disabled={asset.data.status === 'Ready' ? false : true} layout="link" size="icon" aria-label="Assign" onClick={() => openModalRequest(asset)}>
+                                        <div hidden={filter.archive === "Archived" ? true : false}>
+                                            <Button disabled={data.status === 'Ready' ? (!priviledges[1]?.add) : true} layout="link" size="icon" aria-label="Assign" onClick={() => openModalRequest({ id, data })}>
                                                 <FormsIcon className="w-5 h-5" aria-hidden="true" color="#7e3af2" />
                                             </Button>
                                         </div>
-                                        {archived === "Archived" ?
-                                            (<Button layout="link" size="icon" aria-label="Delete" onClick={() => handleDelete(asset.id)}>
+                                        {filter.archive === "Archived" ?
+                                            (<Button layout="link" size="icon" aria-label="Delete" disabled={!priviledges[0]?.delete} onClick={() => handleDelete(id)} >
                                                 <TrashIcon className="w-5 h-5" aria-hidden="true" color='#c81e1e' />
                                             </Button>)
                                             :
-                                            (<Button layout="link" size="icon" aria-label="Archive" onClick={() => handleArchive(asset.id)}>
+                                            (<Button layout="link" size="icon" aria-label="Archive" disabled={!priviledges[0]?.edit} onClick={() => handleArchive(id)}>
                                                 <ArchiveIcon className="w-5 h-5" aria-hidden="true" color="#7e3af2" />
                                             </Button>)
                                         }
@@ -212,7 +213,7 @@ function TableNonITAsset({ archived }) {
                 </TableFooter>
             </TableContainer>
             <ModalFormNonITAsset isModalOpen={isModalOpen} closeModal={closeModal} id={assetId} data={assetData} />
-            <ModalFormRequest isModalOpen={isModalRequestOpen} closeModal={closeModalRequest} id={assetId} data={assetData} />
+            <ModalFormDeploy isModalOpen={isModalRequestOpen} closeModal={closeModalRequest} id={assetId} data={assetData} />
         </>
     )
 }

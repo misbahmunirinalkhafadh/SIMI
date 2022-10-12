@@ -6,11 +6,11 @@ import TableNonITAsset from './TableNonITAsset';
 import ModalFormNonITAsset from './ModalFormNonITAsset';
 import { assetsServices } from '../../services/assets';
 
-function TabNonITAsset() {
+function TabNonITAsset({ priviledges }) {
     const [isModalOpen, setIsModalOpen] = useState(false)
-    const [archive, setArchived] = useState('')
     const [category, setCategory] = useState([])
     const [status, setStatus] = useState([])
+    const [filter, setFilter] = useState({ search: '', archive: 'Unarchived', category: '', status: '' });
 
     function openModal() {
         setIsModalOpen(true)
@@ -20,8 +20,11 @@ function TabNonITAsset() {
         setIsModalOpen(false)
     }
 
-    function onSelect(event) {
-        setArchived(event.target.value)
+    function handleChange(e) {
+        setFilter({
+            ...filter,
+            [e.target.name]: e.target.value
+        })
     }
 
     useEffect(() => {
@@ -47,6 +50,25 @@ function TabNonITAsset() {
         }
     }, [])
 
+    let addButton = null;
+    let tableNonITAsset = null; // bisa diganti loader
+
+    if (priviledges) {
+        addButton = (
+            <Button
+                iconLeft={AddIcon}
+                onClick={openModal}
+                disabled={!priviledges[0]?.add}
+            >
+                <span>Add New</span>
+            </Button>
+        );
+
+        tableNonITAsset = (
+            <TableNonITAsset filter={filter} priviledges={priviledges} />
+        );
+    }
+
     return (
         <>
             {/* Action  */}
@@ -55,44 +77,55 @@ function TabNonITAsset() {
                     {/* Search */}
                     <div className="relative w-64 focus-within:text-purple-500">
                         <div className="absolute inset-y-0 flex items-center pl-2">
-                            <SearchIcon className="w-4 h-4 text-purple-600" aria-hidden="true" />
+                            <SearchIcon
+                                className="w-4 h-4 text-purple-600"
+                                aria-hidden="true"
+                            />
                         </div>
                         <Input
                             className="pl-8 text-gray-700"
                             placeholder="Search for data"
                             aria-label="Search"
+                            name="search"
+                            onChange={handleChange}
                         />
                     </div>
                     {/* Filter  */}
                     <div className="ml-3">
-                        <Select onChange={onSelect} >
-                            <option value="Unarchived" >Unarchived</option>
-                            <option value="Archived" >Archived</option>
+                        <Select name="archive" onChange={handleChange} >
+                            <option value="Unarchived">Unarchived</option>
+                            <option value="Archived">Archived</option>
                         </Select>
                     </div>
                     {/* Type  */}
-                    <div className="ml-3" >
-                        <Select>
-                            <option value="" >All Category</option>
-                            {category.map((data, i) => <option value={data} key={i}>{data}</option>)}
+                    <div className="ml-3">
+                        <Select name="category" onChange={handleChange} >
+                            <option value="">All Category</option>
+                            {category.map((data, i) => (
+                                <option value={data} key={i}>
+                                    {data}
+                                </option>
+                            ))}
                         </Select>
                     </div>
                     {/* Status  */}
-                    <div className="ml-3" >
-                        <Select>
-                            <option value="" >All Status</option>
-                            {status.map((data, i) => <option value={data} key={i}>{data}</option>)}
+                    <div className="ml-3">
+                        <Select name="status" onChange={handleChange} >
+                            <option value="">All Status</option>
+                            {status.map((data, i) => (
+                                <option value={data} key={i}>
+                                    {data}
+                                </option>
+                            ))}
                         </Select>
                     </div>
                 </div>
                 {/* Button Add */}
-                <Button iconLeft={AddIcon} onClick={openModal}>
-                    <span>Add New</span>
-                </Button>
+                {addButton}
             </div>
 
             {/* Table Data */}
-            <TableNonITAsset archived={archive} />
+            {tableNonITAsset}
 
             <ModalFormNonITAsset isModalOpen={isModalOpen} closeModal={closeModal} />
         </>
