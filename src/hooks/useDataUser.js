@@ -6,9 +6,9 @@ import { auth } from "../utils/firebase";
 
 const useDataUser = () => {
   const [user, loading] = useAuthState(auth);
-  const [dataUser, setDataUser] = useState(null);
-  const [role, setRole] = useState(null);
-  const [allUser, setAllUser] = useState(null);
+  const [dataUser, setDataUser] = useState({});
+  const [role, setRole] = useState({});
+  const [allUser, setAllUser] = useState([]);
 
   useEffect(() => {
     if (user) {
@@ -16,21 +16,15 @@ const useDataUser = () => {
 
       if (uid) {
         usersServices.getById(uid).then((res) => {
+          rolesServices.getById(res.role.id).then((res) => {
+            setRole(res);
+          });
           setDataUser(res);
         })
           .catch((err) => console.log(err));
       }
     }
   }, [user]);
-
-  useEffect(() => {
-    let id = dataUser?.role.id
-    if (dataUser) {
-      rolesServices.getById(id).then((res) => {
-        setRole(res);
-      });
-    }
-  }, [dataUser]);
 
   useEffect(() => {
     usersServices.getAll()

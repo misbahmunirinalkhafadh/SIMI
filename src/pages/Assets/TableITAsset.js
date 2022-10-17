@@ -166,6 +166,7 @@ function TableITAsset({ filter, priviledges }) {
 
           return search && archive && category && status
         }));
+
         setResponse(resultFilter[0]);
       });
     } catch (error) {
@@ -221,7 +222,7 @@ function TableITAsset({ filter, priviledges }) {
                   {(() => {
                     switch (data.status) {
                       case "In Use":
-                        return <Badge type="warning">{data.status}</Badge>
+                        return <Badge type="primary">{data.status}</Badge>
                       case "Broken":
                         return <Badge type="danger">{data.status}</Badge>
                       case "Ready":
@@ -229,7 +230,7 @@ function TableITAsset({ filter, priviledges }) {
                       case "On Service":
                         return <Badge type="neutral">{data.status}</Badge>
                       default:
-                        return <Badge type="primary">{data.status}</Badge>
+                        return <Badge type="warning">{data.status}</Badge>
                     }
                   })()}
                 </TableCell>
@@ -248,21 +249,7 @@ function TableITAsset({ filter, priviledges }) {
                         color="#7e3af2"
                       />
                     </Button>
-                    <div hidden={filter.archive === "Archived" ? true : false}>
-                      <Button
-                        layout="link"
-                        size="icon"
-                        aria-label="Assign"
-                        disabled={data.status === "Ready" ? (!priviledges[1]?.add) : true}
-                        onClick={() => openModal({ id, data })}
-                      >
-                        <FormsIcon
-                          className="w-5 h-5"
-                          aria-hidden="true"
-                          color="#7e3af2"
-                        />
-                      </Button>
-                    </div>
+
                     {filter.archive === "Archived" ? (
                       <div className="flex items-center space-x-2">
                         <Button
@@ -307,6 +294,22 @@ function TableITAsset({ filter, priviledges }) {
                         />
                       </Button>
                     )}
+
+                    <div hidden={filter.archive === "Archived" ? true : false}>
+                      <Button
+                        layout="link"
+                        size="icon"
+                        aria-label="Assign"
+                        disabled={data.status === "Ready" ? (!priviledges[1]?.add) : true}
+                        onClick={() => openModal({ id, data })}
+                      >
+                        <FormsIcon
+                          className="w-5 h-5"
+                          aria-hidden="true"
+                          color="#7e3af2"
+                        />
+                      </Button>
+                    </div>
                   </div>
                 </TableCell>
               </TableRow>
@@ -327,7 +330,7 @@ function TableITAsset({ filter, priviledges }) {
       <ModalFormDeploy
         isModalOpen={isModalOpen}
         closeModal={closeModal}
-        id={assetId}
+        assetId={assetId}
         data={assetData}
       />
     </>

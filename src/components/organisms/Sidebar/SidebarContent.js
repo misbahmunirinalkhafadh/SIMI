@@ -75,11 +75,12 @@ function SidebarContent() {
           (<Badge
             type="danger"
             className="px-2 py-0.5 ml-auto tracking-wide"
-          >  {pendingDeploy} </Badge>) : ""
+          >  {pendingDeploy !== 0 ? pendingDeploy : ''} </Badge>) : ""
         }
       </>
     )
   }
+  
   return (
     <div className="py-4 text-gray-500 dark:text-gray-400">
       <Link
@@ -132,7 +133,7 @@ function SidebarContent() {
                       icon={route.icon}
                     />
                     <span className="ml-4">{route.name}</span>
-                      <Badges route={route} pendingDeploy={pendingDeploy} />
+                    <Badges route={route} pendingDeploy={pendingDeploy} />
                   </NavLink>
                 </li>
               )

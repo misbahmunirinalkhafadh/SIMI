@@ -188,16 +188,16 @@ function TableNonITAsset({ filter, priviledges }) {
                                 <TableCell className="text-center" >
                                     {(() => {
                                         switch (data.status) {
-                                            case 'In Use':
-                                                return <Badge type="warning" >{data.status}</Badge>
-                                            case 'Broken':
-                                                return <Badge type="danger"  >{data.status}</Badge>
-                                            case 'Ready':
-                                                return <Badge type="success" >{data.status}</Badge>
-                                            case 'On Service':
-                                                return <Badge type="neutral" >{data.status}</Badge>
+                                            case "In Use":
+                                                return <Badge type="primary">{data.status}</Badge>
+                                            case "Broken":
+                                                return <Badge type="danger">{data.status}</Badge>
+                                            case "Ready":
+                                                return <Badge type="success">{data.status}</Badge>
+                                            case "On Service":
+                                                return <Badge type="neutral">{data.status}</Badge>
                                             default:
-                                                return <Badge type="primary" >{data.status}</Badge>
+                                                return <Badge type="warning">{data.status}</Badge>
                                         }
                                     })()}
                                 </TableCell>
@@ -206,11 +206,7 @@ function TableNonITAsset({ filter, priviledges }) {
                                         <Button layout="link" size="icon" aria-label="Edit" disabled={!priviledges[0]?.edit} onClick={() => openModal({ id, data })} >
                                             <EditIcon className="w-5 h-5" aria-hidden="true" color="#7e3af2" />
                                         </Button>
-                                        <div hidden={filter.archive === "Archived" ? true : false}>
-                                            <Button disabled={data.status === 'Ready' ? (!priviledges[1]?.add) : true} layout="link" size="icon" aria-label="Assign" onClick={() => openModalRequest({ id, data })}>
-                                                <FormsIcon className="w-5 h-5" aria-hidden="true" color="#7e3af2" />
-                                            </Button>
-                                        </div>
+                                      
                                         {filter.archive === "Archived" ?
                                             (<div className="flex items-center space-x-2">
                                                 <Button
@@ -245,6 +241,12 @@ function TableNonITAsset({ filter, priviledges }) {
                                                 <ArchiveIcon className="w-5 h-5" aria-hidden="true" color="#7e3af2" />
                                             </Button>)
                                         }
+
+                                        <div hidden={filter.archive === "Archived" ? true : false}>
+                                            <Button disabled={data.status === 'Ready' ? (!priviledges[1]?.add) : true} layout="link" size="icon" aria-label="Assign" onClick={() => openModalRequest({ id, data })}>
+                                                <FormsIcon className="w-5 h-5" aria-hidden="true" color="#7e3af2" />
+                                            </Button>
+                                        </div>
                                     </div>
                                 </TableCell>
                             </TableRow>

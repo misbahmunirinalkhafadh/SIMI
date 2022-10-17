@@ -114,7 +114,7 @@ export default function TablePending(filter) {
                         {dataTable.map(({ id, data }) => (
                             <TableRow className="dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600" key={id}>
                                 <TableCell>
-                                    {allSite?.filter((e) => e.id === data?.assetSite)[0]?.data.name}
+                                    {allSite?.filter((e) => e.id === data?.site)[0]?.data.name}
                                 </TableCell>
                                 <TableCell>{data?.category}</TableCell>
                                 <TableCell>{data?.brand} {data?.model}</TableCell>
@@ -122,7 +122,7 @@ export default function TablePending(filter) {
                                 <TableCell>{data?.user}</TableCell>
                                 <TableCell>{data?.email}</TableCell>
                                 <TableCell>{data?.job}</TableCell>
-                                <TableCell className="text-center" ><Badge type="primary">{data?.statusDeploy}</Badge></TableCell>
+                                <TableCell className="text-center" ><Badge type="warning">{data?.statusDeploy}</Badge></TableCell>
                                 <TableCell>
                                     <div className="flex items-center space-x-2">
                                         <Button layout="link" size="icon" aria-label="Edit" disabled={!priviledges?.edit} onClick={() => openModal({ id, data })}>
@@ -148,7 +148,7 @@ export default function TablePending(filter) {
                     )}
                 </TableFooter>
             </TableContainer>
-            <ModalFormDeploy isModalOpen={isModalOpen} closeModal={closeModal} id={dataDeploy.id} data={dataDeploy.data} />
+            <ModalFormDeploy isModalOpen={isModalOpen} closeModal={closeModal} deployId={dataDeploy.id} data={dataDeploy.data} />
         </>
     )
 }

@@ -11,7 +11,7 @@ import useDataAsset from '../../hooks/useDataAsset'
 import { deploymentsServices } from '../../services/deployments'
 import { assetsServices } from '../../services/assets'
 
-function ModalFormDeploy({ closeModal, isModalOpen, id, data }) {
+function ModalFormDeploy({ closeModal, isModalOpen, deployId, assetId, data }) {
     const { register, handleSubmit, control, reset } = useForm({ defaultValues: data })
     const [listAsset, setListAsset] = useState([])
     const [listUser, setListUser] = useState([])
@@ -32,24 +32,25 @@ function ModalFormDeploy({ closeModal, isModalOpen, id, data }) {
     }
 
     const onSubmit = (value) => {
+        const newAssetId = value?.dataAsset?.value === undefined ? assetId : value?.dataAsset?.value
         const dataRequest = {
-            assetSite: value.dataAsset.site,
-            category: value.dataAsset.category,
-            serialNumber: value.dataAsset.label,
-            brand: value.dataAsset.brand,
-            model: value.dataAsset.model,
-            email: userdata.label,
-            user: userdata.name,
-            job: userdata.job,
-            department: userdata.department,
+            site: value?.dataAsset?.site === undefined ? data?.site : value?.dataAsset?.site,
+            category: value?.dataAsset?.category === undefined ? data?.category : value?.dataAsset?.category,
+            serialNumber: value?.dataAsset?.label === undefined ? data?.serialNumber : value?.dataAsset?.label,
+            brand: value?.dataAsset?.brand === undefined ? data?.brand : value?.dataAsset?.brand,
+            model: value?.dataAsset?.model === undefined ? data?.model : value?.dataAsset?.model,
+            email: userdata?.label,
+            user: userdata?.name,
+            job: userdata?.job,
+            department: userdata?.department,
             isDeployed: false,
             statusDeploy: 'Assigned',
-            createdBy: dataUser?.displayName,
+            createdBy: dataUser?.email,
             createdAt: Timestamp.now(),
         }
 
         try {
-            if (id == null) {
+            if (deployId == null && assetId !== null) {
                 Swal.fire({
                     title: 'Do you want to save the New Request Service?',
                     showDenyButton: false,
@@ -58,10 +59,8 @@ function ModalFormDeploy({ closeModal, isModalOpen, id, data }) {
                 }).then((result) => {
                     /* Read more about isConfirmed, isDenied below */
                     if (result.isConfirmed) {
-                        let id = value.dataAsset.value
-                        console.log(dataRequest);
                         deploymentsServices.add(dataRequest)
-                        assetsServices.update(id, { status: 'Assigned' })
+                        assetsServices.update(newAssetId, { status: 'Assigned' })
                         Swal.fire('Saved!', '', 'success')
                             .then(() => window.location.reload())
                         closeModal()
@@ -75,14 +74,29 @@ function ModalFormDeploy({ closeModal, isModalOpen, id, data }) {
                     confirmButtonText: 'Save',
                     denyButtonText: `Don't save`,
                 }).then((result) => {
+                    let dataEdit = {
+                        site: value?.dataAsset?.site === undefined ? data?.site : value?.dataAsset?.site,
+                        category: value?.dataAsset?.category === undefined ? data?.category : value?.dataAsset?.category,
+                        serialNumber: value?.dataAsset?.label === undefined ? data?.serialNumber : value?.dataAsset?.label,
+                        brand: value?.dataAsset?.brand === undefined ? data?.brand : value?.dataAsset?.brand,
+                        model: value?.dataAsset?.model === undefined ? data?.model : value?.dataAsset?.model,
+                        email: userdata?.label === undefined ? data?.email : userdata?.label,
+                        user: userdata?.name === undefined ? data?.user : userdata?.name,
+                        job: userdata?.job === undefined ? data?.job : userdata?.job,
+                        department: userdata?.department === undefined ? data?.department : userdata?.department,
+                        modifiedBy: dataUser?.email,
+                        modifiedAt: Timestamp.now()
+                    }
+
                     /* Read more about isConfirmed, isDenied below */
                     if (result.isConfirmed) {
-                        // requestsServices.update(id, {
-                        //     roleName: value.roleName,
-                        //     description: value.description,
-                        // modifiedBy: '',
-                        //     modifiedAt: Timestamp.now()
-                        // })
+                        deploymentsServices.update(deployId, dataEdit)
+                        if (dataEdit?.serialNumber !== data?.serialNumber) {
+                            let currentAssetId = allAsset.filter(e => e.data?.serialNumber === data?.serialNumber)[0].id
+                            assetsServices.update(currentAssetId, { status: 'Ready' })
+                        }
+                        if (newAssetId) assetsServices.update(newAssetId, { status: 'Assigned' })
+
                         Swal.fire('Saved!', '', 'success')
                             .then(() => window.location.reload())
                         closeModal()
@@ -141,7 +155,7 @@ function ModalFormDeploy({ closeModal, isModalOpen, id, data }) {
                     <ModalBody>
                         <Label className="mt-3">
                             <span>Asset Site<small className='text-red-600'>*</small></span>
-                            <Select className="mt-1" name="site" required defaultValue={data?.assetSite} onChange={handleChange} >
+                            <Select className="mt-1" name="site" required defaultValue={data?.site} onChange={handleChange}  >
                                 <option value="" >-- Choose one --</option>
                                 {allSite.map((site, i) => (
                                     <option key={i} value={site.id}>{site.data.name}</option>

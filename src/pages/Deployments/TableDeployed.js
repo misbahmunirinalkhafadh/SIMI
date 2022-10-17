@@ -62,7 +62,7 @@ export default function TableDeployed() {
                         {dataTable.map(({ id, data }) => (
                             <TableRow className="dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600" key={id}>
                                 <TableCell>
-                                    {allSite?.filter((e) => e.id === data.assetSite)[0]?.data.name}
+                                    {allSite?.filter((e) => e.id === data.site)[0]?.data.name}
                                 </TableCell>
                                 <TableCell>{data.category}</TableCell>
                                 <TableCell>{data.brand} {data.model}</TableCell>
@@ -70,7 +70,7 @@ export default function TableDeployed() {
                                 <TableCell>{data.user}</TableCell>
                                 <TableCell>{data.email}</TableCell>
                                 <TableCell>{data.job}</TableCell>
-                                <TableCell className="text-center" ><Badge type="primary">{data.statusDeploy}</Badge></TableCell>
+                                <TableCell className="text-center" ><Badge type="success">{data.statusDeploy}</Badge></TableCell>
                             </TableRow>
                         ))}
                     </TableBody>

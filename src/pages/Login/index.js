@@ -27,6 +27,7 @@ function Login() {
       // maybe trigger a loading screen
       return;
     }
+
     if (user) usersServices.getById(user.uid)
       .then((res) =>
         rolesServices.getById(res.role.id)
