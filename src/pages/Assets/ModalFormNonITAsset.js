@@ -184,9 +184,10 @@ function ModalFormNonITAsset({ closeModal, isModalOpen, id, data }) {
                                     <Select className="mt-1" required={!id ? false : true} {...register("status")} onChange={handleChange} >
                                         <option value="" >-- Choose one --</option>
                                         <option value="Ready" >Ready</option>
+                                        <option value="Assigned" >Assigned</option>
                                         <option value="In Use" >In Use</option>
-                                        <option value="Broken" >Broken</option>
                                         <option value="On Service" >On Service</option>
+                                        <option value="Broken" >Broken</option>
                                     </Select>
                                 </Label>
                                 <Label className="mt-3">

@@ -4,9 +4,10 @@ import { AddIcon, SearchIcon } from '../../assets/icons';
 import { Input, Button, Select } from '@windmill/react-ui';
 import TableNonITAsset from './TableNonITAsset';
 import ModalFormNonITAsset from './ModalFormNonITAsset';
-import { assetsServices } from '../../services/assets';
+import useDataAsset from '../../hooks/useDataAsset';
 
 function TabNonITAsset({ priviledges }) {
+    const { allNonITAsset } = useDataAsset({})
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [category, setCategory] = useState([])
     const [status, setStatus] = useState([])
@@ -28,27 +29,22 @@ function TabNonITAsset({ priviledges }) {
     }
 
     useEffect(() => {
-        try {
-            assetsServices.getAllNonITAsset().then(data => {
-                const uniqueTags = [];
-                const uniqueStatus = [];
-                data.forEach(asd => {
-                    if (uniqueTags.indexOf(asd.data.category) === -1) {
-                        uniqueTags.push(asd.data.category)
-                    }
-                });
-                data.forEach(sts => {
-                    if (uniqueStatus.indexOf(sts.data.status) === -1) {
-                        uniqueStatus.push(sts.data.status)
-                    }
-                });
-                setCategory(uniqueTags)
-                setStatus(uniqueStatus)
-            })
-        } catch (error) {
-            console.log(error)
-        }
-    }, [])
+        const uniqueTags = [];
+        const uniqueStatus = [];
+        allNonITAsset.forEach(asd => {
+            if (uniqueTags.indexOf(asd.data.category) === -1) {
+                uniqueTags.push(asd.data.category)
+            }
+        });
+
+        allNonITAsset.forEach(sts => {
+            if (uniqueStatus.indexOf(sts.data.status) === -1) {
+                uniqueStatus.push(sts.data.status)
+            }
+        });
+        setCategory(uniqueTags)
+        setStatus(uniqueStatus)
+    }, [allNonITAsset])
 
     let addButton = null;
     let tableNonITAsset = null; // bisa diganti loader

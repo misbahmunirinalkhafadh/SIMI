@@ -4,9 +4,10 @@ import { AddIcon, SearchIcon } from "../../assets/icons";
 import { Input, Button, Select } from "@windmill/react-ui";
 import ModalFormITAsset from "./ModalFormITAsset";
 import TableITAsset from "./TableITAsset";
-import { assetsServices } from "../../services/assets";
+import useDataAsset from "../../hooks/useDataAsset";
 
 function TabITAsset({ priviledges }) {
+  const { allITAsset } = useDataAsset({})
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [category, setCategory] = useState([]);
   const [status, setStatus] = useState([]);
@@ -28,27 +29,22 @@ function TabITAsset({ priviledges }) {
   }
 
   useEffect(() => {
-    try {
-      assetsServices.getAllITAsset().then((data) => {
-        const uniqueTags = [];
-        const uniqueStatus = [];
-        data.forEach((asd) => {
-          if (uniqueTags.indexOf(asd.data.category) === -1) {
-            uniqueTags.push(asd.data.category);
-          }
-        });
-        data.forEach((sts) => {
-          if (uniqueStatus.indexOf(sts.data.status) === -1) {
-            uniqueStatus.push(sts.data.status);
-          }
-        });
-        setCategory(uniqueTags);
-        setStatus(uniqueStatus);
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  }, []);
+    const uniqueTags = [];
+    const uniqueStatus = [];
+    allITAsset.forEach((asd) => {
+      if (uniqueTags.indexOf(asd.data.category) === -1) {
+        uniqueTags.push(asd.data.category);
+      }
+    });
+    
+    allITAsset.forEach((sts) => {
+      if (uniqueStatus.indexOf(sts.data.status) === -1) {
+        uniqueStatus.push(sts.data.status);
+      }
+    });
+    setCategory(uniqueTags);
+    setStatus(uniqueStatus);
+  }, [allITAsset]);
 
   let addButton = null;
   let tableITAsset = null; // bisa diganti loader

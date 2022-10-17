@@ -55,7 +55,7 @@ export const Tabs = ({ color }) => {
                         <div className="flex-auto pt-5">
                             <div className="tab-content tab-space">
                                 <div className={openTab === 1 ? "block" : "hidden"} id="link1">
-                                    <TabPending/>
+                                    <TabPending />
                                 </div>
                                 <div className={openTab === 2 ? "block" : "hidden"} id="link2">
                                     <TabDeployed />

@@ -8,6 +8,7 @@ import SidebarSubmenu from "./SidebarSubmenu";
 import routes from "../../../routes/sidebar";
 import useDataUser from "../../../hooks/useDataUser";
 import ModalFormDeploy from "../../../pages/Deployments/ModalFormDeploy";
+import useDataDeployment from '../../../hooks/useDataDeployment'
 
 function Icon({ icon, ...props }) {
   const Icon = Icons[icon];
@@ -15,9 +16,12 @@ function Icon({ icon, ...props }) {
 }
 
 function SidebarContent() {
+  const { allDeployment } = useDataDeployment({})
   const [isModalOpen, setIsModalOpen] = useState(false);
   const history = useHistory();
   const { user, role, dataUser, loading } = useDataUser();
+
+  const pendingDeploy = allDeployment.filter(e => e.data.isDeployed === false).length
 
   function openModal() {
     setIsModalOpen(true);
@@ -52,6 +56,30 @@ function SidebarContent() {
     );
   }
 
+  function Badges({ route, pendingDeploy }) {
+    return (
+      <>
+        {route.name === "Assets" ?
+          (<Badge
+            type="success"
+            className="px-2 py-0.5 ml-auto tracking-wide"
+          >  New </Badge>) : ""
+        }
+        {route.name === "Request Service" ?
+          (<Badge
+            type="danger"
+            className="px-2 py-0.5 ml-auto tracking-wide"
+          >  10 </Badge>) : ""
+        }
+        {route.name === "Deployments" ?
+          (<Badge
+            type="danger"
+            className="px-2 py-0.5 ml-auto tracking-wide"
+          >  {pendingDeploy} </Badge>) : ""
+        }
+      </>
+    )
+  }
   return (
     <div className="py-4 text-gray-500 dark:text-gray-400">
       <Link
@@ -104,26 +132,7 @@ function SidebarContent() {
                       icon={route.icon}
                     />
                     <span className="ml-4">{route.name}</span>
-                    {route.name === "Assets" ? (
-                      <Badge
-                        type="success"
-                        className="px-2 py-0.5 ml-auto tracking-wide"
-                      >
-                        New
-                      </Badge>
-                    ) : (
-                      ""
-                    )}
-                    {route.name === "Request Service" ? (
-                      <Badge
-                        type="danger"
-                        className="px-2 py-0.5 ml-auto tracking-wide"
-                      >
-                        10
-                      </Badge>
-                    ) : (
-                      ""
-                    )}
+                      <Badges route={route} pendingDeploy={pendingDeploy} />
                   </NavLink>
                 </li>
               )

@@ -16,6 +16,7 @@ import {
   ArchiveIcon,
   EditIcon,
   FormsIcon,
+  RestoreIcon,
   TrashIcon,
 } from "../../assets/icons";
 import { Link, useHistory } from "react-router-dom";
@@ -39,7 +40,7 @@ function TableITAsset({ filter, priviledges }) {
   const [assetId, setAssetId] = useState(null);
   const [assetData, setAssetData] = useState([]);
   const history = useHistory();
-  const { dataSite } = useDataSite()
+  const { allSite } = useDataSite()
 
   // pagination setup
   const resultsPerPage = 10;
@@ -62,6 +63,7 @@ function TableITAsset({ filter, priviledges }) {
   const handleArchive = (id) => {
     try {
       Swal.fire({
+        title: "Archive",
         text: "Do you want to move in Archive?",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
@@ -73,6 +75,30 @@ function TableITAsset({ filter, priviledges }) {
           Swal.fire(
             "Archived!",
             "Your file has been archived.",
+            "success"
+          ).then(() => window.location.reload());
+        }
+      });
+    } catch (err) {
+      alert(err);
+    }
+  };
+
+  const handleRestore = (id) => {
+    try {
+      Swal.fire({
+        title: "Restore",
+        text: "Do you want to restore and move in Unarchive?",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, restore it!",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          assetsServices.update(id, { isArchived: false });
+          Swal.fire(
+            "Restored!",
+            "Your file has been restored.",
             "success"
           ).then(() => window.location.reload());
         }
@@ -158,17 +184,6 @@ function TableITAsset({ filter, priviledges }) {
     );
   }, [response, pageTable]);
 
-  // function Site(site) {
-  //   // let data
-  //   // // console.log(dataSite?.filter((e) => e.data.site === site));
-  //   // console.log(data);
-  //   return site
-  // }
-
-  // console.log("Data: ", dataSite?.filter((e) => e.data.name === "uAhAJgCeR1nu6WfMGMJs")[0].data)
-
-  // console.log(dataSite?.filter(e => e.data.name === 'uAhAJgCeR1nu6WfMGMJs')[0].data);
-
   return (
     <>
       <TableContainer className="mb-8">
@@ -190,7 +205,7 @@ function TableITAsset({ filter, priviledges }) {
                 className="dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
                 key={id}
               >
-                <TableCell>{dataSite?.filter((e) => e.id === data.site)[0]?.data.name}</TableCell>
+                <TableCell>{allSite?.filter((e) => e.id === data.site)[0]?.data.name}</TableCell>
                 <TableCell>{data.salesOrder}</TableCell>
                 <TableCell>{data.category}</TableCell>
                 <TableCell>
@@ -225,9 +240,7 @@ function TableITAsset({ filter, priviledges }) {
                       size="icon"
                       aria-label="Edit"
                       disabled={!priviledges[0]?.edit}
-                      onClick={() =>
-                        history.push(`/app/assets/form/itasset/${id}`)
-                      }
+                      onClick={() => history.push(`/app/assets/form/itasset/${id}`)}
                     >
                       <EditIcon
                         className="w-5 h-5"
@@ -251,19 +264,34 @@ function TableITAsset({ filter, priviledges }) {
                       </Button>
                     </div>
                     {filter.archive === "Archived" ? (
-                      <Button
-                        layout="link"
-                        size="icon"
-                        aria-label="Delete"
-                        disabled={!priviledges[0]?.delete}
-                        onClick={() => handleDelete(id)}
-                      >
-                        <TrashIcon
-                          className="w-5 h-5"
-                          aria-hidden="true"
-                          color="#c81e1e"
-                        />
-                      </Button>
+                      <div className="flex items-center space-x-2">
+                        <Button
+                          layout="link"
+                          size="icon"
+                          aria-label="Restore"
+                          disabled={!priviledges[0]?.edit}
+                          onClick={() => handleRestore(id)}
+                        >
+                          <RestoreIcon
+                            className="w-5 h-5"
+                            aria-hidden="true"
+                            color="#7e3af2"
+                          />
+                        </Button>
+                        <Button
+                          layout="link"
+                          size="icon"
+                          aria-label="Delete"
+                          disabled={!priviledges[0]?.delete}
+                          onClick={() => handleDelete(id)}
+                        >
+                          <TrashIcon
+                            className="w-5 h-5"
+                            aria-hidden="true"
+                            color="#c81e1e"
+                          />
+                        </Button>
+                      </div>
                     ) : (
                       <Button
                         layout="link"

@@ -9,8 +9,11 @@ import { useForm } from 'react-hook-form'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { auth } from '../../utils/firebase'
 import { logInWithEmailAndPassword } from '../../services/auth'
+import { usersServices } from '../../services/users'
+import { rolesServices } from '../../services/roles'
 
 function Login() {
+  // const { role } = useDataUser();
   const { register, handleSubmit } = useForm()
   const [user, loading] = useAuthState(auth);
   const history = useHistory();
@@ -24,7 +27,17 @@ function Login() {
       // maybe trigger a loading screen
       return;
     }
-    if (user) history.replace("/app");
+    if (user) usersServices.getById(user.uid)
+      .then((res) =>
+        rolesServices.getById(res.role.id)
+          .then((res) => {
+            if (res.priviledges.filter(e => e.permission === "Dashboard" && e.view === true)[0]) history.push("/app/dashboard");
+            if (res.priviledges.filter(e => e.permission === "Home" && e.view === true)[0]) history.push("/app/home");
+          })
+          .catch((error) => console.log(error))
+      )
+      .catch((error) => console.log(error))
+
   }, [user, loading, history]);
 
   return (

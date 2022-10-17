@@ -17,7 +17,7 @@ function Dashboard() {
 
       {/* <!-- Cards --> */}
       <div className="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-4">
-        <InfoCard title="Total clients" value="6389">
+        <InfoCard title="Total users" value="6389">
           <RoundIcon
             icon={PeopleIcon}
             iconColorClass="text-orange-500 dark:text-orange-100"
@@ -26,16 +26,16 @@ function Dashboard() {
           />
         </InfoCard>
 
-        <InfoCard title="Account balance" value="$ 46,760.89">
+        <InfoCard title="Total assets" value="4323">
           <RoundIcon
-            icon={MoneyIcon}
+            icon={CartIcon}
             iconColorClass="text-green-500 dark:text-green-100"
             bgColorClass="bg-green-100 dark:bg-green-500"
             className="mr-4"
           />
         </InfoCard>
 
-        <InfoCard title="New sales" value="376">
+        <InfoCard title="Pending deploy" value="10">
           <RoundIcon
             icon={CartIcon}
             iconColorClass="text-blue-500 dark:text-blue-100"
@@ -44,7 +44,7 @@ function Dashboard() {
           />
         </InfoCard>
 
-        <InfoCard title="Pending contacts" value="35">
+        <InfoCard title="Asset deploy" value="353">
           <RoundIcon
             icon={ChatIcon}
             iconColorClass="text-teal-500 dark:text-teal-100"
@@ -54,7 +54,6 @@ function Dashboard() {
         </InfoCard>
       </div>
       
-      <PageTitle>Charts</PageTitle>
       <div className="grid gap-6 mb-8 md:grid-cols-2">
         <ChartCard title="Revenue">
           <Doughnut {...doughnutOptions} />

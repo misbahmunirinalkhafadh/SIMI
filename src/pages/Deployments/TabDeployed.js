@@ -1,9 +1,34 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Input, Select } from '@windmill/react-ui';
 import { SearchIcon } from '../../assets/icons';
 import TableDeployed from './TableDeployed';
+import useDataDeployment from '../../hooks/useDataDeployment';
 
 function TabDeployed() {
+  const { allDeployment } = useDataDeployment({})
+  const [category, setCategory] = useState([])
+  const [filter, setFilter] = useState({ search: '', category: '' });
+
+  function handleChange(e) {
+    setFilter({
+      ...filter,
+      [e.target.name]: e.target.value
+    })
+  }
+
+  useEffect(() => {
+    const pending = allDeployment?.filter(e => e.data.isDeployed === false)
+    const uniqueTags = [];
+
+    pending.forEach(asd => {
+      if (uniqueTags.indexOf(asd.data.category) === -1) {
+        uniqueTags.push(asd.data.category)
+      }
+    });
+
+    setCategory(uniqueTags)
+  }, [allDeployment])
+
   return (
     <>
       {/* Action  */}
@@ -18,23 +43,19 @@ function TabDeployed() {
               className="pl-8 text-gray-700"
               placeholder="Search for data"
               aria-label="Search"
+              name="search"
+              onChange={handleChange}
             />
-          </div>
-          {/* Filter  */}
-          <div className="ml-3">
-            <Select >
-              <option value="Unarchived" >Unarchived</option>
-              <option value="Archived" >Archived</option>
-              <option value="Draft" >Draft</option>
-            </Select>
           </div>
           {/* Type  */}
           <div className="ml-3" >
-            <Select>
+            <Select name="category" onChange={handleChange} >
               <option value="" >All Category</option>
-              <option value="Laptop" >Laptop</option>
-              <option value="Desktop" >Desktop</option>
-              <option value="Scanner" >Printer</option>
+              {category.map((data, i) => (
+                <option value={data} key={i}>
+                  {data}
+                </option>
+              ))}
             </Select>
           </div>
         </div>

@@ -14,12 +14,21 @@ import {
 
 import { EditIcon, TrashIcon } from '../../assets/icons'
 import Swal from 'sweetalert2'
-import { requestsServices } from '../../services/requests'
-import { Link } from 'react-router-dom'
 import ModalFormDeploy from './ModalFormDeploy'
+import useDataDeployment from '../../hooks/useDataDeployment'
+import useDataSite from '../../hooks/useDataSite'
+import { deploymentsServices } from '../../services/deployments'
+import useDataUser from '../../hooks/useDataUser'
+import { assetsServices } from '../../services/assets'
+import useDataAsset from '../../hooks/useDataAsset'
 
-export default function TablePending() {
+export default function TablePending(filter) {
+    const { allDeployment } = useDataDeployment({})
+    const { allSite } = useDataSite({})
+    const { allAsset } = useDataAsset({})
+    const { role } = useDataUser();
     const [response, setResponse] = useState([])
+    const [dataDeploy, setDataDeploy] = useState({})
 
     // setup pages control for every table
     const [pageTable, setPageTable] = useState(1)
@@ -27,6 +36,8 @@ export default function TablePending() {
     // setup data for every table
     const [dataTable, setDataTable] = useState([])
     const [isModalOpen, setIsModalOpen] = useState(false)
+
+    const priviledges = role?.priviledges?.filter(e => e.permission === "Deployments")[0];
 
     // pagination setup
     const resultsPerPage = 10
@@ -36,15 +47,17 @@ export default function TablePending() {
         setPageTable(p)
     }
 
-    function openModal() {
+    function openModal({ id, data }) {
         setIsModalOpen(true)
+        setDataDeploy({ id, data })
     }
 
     function closeModal() {
         setIsModalOpen(false)
     }
 
-    const handleDelete = (id) => {
+    const handleDelete = ({ id, data }) => {
+        let assetId = allAsset.filter(e => e.data.serialNumber === data.serialNumber)[0].id
         try {
             Swal.fire({
                 title: 'Are you sure?',
@@ -56,7 +69,8 @@ export default function TablePending() {
                 confirmButtonText: 'Yes, delete it!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // assetsServices.delete(id)
+                    deploymentsServices.delete(id)
+                    assetsServices.update(assetId, { status: "Ready" })
                     Swal.fire(
                         'Deleted!',
                         'Your file has been deleted.',
@@ -70,14 +84,8 @@ export default function TablePending() {
     }
 
     useEffect(() => {
-        try {
-            requestsServices.getAll().then(data => {
-                setResponse(data)
-            })
-        } catch (error) {
-            console.log(error)
-        }
-    }, [])
+        setResponse(allDeployment?.filter(e => e.data.isDeployed === false))
+    }, [allDeployment, filter])
 
     // on page change, load new sliced data
     // here you would make another server request for new data
@@ -91,38 +99,36 @@ export default function TablePending() {
                 <Table>
                     <TableHeader>
                         <tr>
-                            <TableCell>Asset Name</TableCell>
+                            <TableCell>Asset Site</TableCell>
                             <TableCell>Category</TableCell>
                             <TableCell>Type</TableCell>
                             <TableCell>Serial Number</TableCell>
-                            <TableCell className="text-center">Status</TableCell>
-                            <TableCell>Actions</TableCell>
+                            <TableCell>User</TableCell>
+                            <TableCell>Email</TableCell>
+                            <TableCell>Job Title</TableCell>
+                            <TableCell className="text-center">Status Deploy</TableCell>
+                            <TableCell className="text-center">Actions</TableCell>
                         </tr>
                     </TableHeader>
                     <TableBody>
-                        {dataTable.map((req) => (
-                            <TableRow className="dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600" key={req?.id}>
+                        {dataTable.map(({ id, data }) => (
+                            <TableRow className="dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600" key={id}>
                                 <TableCell>
-                                    <Link className="text-blue-500" to='/app/assets/detail'>{req?.data.assetName}</Link>
+                                    {allSite?.filter((e) => e.id === data?.assetSite)[0]?.data.name}
                                 </TableCell>
-                                <TableCell>
-                                    {req?.data.category}
-                                </TableCell>
-                                <TableCell>
-                                    {req?.data.type}
-                                </TableCell>
-                                <TableCell>
-                                    {req?.data.serialNumber}
-                                </TableCell>
-                                <TableCell className="text-center" >
-                                    <Badge type={req?.data.status === 'Standby' ? 'success' : 'primary'}></Badge>
-                                </TableCell>
+                                <TableCell>{data?.category}</TableCell>
+                                <TableCell>{data?.brand} {data?.model}</TableCell>
+                                <TableCell>{data?.serialNumber}</TableCell>
+                                <TableCell>{data?.user}</TableCell>
+                                <TableCell>{data?.email}</TableCell>
+                                <TableCell>{data?.job}</TableCell>
+                                <TableCell className="text-center" ><Badge type="primary">{data?.statusDeploy}</Badge></TableCell>
                                 <TableCell>
                                     <div className="flex items-center space-x-2">
-                                        <Button layout="link" size="icon" aria-label="Edit" onClick={() => openModal()}>
+                                        <Button layout="link" size="icon" aria-label="Edit" disabled={!priviledges?.edit} onClick={() => openModal({ id, data })}>
                                             <EditIcon className="w-5 h-5" aria-hidden="true" color="#7e3af2" />
                                         </Button>
-                                        <Button layout="link" size="icon" aria-label="Delete" onClick={() => handleDelete()}>
+                                        <Button layout="link" size="icon" aria-label="Delete" disabled={!priviledges?.delete} onClick={() => handleDelete({ id, data })}>
                                             <TrashIcon className="w-5 h-5" aria-hidden="true" color='#c81e1e' />
                                         </Button>
                                     </div>
@@ -142,7 +148,7 @@ export default function TablePending() {
                     )}
                 </TableFooter>
             </TableContainer>
-            <ModalFormDeploy isModalOpen={isModalOpen} closeModal={closeModal} />
+            <ModalFormDeploy isModalOpen={isModalOpen} closeModal={closeModal} id={dataDeploy.id} data={dataDeploy.data} />
         </>
     )
 }

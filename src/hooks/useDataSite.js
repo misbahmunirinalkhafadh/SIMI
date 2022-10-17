@@ -3,15 +3,15 @@ import { useEffect, useState } from "react";
 import { sitesServices } from "../services/sites";
 
 const useDataSite = () => {
-  const [dataSite, setDataSite] = useState([]);
+  const [allSite, setAllSite] = useState([]);
 
   useEffect(() => {
     sitesServices.getAll()
-      .then((res) => setDataSite(res))
+      .then((res) => setAllSite(res))
       .catch((err) => console.log(err));
   }, []);
 
-  return { dataSite };
+  return { allSite };
 };
 
 export default useDataSite;

@@ -1,52 +1,53 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { Modal, ModalHeader, ModalBody, ModalFooter, Select, Button, Label, Input, Textarea } from '@windmill/react-ui'
+import { Modal, ModalHeader, ModalBody, ModalFooter, Select, Button, Label, Input } from '@windmill/react-ui'
 import { Timestamp } from 'firebase/firestore'
 import Swal from 'sweetalert2'
-import ReactSelect from 'react-select'
 
-
-import { requestsServices } from '../../services/requests'
-import { assetsServices } from '../../services/assets'
-import { usersServices } from '../../services/users'
 import useDataUser from '../../hooks/useDataUser'
 import useDataSite from '../../hooks/useDataSite'
 import ActionSelect from './ActionSelect'
+import useDataAsset from '../../hooks/useDataAsset'
+import { deploymentsServices } from '../../services/deployments'
+import { assetsServices } from '../../services/assets'
 
 function ModalFormDeploy({ closeModal, isModalOpen, id, data }) {
-    const { register, onChange, handleSubmit, control, reset } = useForm({
-        mode: "onBlur",
-        reValidateMode: "onChange",
-        shouldUnregister: true,
-        defaultValues: data
-    })
+    const { register, handleSubmit, control, reset } = useForm({ defaultValues: data })
     const [listAsset, setListAsset] = useState([])
     const [listUser, setListUser] = useState([])
-    const { allUser } = useDataUser();
-    const { dataSite } = useDataSite();
+    const { allUser, dataUser } = useDataUser();
+    const { allSite } = useDataSite();
+    const { allAsset } = useDataAsset();
+    const [filter, setFilter] = useState({})
+    const [userdata, setUserdata] = useState({})
 
-    const handleChange = useCallback((value, name) => {
-        console.log(prev => ({
-            ...prev,
-            [name]: value
-        }));
-        console.log(value);
-    }, []);
+    const indexAsset = listAsset?.findIndex(e => e?.label === data?.serialNumber)
+    const indexUser = listUser?.findIndex(e => e?.label === data?.email)
+
+    const handleChange = (e) => {
+        setFilter({
+            ...filter,
+            [e.target.name]: e.target.value
+        })
+    }
 
     const onSubmit = (value) => {
-        console.log(value);
         const dataRequest = {
-            salesOrder: value.salesOrder,
-            brand: value.brand,
-            model: value.model,
-            serialNumber: value.serialNumber,
-            category: value.category,
-            displayName: value.user,
-            email: value.email,
+            assetSite: value.dataAsset.site,
+            category: value.dataAsset.category,
+            serialNumber: value.dataAsset.label,
+            brand: value.dataAsset.brand,
+            model: value.dataAsset.model,
+            email: userdata.label,
+            user: userdata.name,
+            job: userdata.job,
+            department: userdata.department,
             isDeployed: false,
             statusDeploy: 'Assigned',
-            createdAt: Timestamp.now()
+            createdBy: dataUser?.displayName,
+            createdAt: Timestamp.now(),
         }
+
         try {
             if (id == null) {
                 Swal.fire({
@@ -57,11 +58,10 @@ function ModalFormDeploy({ closeModal, isModalOpen, id, data }) {
                 }).then((result) => {
                     /* Read more about isConfirmed, isDenied below */
                     if (result.isConfirmed) {
-                        // requestsServices.add(dataRequest)
-                        const assetId = ''
-                        // assetsServices.update(assetId, {
-                        //     status: value.status
-                        // })
+                        let id = value.dataAsset.value
+                        console.log(dataRequest);
+                        deploymentsServices.add(dataRequest)
+                        assetsServices.update(id, { status: 'Assigned' })
                         Swal.fire('Saved!', '', 'success')
                             .then(() => window.location.reload())
                         closeModal()
@@ -80,6 +80,8 @@ function ModalFormDeploy({ closeModal, isModalOpen, id, data }) {
                         // requestsServices.update(id, {
                         //     roleName: value.roleName,
                         //     description: value.description,
+                        // modifiedBy: '',
+                        //     modifiedAt: Timestamp.now()
                         // })
                         Swal.fire('Saved!', '', 'success')
                             .then(() => window.location.reload())
@@ -100,88 +102,36 @@ function ModalFormDeploy({ closeModal, isModalOpen, id, data }) {
     }, [reset, data])
 
     useEffect(() => {
-        try {
-            assetsServices.getAll().then(res => {
-                const laptop = res?.filter((e) => e.data.category === "Laptop" && e.data.isArchived === false)
-                    .map(({ id, data }) => {
-                        let arr = []
-                        let disabled = true
-                        if (data.status === "Ready") {
-                            disabled = false
-                        }
-                        arr = { value: id, label: data.serialNumber, type: `${data.brand} ${data.model}`, isDisabled: disabled }
-                        return arr
-                    });
-                const desktop = res?.filter((e) => e.data.category === "Desktop" && e.data.isArchived === false)
-                    .map(({ id, data }) => {
-                        let arr = []
-                        let disabled = true
-                        if (data.status === "Ready") {
-                            disabled = false
-                        }
-                        arr = { value: id, label: data.serialNumber, type: `${data.brand} ${data.model}`, isDisabled: disabled }
-                        return arr
-                    });
-                const printer = res?.filter((e) => e.data.category === "Printer" && e.data.isArchived === false)
-                    .map(({ id, data }) => {
-                        let arr = []
-                        let disabled = true
-                        if (data.status === "Ready") {
-                            disabled = false
-                        }
-                        arr = { value: id, label: data.serialNumber, type: `${data.brand} ${data.model}`, isDisabled: disabled }
-                        return arr
-                    });
-                const projector = res?.filter((e) => e.data.category === "Projector" && e.data.isArchived === false)
-                    .map(({ id, data }) => {
-                        let arr = []
-                        let disabled = true
-                        if (data.status === "Ready") {
-                            disabled = false
-                        }
-                        arr = { value: id, label: data.serialNumber, type: `${data.brand} ${data.model}`, isDisabled: disabled }
-                        return arr
-                    });
+        let assetFilter = []
+        assetFilter.push(allAsset?.filter((e) => {
+            let archive = e.data.isArchived === false;
+            let site = filter.site !== "" ? e.data.site.search(filter.site) !== -1 : true;
+            let category = filter.category !== "" ? e.data.category.search(filter.category) !== -1 : true;
+            let asset = archive && site && category
 
-                const group = [
-                    { label: 'Laptop', options: laptop },
-                    { label: 'Desktop', options: desktop },
-                    { label: 'Printer', options: printer },
-                    { label: 'Projector', options: projector },
-                ]
+            return asset
+        }));
 
-                const assets = res?.filter((e) => e.data.isArchived === false)
-                    .map(({ id, data }) => {
-                        let arr = []
-                        let disabled = true
-                        if (data.status === "Ready") {
-                            disabled = false
-                        }
-                        arr = { value: id, label: data.serialNumber, type: `${data.brand} ${data.model}`, isDisabled: disabled }
-                        return arr
-                    });
-
-                setListAsset(assets)
-            })
-        } catch (err) {
-            alert(err)
-        }
-    }, [])
+        setListAsset(
+            assetFilter[0].map(({ id, data }) => {
+                let arr = []
+                let disabled = true
+                if (data.status === "Ready" && data.isArchived === false) {
+                    disabled = false
+                }
+                arr = { value: id, label: data.serialNumber, site: data.site, category: data.category, brand: data.brand, model: data.model, isDisabled: disabled }
+                return arr
+            }))
+    }, [allAsset, filter])
 
     useEffect(() => {
-        try {
-            usersServices.getAll().then(res => {
-                const users = res.map(({ id, data }) => {
-                    let arr = []
-                    arr = { value: id, label: data.email }
-                    return arr
-                });
-                setListUser(users)
-            })
-        } catch (err) {
-            alert(err)
-        }
-    }, [])
+        const users = allUser?.map(({ id, data }) => {
+            let arr = []
+            arr = { value: id, label: data.email, name: data.displayName, job: data.job, department: data.department }
+            return arr
+        });
+        if (allUser) setListUser(users)
+    }, [allUser])
 
     return (
         <>
@@ -190,8 +140,17 @@ function ModalFormDeploy({ closeModal, isModalOpen, id, data }) {
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <ModalBody>
                         <Label className="mt-3">
+                            <span>Asset Site<small className='text-red-600'>*</small></span>
+                            <Select className="mt-1" name="site" required defaultValue={data?.assetSite} onChange={handleChange} >
+                                <option value="" >-- Choose one --</option>
+                                {allSite.map((site, i) => (
+                                    <option key={i} value={site.id}>{site.data.name}</option>
+                                ))}
+                            </Select>
+                        </Label>
+                        <Label className="mt-3">
                             <span>Category<small className='text-red-600'>*</small></span>
-                            <Select className="mt-1" required {...register("category")}>
+                            <Select className="mt-1" name="category" required defaultValue={data?.category} onChange={handleChange} >
                                 <option value="" >-- Choose one --</option>
                                 <option value="Laptop" >Laptop</option>
                                 <option value="Desktop" >Desktop</option>
@@ -201,43 +160,50 @@ function ModalFormDeploy({ closeModal, isModalOpen, id, data }) {
                         </Label>
                         <Label className="mt-3">
                             <span>Serial Number<small className='text-red-600'>*</small></span>
-                            <ReactSelect
-                                className="mt-1"
-                                placeholder="Type here..."
-                                name="asset"
-                                isClearable
+                            <ActionSelect
+                                name="dataAsset"
+                                control={control}
                                 options={listAsset}
-                                onChange={handleChange}
-                                getOptionLabel={(option) => `${option.label}: ${option.type}`}
+                                optionLabel={true}
+                                defaultValue={listAsset[indexAsset]}
                             />
                         </Label>
                         <Label className="mt-3">
                             <span>Email<small className='text-red-600'>*</small></span>
-                            <ReactSelect
-                                className="mt-1"
-                                placeholder="Type here..."
-                                name="user"
-                                isClearable
+                            <ActionSelect
+                                name="dataUser"
+                                control={control}
                                 options={listUser}
-                                onChange={handleChange}
+                                optionLabel={false}
+                                defaultValue={listUser[indexUser]}
+                                onChange={(choice) => setUserdata(choice)}
                             />
                         </Label>
                         <Label className="mt-3">
                             <span>User</span>
                             <Input
                                 className="mt-1"
-                                placeholder="Type here..."
                                 disabled
-                                {...register("user")}
+                                value={userdata?.name || ''}
+                                {...register('user')}
                             />
                         </Label>
                         <Label className="mt-3">
-                            <span>Notes</span>
-                            <Textarea
+                            <span>Job Title</span>
+                            <Input
                                 className="mt-1"
-                                rows="3"
-                                placeholder="Enter notes for user..."
-                                {...register("notes")}
+                                disabled
+                                value={userdata?.job || ''}
+                                {...register('job')}
+                            />
+                        </Label>
+                        <Label className="mt-3">
+                            <span>Department</span>
+                            <Input
+                                className="mt-1"
+                                disabled
+                                value={userdata?.department || ''}
+                                {...register('department')}
                             />
                         </Label>
                     </ModalBody>

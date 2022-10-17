@@ -89,7 +89,6 @@ function TableUser() {
     }
 
     useEffect(() => {
-        // setDataTable(response.slice((pageTable - 1) * resultsPerPage, pageTable * resultsPerPage))
         try {
             usersServices.getAll().then(data => {
                 setResponse(data)

@@ -12,7 +12,7 @@ import {
     Button,
     Pagination,
 } from '@windmill/react-ui'
-import { ArchiveIcon, EditIcon, FormsIcon, TrashIcon } from '../../assets/icons'
+import { ArchiveIcon, EditIcon, FormsIcon, RestoreIcon, TrashIcon } from '../../assets/icons'
 
 import { Link } from 'react-router-dom'
 import { assetsServices } from '../../services/assets'
@@ -34,7 +34,7 @@ function TableNonITAsset({ filter, priviledges }) {
     const [isModalRequestOpen, setIsModalRequestOpen] = useState(false)
     const [assetId, setAssetId] = useState(null)
     const [assetData, setAssetData] = useState([])
-    const { dataSite } = useDataSite()
+    const { allSite } = useDataSite()
 
     // pagination setup
     const resultsPerPage = 10
@@ -67,6 +67,7 @@ function TableNonITAsset({ filter, priviledges }) {
     const handleArchive = (id) => {
         try {
             Swal.fire({
+                title: "Archive",
                 text: "Do you want to move in Archive?",
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -86,6 +87,30 @@ function TableNonITAsset({ filter, priviledges }) {
             alert(err)
         }
     }
+
+    const handleRestore = (id) => {
+        try {
+            Swal.fire({
+                title: "Restore",
+                text: "Do you want to restore and move in Unarchive?",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, restore it!",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    assetsServices.update(id, { isArchived: false });
+                    Swal.fire(
+                        "Restored!",
+                        "Your file has been restored.",
+                        "success"
+                    ).then(() => window.location.reload());
+                }
+            });
+        } catch (err) {
+            alert(err);
+        }
+    };
 
     const handleDelete = (id) => {
         try {
@@ -155,7 +180,7 @@ function TableNonITAsset({ filter, priviledges }) {
                     <TableBody>
                         {dataTable.map(({ id, data }) => (
                             <TableRow className="dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600" key={id}>
-                                <TableCell>{dataSite?.filter((e) => e.id === data.site)[0]?.data.name}</TableCell>
+                                <TableCell>{allSite?.filter((e) => e.id === data.site)[0]?.data.name}</TableCell>
                                 <TableCell>{data.salesOrder}</TableCell>
                                 <TableCell>{data.category}</TableCell>
                                 <TableCell><Link className="text-blue-500" to={`/app/assets/detail/${id}`}>{data.brand} {data.model}</Link></TableCell>
@@ -187,9 +212,34 @@ function TableNonITAsset({ filter, priviledges }) {
                                             </Button>
                                         </div>
                                         {filter.archive === "Archived" ?
-                                            (<Button layout="link" size="icon" aria-label="Delete" disabled={!priviledges[0]?.delete} onClick={() => handleDelete(id)} >
-                                                <TrashIcon className="w-5 h-5" aria-hidden="true" color='#c81e1e' />
-                                            </Button>)
+                                            (<div className="flex items-center space-x-2">
+                                                <Button
+                                                    layout="link"
+                                                    size="icon"
+                                                    aria-label="Restore"
+                                                    disabled={!priviledges[0]?.edit}
+                                                    onClick={() => handleRestore(id)}
+                                                >
+                                                    <RestoreIcon
+                                                        className="w-5 h-5"
+                                                        aria-hidden="true"
+                                                        color="#7e3af2"
+                                                    />
+                                                </Button>
+                                                <Button
+                                                    layout="link"
+                                                    size="icon"
+                                                    aria-label="Delete"
+                                                    disabled={!priviledges[0]?.delete}
+                                                    onClick={() => handleDelete(id)}
+                                                >
+                                                    <TrashIcon
+                                                        className="w-5 h-5"
+                                                        aria-hidden="true"
+                                                        color="#c81e1e"
+                                                    />
+                                                </Button>
+                                            </div>)
                                             :
                                             (<Button layout="link" size="icon" aria-label="Archive" disabled={!priviledges[0]?.edit} onClick={() => handleArchive(id)}>
                                                 <ArchiveIcon className="w-5 h-5" aria-hidden="true" color="#7e3af2" />

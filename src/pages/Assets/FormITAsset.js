@@ -1,26 +1,26 @@
 import React, { useEffect, useState } from 'react'
 import { Card, CardBody, Button, Input, Label, Select, Textarea } from '@windmill/react-ui'
 import { useAuthState } from "react-firebase-hooks/auth";
-
-import { useForm } from 'react-hook-form'
-import { assetsServices } from '../../services/assets'
 import Swal from 'sweetalert2'
-import { Timestamp } from 'firebase/firestore'
+import { useForm } from 'react-hook-form'
 import { useHistory, useParams } from 'react-router-dom'
-import { sitesServices } from '../../services/sites'
+
+import { assetsServices } from '../../services/assets'
+import { Timestamp } from 'firebase/firestore'
 import { auth } from '../../utils/firebase';
 import { ArrowLeftIcon } from '../../assets/icons';
+import useDataSite from '../../hooks/useDataSite';
 
 function FormITAsset() {
     const { id } = useParams();
     const [assetInfo, setAssetInfo] = useState({})
     const { register, handleSubmit, reset } = useForm()
 
-    const [site, setSite] = useState([])
     const [disabled, setDisabled] = useState(true)
     const [requiredStatusDetail, setRequiredStatusDetail] = useState(false)
     const history = useHistory()
     const [user, loading] = useAuthState(auth);
+    const { allSite } = useDataSite();
 
     const handleChange = (e) => {
         if (e.target.value === "In Use") {
@@ -81,16 +81,6 @@ function FormITAsset() {
 
     useEffect(() => {
         try {
-            sitesServices.getAll().then(data => {
-                setSite(data)
-            })
-        } catch (error) {
-            console.log(error)
-        }
-    }, [])
-
-    useEffect(() => {
-        try {
             assetsServices.getById(id).then(data => {
                 setAssetInfo(data.information)
                 reset(data)
@@ -128,7 +118,7 @@ function FormITAsset() {
                                 <span>Site<small className='text-red-600'>*</small></span>
                                 <Select className="mt-1" required {...register("site")} onChange={handleChange}>
                                     <option value="" >-- Choose one --</option>
-                                    {site.map((site, i) => (
+                                    {allSite.map((site, i) => (
                                         <option key={i} value={site.id}>{site.data.name}</option>
                                     ))}
                                 </Select>
@@ -183,9 +173,10 @@ function FormITAsset() {
                                     <Select className="mt-1" required {...register("status")} onChange={handleChange} >
                                         <option value="" >-- Choose one --</option>
                                         <option value="Ready" >Ready</option>
+                                        <option value="Assigned" >Assigned</option>
                                         <option value="In Use" >In Use</option>
-                                        <option value="Broken" >Broken</option>
                                         <option value="On Service" >On Service</option>
+                                        <option value="Broken" >Broken</option>
                                     </Select>
                                 </Label>
                                 <Label className="mt-3">
