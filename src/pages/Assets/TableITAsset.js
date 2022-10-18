@@ -28,6 +28,7 @@ import useDataSite from "../../hooks/useDataSite";
 // make a copy of the data, for the second table
 
 function TableITAsset({ filter, priviledges }) {
+  const { allSite } = useDataSite()
   const [response, setResponse] = useState([]);
 
   // setup pages control for every table
@@ -40,7 +41,6 @@ function TableITAsset({ filter, priviledges }) {
   const [assetId, setAssetId] = useState(null);
   const [assetData, setAssetData] = useState([]);
   const history = useHistory();
-  const { allSite } = useDataSite()
 
   // pagination setup
   const resultsPerPage = 10;

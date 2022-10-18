@@ -1,9 +1,19 @@
-import React from 'react';
-
-import { PageTitle, SectionTitle } from '../../components/atoms';
+import React, { useEffect, useState } from 'react';
 import { Card, CardBody } from '@windmill/react-ui';
 
+import { PageTitle } from '../../components/atoms';
+import useDataDeployment from '../../hooks/useDataDeployment';
+import useDataUser from '../../hooks/useDataUser';
 function Home() {
+  const { allDeployment } = useDataDeployment()
+  const { dataUser } = useDataUser()
+  const [myAsset, setMyAsset] = useState([])
+
+  console.log(myAsset);
+  useEffect(() => {
+    setMyAsset(allDeployment?.filter(e => e?.data?.email === dataUser.email))
+  }, [allDeployment, dataUser])
+
   return (
     <>
       <PageTitle>Home</PageTitle>
@@ -32,11 +42,16 @@ function Home() {
           <CardBody>
             <p className="mb-4 font-semibold text-gray-600 dark:text-gray-300">My Assets</p>
             <div className="border-t border-gray-200">
-              <p className="text-gray-600 dark:text-gray-400">
-                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Fuga, cum commodi a omnis
-                numquam quod? Totam exercitationem quos hic ipsam at qui cum numquam, sed amet
-                ratione! Ratione, nihil dolorum.
-              </p>
+              <dl>
+                <div className="px-4 py-5 bg-gray-50 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                  <dt className="text-sm font-medium text-gray-500">Full name</dt>
+                  <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">Margot Foster</dd>
+                </div>
+                <div className="px-4 py-5 bg-white sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                  <dt className="text-sm font-medium text-gray-500">Application for</dt>
+                  <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">Backend Developer</dd>
+                </div>
+              </dl>
             </div>
           </CardBody>
         </Card>

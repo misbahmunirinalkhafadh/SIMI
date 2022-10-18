@@ -57,7 +57,7 @@ function FormITAsset() {
                             storageCapacity: value.information.storageCapacity.toUpperCase().replace(/\s+/g, ''),
                             storageType: value.information.storageType,
                         },
-                        isArchived: value.isArchived,
+                        // isArchived: value.isArchived === 'false' ? false : true,
                         status: value.status,
                         statusDetail: value.statusDetail,
                         description: value.description,
@@ -189,13 +189,13 @@ function FormITAsset() {
                                     </Select>
                                 </Label>
                             </div>
-                            <Label className="mt-3">
+                            {/* <Label className="mt-3">
                                 <span>Visibility<small className='text-red-600'>*</small></span>
                                 <Select className="mt-1" required {...register("isArchived")} onChange={handleChange}>
                                     <option value={false}>Unarchived</option>
                                     <option value={true} >Archived</option>
                                 </Select>
-                            </Label>
+                            </Label> */}
                         </CardBody>
                     </Card>
 

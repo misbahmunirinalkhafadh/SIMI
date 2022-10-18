@@ -22,9 +22,9 @@ import useDataUser from '../../hooks/useDataUser'
 import { assetsServices } from '../../services/assets'
 import useDataAsset from '../../hooks/useDataAsset'
 
-export default function TablePending(filter) {
+export default function TablePending({ filter }) {
     const { allDeployment } = useDataDeployment({})
-    const { allSite } = useDataSite({})
+    // const { allSite } = useDataSite({})
     const { allAsset } = useDataAsset({})
     const { role } = useDataUser();
     const [response, setResponse] = useState([])
@@ -84,7 +84,24 @@ export default function TablePending(filter) {
     }
 
     useEffect(() => {
-        setResponse(allDeployment?.filter(e => e.data.isDeployed === false))
+        let resultFilter = [];
+        resultFilter.push(allDeployment?.filter((e) => {
+            let deploy = e.data.isDeployed === false
+
+            let search = filter.search !== "" ? e.data.serialNumber
+                .toLowerCase()
+                .search(filter.search.toLowerCase()) !== -1
+                : true;
+
+            let category = filter.category !== "all" ? e.data.category
+                .toLowerCase()
+                .search(filter.category.toLowerCase()) !== -1
+                : true;
+
+            return deploy && search && category
+        }));
+
+        setResponse(resultFilter[0])
     }, [allDeployment, filter])
 
     // on page change, load new sliced data
@@ -99,7 +116,7 @@ export default function TablePending(filter) {
                 <Table>
                     <TableHeader>
                         <tr>
-                            <TableCell>Asset Site</TableCell>
+                            {/* <TableCell>Asset Site</TableCell> */}
                             <TableCell>Category</TableCell>
                             <TableCell>Type</TableCell>
                             <TableCell>Serial Number</TableCell>
@@ -113,9 +130,9 @@ export default function TablePending(filter) {
                     <TableBody>
                         {dataTable.map(({ id, data }) => (
                             <TableRow className="dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600" key={id}>
-                                <TableCell>
+                                {/* <TableCell>
                                     {allSite?.filter((e) => e.id === data?.site)[0]?.data.name}
-                                </TableCell>
+                                </TableCell> */}
                                 <TableCell>{data?.category}</TableCell>
                                 <TableCell>{data?.brand} {data?.model}</TableCell>
                                 <TableCell>{data?.serialNumber}</TableCell>

@@ -11,7 +11,7 @@ function TabNonITAsset({ priviledges }) {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [category, setCategory] = useState([])
     const [status, setStatus] = useState([])
-    const [filter, setFilter] = useState({ search: '', archive: 'Unarchived', category: '', status: '' });
+    const [filter, setFilter] = useState({ search: '', archive: 'Unarchived', category: 'all', status: 'all' });
 
     function openModal() {
         setIsModalOpen(true)

@@ -7,7 +7,7 @@ import useDataDeployment from '../../hooks/useDataDeployment';
 function TabDeployed() {
   const { allDeployment } = useDataDeployment({})
   const [category, setCategory] = useState([])
-  const [filter, setFilter] = useState({ search: '', category: '' });
+  const [filter, setFilter] = useState({ search: '', category: 'all' });
 
   function handleChange(e) {
     setFilter({
@@ -17,7 +17,7 @@ function TabDeployed() {
   }
 
   useEffect(() => {
-    const pending = allDeployment?.filter(e => e.data.isDeployed === false)
+    const pending = allDeployment?.filter(e => e.data.isDeployed === true)
     const uniqueTags = [];
 
     pending.forEach(asd => {
@@ -50,7 +50,7 @@ function TabDeployed() {
           {/* Type  */}
           <div className="ml-3" >
             <Select name="category" onChange={handleChange} >
-              <option value="" >All Category</option>
+              <option value="all" >All Category</option>
               {category.map((data, i) => (
                 <option value={data} key={i}>
                   {data}
@@ -61,7 +61,7 @@ function TabDeployed() {
         </div>
       </div>
 
-      <TableDeployed />
+      <TableDeployed filter={filter} />
     </>
   )
 }

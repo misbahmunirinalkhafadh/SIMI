@@ -13,9 +13,9 @@ import {
 import useDataDeployment from '../../hooks/useDataDeployment'
 import useDataSite from '../../hooks/useDataSite'
 
-export default function TableDeployed() {
+export default function TableDeployed({filter}) {
     const { allDeployment } = useDataDeployment({})
-    const { allSite } = useDataSite({})
+    // const { allSite } = useDataSite({})
 
     const [response, setResponse] = useState([])
 
@@ -34,8 +34,24 @@ export default function TableDeployed() {
     }
 
     useEffect(() => {
-        setResponse(allDeployment?.filter(e => e.data.isDeployed === true))
-    }, [allDeployment])
+        let resultFilter = [];
+        resultFilter.push(allDeployment?.filter((e) => {
+            let deploy = e.data.isDeployed === true
+
+            let search = filter.search !== "" ? e.data.serialNumber
+                .toLowerCase()
+                .search(filter.search.toLowerCase()) !== -1
+                : true;
+
+            let category = filter.category !== "all" ? e.data.category
+                .toLowerCase()
+                .search(filter.category.toLowerCase()) !== -1
+                : true;
+
+            return deploy && search && category
+        }));
+        setResponse(resultFilter[0])
+    }, [allDeployment, filter])
 
     // on page change, load new sliced data
     // here you would make another server request for new data
@@ -49,7 +65,7 @@ export default function TableDeployed() {
                 <Table>
                     <TableHeader>
                         <tr>
-                            <TableCell>Asset Site</TableCell>
+                            {/* <TableCell>Asset Site</TableCell> */}
                             <TableCell>Category</TableCell>
                             <TableCell>Type</TableCell>
                             <TableCell>Serial Number</TableCell>
@@ -61,9 +77,9 @@ export default function TableDeployed() {
                     <TableBody>
                         {dataTable.map(({ id, data }) => (
                             <TableRow className="dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600" key={id}>
-                                <TableCell>
+                                {/* <TableCell>
                                     {allSite?.filter((e) => e.id === data.site)[0]?.data.name}
-                                </TableCell>
+                                </TableCell> */}
                                 <TableCell>{data.category}</TableCell>
                                 <TableCell>{data.brand} {data.model}</TableCell>
                                 <TableCell>{data.serialNumber}</TableCell>

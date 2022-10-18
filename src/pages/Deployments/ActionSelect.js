@@ -2,7 +2,7 @@ import React from 'react'
 import Select from 'react-select'
 import { Controller } from "react-hook-form";
 
-export default function ActionSelect({ control, name, options, optionLabel, defaultValue, ...props }) {
+export default function ActionSelect({ control, name, options, optionLabel, defaultValue, disabled, ...props }) {
     return (
         <>
             <Controller
@@ -13,6 +13,7 @@ export default function ActionSelect({ control, name, options, optionLabel, defa
                         className="mt-1"
                         placeholder="Type here..."
                         isClearable
+                        isDisabled={disabled}
                         options={options}
                         onChange={onChange}
                         onBlur={onBlur}

@@ -32,41 +32,59 @@ function ModalFormDeploy({ closeModal, isModalOpen, deployId, assetId, data }) {
     }
 
     const onSubmit = (value) => {
-        const newAssetId = value?.dataAsset?.value === undefined ? assetId : value?.dataAsset?.value
-        const dataRequest = {
-            site: value?.dataAsset?.site === undefined ? data?.site : value?.dataAsset?.site,
-            category: value?.dataAsset?.category === undefined ? data?.category : value?.dataAsset?.category,
-            serialNumber: value?.dataAsset?.label === undefined ? data?.serialNumber : value?.dataAsset?.label,
-            brand: value?.dataAsset?.brand === undefined ? data?.brand : value?.dataAsset?.brand,
-            model: value?.dataAsset?.model === undefined ? data?.model : value?.dataAsset?.model,
-            email: userdata?.label,
-            user: userdata?.name,
-            job: userdata?.job,
-            department: userdata?.department,
-            isDeployed: false,
-            statusDeploy: 'Assigned',
-            createdBy: dataUser?.email,
-            createdAt: Timestamp.now(),
-        }
-
         try {
-            if (deployId == null && assetId !== null) {
-                Swal.fire({
-                    title: 'Do you want to save the New Request Service?',
-                    showDenyButton: false,
-                    showCancelButton: true,
-                    confirmButtonText: 'Save',
-                }).then((result) => {
-                    /* Read more about isConfirmed, isDenied below */
-                    if (result.isConfirmed) {
-                        deploymentsServices.add(dataRequest)
-                        assetsServices.update(newAssetId, { status: 'Assigned' })
-                        Swal.fire('Saved!', '', 'success')
-                            .then(() => window.location.reload())
-                        closeModal()
-                    }
-                })
-            } else {
+            /**
+             * New Deploy Asset
+             */
+            const dataDeploy = {
+                site: value?.dataAsset?.site === undefined ? data?.site : value?.dataAsset?.site,
+                category: value?.dataAsset?.category === undefined ? data?.category : value?.dataAsset?.category,
+                serialNumber: value?.dataAsset?.label === undefined ? data?.serialNumber : value?.dataAsset?.label,
+                brand: value?.dataAsset?.brand === undefined ? data?.brand : value?.dataAsset?.brand,
+                model: value?.dataAsset?.model === undefined ? data?.model : value?.dataAsset?.model,
+                email: userdata?.label,
+                user: userdata?.name,
+                job: userdata?.job,
+                department: userdata?.department === undefined ? '' : userdata?.department,
+                isDeployed: false,
+                statusDeploy: 'Assigned',
+                createdBy: dataUser?.email,
+                createdAt: Timestamp.now(),
+            }
+            Swal.fire({
+                title: 'Do you want to save the New Deployment Asset?',
+                showDenyButton: false,
+                showCancelButton: true,
+                confirmButtonText: 'Save',
+            }).then((result) => {
+                /* Read more about isConfirmed, isDenied below */
+                let id = value?.dataAsset?.value === undefined ? assetId : value?.dataAsset?.value
+                if (result.isConfirmed) {
+                    console.log("Deploy", { id, dataDeploy });
+                    deploymentsServices.add(dataDeploy)
+                    assetsServices.update(id, { status: 'Assigned' })
+                    Swal.fire('Saved!', '', 'success')
+                        .then(() => window.location.reload())
+                    closeModal()
+                }
+            })
+            if (deployId) {
+                /**
+                 * Edit data Asset Deploy
+                 */
+                let dataEdit = {
+                    site: value?.dataAsset?.site === undefined ? data?.site : value?.dataAsset?.site,
+                    category: value?.dataAsset?.category === undefined ? data?.category : value?.dataAsset?.category,
+                    serialNumber: value?.dataAsset?.label === undefined ? data?.serialNumber : value?.dataAsset?.label,
+                    brand: value?.dataAsset?.brand === undefined ? data?.brand : value?.dataAsset?.brand,
+                    model: value?.dataAsset?.model === undefined ? data?.model : value?.dataAsset?.model,
+                    email: userdata?.label === undefined ? data?.email : userdata?.label,
+                    user: userdata?.name === undefined ? data?.user : userdata?.name,
+                    job: userdata?.job === undefined ? data?.job : userdata?.job,
+                    department: userdata?.department === undefined ? '' : userdata?.department,
+                    modifiedBy: dataUser?.email,
+                    modifiedAt: Timestamp.now()
+                }
                 Swal.fire({
                     title: 'Do you want to save the changes?',
                     showDenyButton: true,
@@ -74,29 +92,15 @@ function ModalFormDeploy({ closeModal, isModalOpen, deployId, assetId, data }) {
                     confirmButtonText: 'Save',
                     denyButtonText: `Don't save`,
                 }).then((result) => {
-                    let dataEdit = {
-                        site: value?.dataAsset?.site === undefined ? data?.site : value?.dataAsset?.site,
-                        category: value?.dataAsset?.category === undefined ? data?.category : value?.dataAsset?.category,
-                        serialNumber: value?.dataAsset?.label === undefined ? data?.serialNumber : value?.dataAsset?.label,
-                        brand: value?.dataAsset?.brand === undefined ? data?.brand : value?.dataAsset?.brand,
-                        model: value?.dataAsset?.model === undefined ? data?.model : value?.dataAsset?.model,
-                        email: userdata?.label === undefined ? data?.email : userdata?.label,
-                        user: userdata?.name === undefined ? data?.user : userdata?.name,
-                        job: userdata?.job === undefined ? data?.job : userdata?.job,
-                        department: userdata?.department === undefined ? data?.department : userdata?.department,
-                        modifiedBy: dataUser?.email,
-                        modifiedAt: Timestamp.now()
-                    }
-
                     /* Read more about isConfirmed, isDenied below */
+                    let currentAssetid = allAsset.filter(e => e.data?.serialNumber === data?.serialNumber)[0].id
+                    let newAssetId = value?.dataAsset?.value === undefined ? assetId : value?.dataAsset?.value
                     if (result.isConfirmed) {
                         deploymentsServices.update(deployId, dataEdit)
                         if (dataEdit?.serialNumber !== data?.serialNumber) {
-                            let currentAssetId = allAsset.filter(e => e.data?.serialNumber === data?.serialNumber)[0].id
-                            assetsServices.update(currentAssetId, { status: 'Ready' })
+                            assetsServices.update(currentAssetid, { status: 'Ready' })
                         }
                         if (newAssetId) assetsServices.update(newAssetId, { status: 'Assigned' })
-
                         Swal.fire('Saved!', '', 'success')
                             .then(() => window.location.reload())
                         closeModal()
@@ -155,7 +159,7 @@ function ModalFormDeploy({ closeModal, isModalOpen, deployId, assetId, data }) {
                     <ModalBody>
                         <Label className="mt-3">
                             <span>Asset Site<small className='text-red-600'>*</small></span>
-                            <Select className="mt-1" name="site" required defaultValue={data?.site} onChange={handleChange}  >
+                            <Select className="mt-1" name="site" disabled={assetId} required defaultValue={data?.site} onChange={handleChange}  >
                                 <option value="" >-- Choose one --</option>
                                 {allSite.map((site, i) => (
                                     <option key={i} value={site.id}>{site.data.name}</option>
@@ -164,7 +168,7 @@ function ModalFormDeploy({ closeModal, isModalOpen, deployId, assetId, data }) {
                         </Label>
                         <Label className="mt-3">
                             <span>Category<small className='text-red-600'>*</small></span>
-                            <Select className="mt-1" name="category" required defaultValue={data?.category} onChange={handleChange} >
+                            <Select className="mt-1" name="category" disabled={assetId} required defaultValue={data?.category} onChange={handleChange} >
                                 <option value="" >-- Choose one --</option>
                                 <option value="Laptop" >Laptop</option>
                                 <option value="Desktop" >Desktop</option>
@@ -179,6 +183,7 @@ function ModalFormDeploy({ closeModal, isModalOpen, deployId, assetId, data }) {
                                 control={control}
                                 options={listAsset}
                                 optionLabel={true}
+                                disabled={assetId}
                                 defaultValue={listAsset[indexAsset]}
                             />
                         </Label>

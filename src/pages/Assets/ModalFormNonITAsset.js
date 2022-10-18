@@ -34,12 +34,10 @@ function ModalFormNonITAsset({ closeModal, isModalOpen, id, data }) {
             model: value.model,
             serialNumber: value.serialNumber.toUpperCase(),
             category: value.category,
-            isArchived: value.isArchived,
+            isArchived: false,
             status: 'Ready',
             statusDetail: '',
             description: value.description,
-            modifiedBy: '',
-            modifiedAt: '',
             createdBy: user.email,
             createdAt: Timestamp.now(),
         }
@@ -77,7 +75,7 @@ function ModalFormNonITAsset({ closeModal, isModalOpen, id, data }) {
                             model: value.model,
                             serialNumber: value.serialNumber.toUpperCase(),
                             category: value.category,
-                            isArchived: value.isArchived,
+                            // isArchived: value.isArchived === 'false' ? false : true,
                             status: value.status,
                             statusDetail: value.statusDetail,
                             description: value.description,
@@ -200,13 +198,13 @@ function ModalFormNonITAsset({ closeModal, isModalOpen, id, data }) {
                                     </Select>
                                 </Label>
                             </div>
-                            <Label className="mt-3">
+                            {/* <Label className="mt-3">
                                 <span>Visibility<small className='text-red-600'>*</small></span>
                                 <Select className="mt-1" required={!id ? false : true} {...register("isArchived")} onChange={handleChange}>
                                     <option value={false}>Unarchived</option>
                                     <option value={true} >Archived</option>
                                 </Select>
-                            </Label>
+                            </Label> */}
                         </div>
                         <Label className="mt-3">
                             <span>Description</span>

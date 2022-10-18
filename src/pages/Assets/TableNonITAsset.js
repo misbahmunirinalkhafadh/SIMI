@@ -23,6 +23,7 @@ import useDataSite from '../../hooks/useDataSite'
 // make a copy of the data, for the second table
 
 function TableNonITAsset({ filter, priviledges }) {
+    const { allSite } = useDataSite()
     const [response, setResponse] = useState([])
 
     // setup pages control for every table
@@ -34,7 +35,6 @@ function TableNonITAsset({ filter, priviledges }) {
     const [isModalRequestOpen, setIsModalRequestOpen] = useState(false)
     const [assetId, setAssetId] = useState(null)
     const [assetData, setAssetData] = useState([])
-    const { allSite } = useDataSite()
 
     // pagination setup
     const resultsPerPage = 10
@@ -144,12 +144,34 @@ function TableNonITAsset({ filter, priviledges }) {
         }
         try {
             assetsServices.getAllNonITAsset().then(data => {
-                const resultFilter = data?.filter((e) =>
-                    e.data.isArchived === archived
-                    // && e.data.category === filter.category
-                    // && e.data.status === filter.status
-                );
-                setResponse(resultFilter);
+                let resultFilter = [];
+                resultFilter.push(data?.filter((e) => {
+                    let search =
+                        filter.search !== ""
+                            ? e.data.serialNumber
+                                .toLowerCase()
+                                .search(filter.search.toLowerCase()) !== -1
+                            : true;
+
+                    let archive = e.data.isArchived === archived
+
+                    let category =
+                        filter.category !== "all"
+                            ? e.data.category
+                                .toLowerCase()
+                                .search(filter.category.toLowerCase()) !== -1
+                            : true;
+
+                    let status =
+                        filter.status !== "all"
+                            ? e.data.status
+                                .toLowerCase()
+                                .search(filter.status.toLowerCase()) !== -1
+                            : true;
+
+                    return search && archive && category && status
+                }));
+                setResponse(resultFilter[0]);
             })
         } catch (error) {
             console.log(error)
@@ -206,7 +228,7 @@ function TableNonITAsset({ filter, priviledges }) {
                                         <Button layout="link" size="icon" aria-label="Edit" disabled={!priviledges[0]?.edit} onClick={() => openModal({ id, data })} >
                                             <EditIcon className="w-5 h-5" aria-hidden="true" color="#7e3af2" />
                                         </Button>
-                                      
+
                                         {filter.archive === "Archived" ?
                                             (<div className="flex items-center space-x-2">
                                                 <Button
@@ -265,7 +287,7 @@ function TableNonITAsset({ filter, priviledges }) {
                 </TableFooter>
             </TableContainer>
             <ModalFormNonITAsset isModalOpen={isModalOpen} closeModal={closeModal} id={assetId} data={assetData} />
-            <ModalFormDeploy isModalOpen={isModalRequestOpen} closeModal={closeModalRequest} id={assetId} data={assetData} />
+            <ModalFormDeploy isModalOpen={isModalRequestOpen} closeModal={closeModalRequest} assetId={assetId} data={assetData} />
         </>
     )
 }
