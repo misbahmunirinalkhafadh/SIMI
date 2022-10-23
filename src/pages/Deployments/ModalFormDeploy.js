@@ -60,9 +60,8 @@ function ModalFormDeploy({ closeModal, isModalOpen, deployId, assetId, data }) {
                 /* Read more about isConfirmed, isDenied below */
                 let id = value?.dataAsset?.value === undefined ? assetId : value?.dataAsset?.value
                 if (result.isConfirmed) {
-                    console.log("Deploy", { id, dataDeploy });
                     deploymentsServices.add(dataDeploy)
-                    assetsServices.update(id, { status: 'Assigned' })
+                    assetsServices.update(id, { status: 'Assigned', deployAt: Timestamp.now() })
                     Swal.fire('Saved!', '', 'success')
                         .then(() => window.location.reload())
                     closeModal()

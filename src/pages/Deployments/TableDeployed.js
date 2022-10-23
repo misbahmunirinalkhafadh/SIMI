@@ -8,15 +8,17 @@ import {
     TableFooter,
     TableContainer,
     Pagination,
-    Badge
+    Badge,
+    Button
 } from '@windmill/react-ui'
 import useDataDeployment from '../../hooks/useDataDeployment'
-import useDataSite from '../../hooks/useDataSite'
+import { EditIcon, InformationIcon, WithdrawIcon } from '../../assets/icons'
+import ModalDetailDeploy from './ModalDetailDeploy'
 
-export default function TableDeployed({filter}) {
+export default function TableDeployed({ filter }) {
     const { allDeployment } = useDataDeployment({})
     // const { allSite } = useDataSite({})
-
+    const [detailDeploy, setDetailDeploy] = useState({})
     const [response, setResponse] = useState([])
 
     // setup pages control for every table
@@ -25,12 +27,23 @@ export default function TableDeployed({filter}) {
     // setup data for every table
     const [dataTable, setDataTable] = useState([])
 
+    const [isModalOpen, setIsModalOpen] = useState(false)
+
     // pagination setup
     const resultsPerPage = 10
 
     // pagination change control
     function onPageChangeTable(p) {
         setPageTable(p)
+    }
+
+    function openModal(value) {
+        setIsModalOpen(true)
+        setDetailDeploy(value)
+    }
+
+    function closeModal() {
+        setIsModalOpen(false)
     }
 
     useEffect(() => {
@@ -72,6 +85,10 @@ export default function TableDeployed({filter}) {
                             <TableCell>User</TableCell>
                             <TableCell>Email</TableCell>
                             <TableCell>Job Title</TableCell>
+                            <TableCell>Deploy Date</TableCell>
+                            <TableCell>Withdrawal Date</TableCell>
+                            <TableCell>Status Withdrawal</TableCell>
+                            <TableCell>Actions</TableCell>
                         </tr>
                     </TableHeader>
                     <TableBody>
@@ -87,6 +104,21 @@ export default function TableDeployed({filter}) {
                                 <TableCell>{data.email}</TableCell>
                                 <TableCell>{data.job}</TableCell>
                                 <TableCell className="text-center" ><Badge type="success">{data.statusDeploy}</Badge></TableCell>
+                                <TableCell></TableCell>
+                                <TableCell></TableCell>
+                                <TableCell>
+                                    <div className="flex items-center space-x-2">
+                                        <Button layout="link" size="icon" aria-label="Edit" >
+                                            <EditIcon className="w-5 h-5" aria-hidden="true" color="#7e3af2" />
+                                        </Button>
+                                        <Button layout="link" size="icon" aria-label="Detail">
+                                            <InformationIcon className="w-5 h-5" aria-hidden="true" color="#7e3af2" onClick={() => openModal(data)} />
+                                        </Button>
+                                        <Button layout="link" size="icon" aria-label="Withdrawal" >
+                                            <WithdrawIcon className="w-5 h-5" aria-hidden="true" color='#7e3af2' />
+                                        </Button>
+                                    </div>
+                                </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
@@ -102,6 +134,7 @@ export default function TableDeployed({filter}) {
                     )}
                 </TableFooter>
             </TableContainer>
+            <ModalDetailDeploy isModalOpen={isModalOpen} closeModal={closeModal} data={detailDeploy} />
         </>
     )
 }

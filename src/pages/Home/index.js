@@ -1,32 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardBody } from '@windmill/react-ui';
 
-import { PageTitle } from '../../components/atoms';
-import useDataDeployment from '../../hooks/useDataDeployment';
+import { PageTitle, SectionTitle } from '../../components/atoms';
 import useDataUser from '../../hooks/useDataUser';
-function Home() {
-  const { allDeployment } = useDataDeployment()
-  const { dataUser } = useDataUser()
-  const [myAsset, setMyAsset] = useState([])
+import useDataDeployment from '../../hooks/useDataDeployment';
+import CardITAsset from './CardITAssets';
+import CardNonITAsset from './CardNonITAssets';
 
-  console.log(myAsset);
+function Home() {
+  const { dataUser } = useDataUser()
+  const { allDeployment } = useDataDeployment({})
+  const [resITAsset, setResITAsset] = useState([])
+  const [resNonITAsset, setResNonITAsset] = useState([])
+
   useEffect(() => {
-    setMyAsset(allDeployment?.filter(e => e?.data?.email === dataUser.email))
+    const dataAsset = allDeployment?.filter(e => e?.data?.email === dataUser.email)
+    setResITAsset(dataAsset?.filter(e => e?.data?.category === 'Laptop' || e?.data?.category === 'Desktop'))
+    setResNonITAsset(dataAsset?.filter(e => e?.data?.category === 'Printer' || e?.data?.category === 'Projector'))
   }, [allDeployment, dataUser])
 
   return (
     <>
       <PageTitle>Home</PageTitle>
-
-      {/* <SectionTitle>My Task</SectionTitle>
-
-      <Card className="mb-8 shadow-md">
-        <CardBody>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            Large, full width sections goes here
-          </p>
-        </CardBody>
-      </Card> */}
 
       <div className="grid gap-6 mb-8 md:grid-cols-2">
         <Card>
@@ -40,57 +35,36 @@ function Home() {
 
         <Card>
           <CardBody>
-            <p className="mb-4 font-semibold text-gray-600 dark:text-gray-300">My Assets</p>
-            <div className="border-t border-gray-200">
-              <dl>
-                <div className="px-4 py-5 bg-gray-50 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                  <dt className="text-sm font-medium text-gray-500">Full name</dt>
-                  <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">Margot Foster</dd>
-                </div>
-                <div className="px-4 py-5 bg-white sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                  <dt className="text-sm font-medium text-gray-500">Application for</dt>
-                  <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">Backend Developer</dd>
-                </div>
-              </dl>
-            </div>
+            <p className="mb-4 font-semibold text-gray-600 dark:text-gray-300">Announcements</p>
+            <p className="text-gray-600 dark:text-gray-400">
+              Coming soon...
+            </p>
           </CardBody>
         </Card>
       </div>
 
-      <Card>
-        <div className="px-4 py-5 sm:px-6">
-          <h3 className="text-lg font-medium leading-6 text-gray-900">Applicant Information</h3>
-          <p className="max-w-2xl mt-1 text-sm text-gray-500">Personal details and application.</p>
-        </div>
-        <div className="border-t border-gray-200">
-          <dl>
-            <div className="px-4 py-5 bg-gray-50 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <dt className="text-sm font-medium text-gray-500">Full name</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">Margot Foster</dd>
-            </div>
-            <div className="px-4 py-5 bg-white sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <dt className="text-sm font-medium text-gray-500">Application for</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">Backend Developer</dd>
-            </div>
-            <div className="px-4 py-5 bg-gray-50 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <dt className="text-sm font-medium text-gray-500">Email address</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">margotfoster@example.com</dd>
-            </div>
-            <div className="px-4 py-5 bg-white sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <dt className="text-sm font-medium text-gray-500">Salary expectation</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">$120,000</dd>
-            </div>
-            <div className="px-4 py-5 bg-gray-50 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <dt className="text-sm font-medium text-gray-500">About</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-                Fugiat ipsum ipsum deserunt culpa aute sint do nostrud anim incididunt cillum culpa consequat. Excepteur
-                qui ipsum aliquip consequat sint. Sit id mollit nulla mollit nostrud in ea officia proident. Irure nostrud
-                pariatur mollit ad adipisicing reprehenderit deserunt qui eu.
-              </dd>
-            </div>
-          </dl>
-        </div>
-      </Card>
+      {/* My Assets */}
+      {resITAsset ?
+        <>
+          <SectionTitle>My IT Asset</SectionTitle>
+          <div className="grid grid-cols-3 gap-4 mb-8">
+            {resITAsset.map(({ id, data }) => (
+              <CardITAsset key={id} deployId={id} data={data} />
+            ))}
+          </div>
+        </> : ''
+      }
+
+      {resNonITAsset ?
+        <>
+          <SectionTitle>My Non IT Asset</SectionTitle>
+          <div className="grid grid-cols-3 gap-4 mb-8">
+            {resNonITAsset.map(({ id, data }) => (
+              <CardNonITAsset key={id} deployId={id} data={data} />
+            ))}
+          </div>
+        </> : ''
+      }
     </>
   )
 }

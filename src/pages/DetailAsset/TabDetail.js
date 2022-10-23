@@ -3,8 +3,10 @@ import { Badge } from '@windmill/react-ui';
 
 import { SectionTitle } from '../../components/atoms';
 import { usersServices } from '../../services/users';
+import useDataSite from '../../hooks/useDataSite';
 
 function TabDetail(data) {
+    const { allSite } = useDataSite()
     const [currentUser, setCurrentUser] = useState({})
     const { site, salesOrder, category, brand, model, serialNumber, isArchived, status, statusDetail, description, createdAt, information, uid } = data.data;
 
@@ -33,7 +35,7 @@ function TabDetail(data) {
                                     Site
                                 </th>
                                 <td className="px-6 py-4">
-                                    {site}
+                                    {allSite?.find((e) => e.id === site)?.data.name}
                                 </td>
                             </tr>
                             <tr className="border-b border-gray-200 dark:border-gray-700">
@@ -99,16 +101,16 @@ function TabDetail(data) {
                                 <td className="px-6 py-4">
                                     {(() => {
                                         switch (status) {
-                                            case 'In Use':
-                                                return <Badge type="warning" >{status}</Badge>;
-                                            case 'Broken':
-                                                return <Badge type="danger"  >{status}</Badge>;
-                                            case 'Ready':
-                                                return <Badge type="success" >{status}</Badge>;
-                                            case 'On Service':
-                                                return <Badge type="neutral" >{status}</Badge>;
+                                            case "In Use":
+                                                return <Badge type="primary">{status}</Badge>
+                                            case "Broken":
+                                                return <Badge type="danger">{status}</Badge>
+                                            case "Ready":
+                                                return <Badge type="success">{status}</Badge>
+                                            case "On Service":
+                                                return <Badge type="neutral">{status}</Badge>
                                             default:
-                                                return <Badge type="primary" >{status}</Badge>;
+                                                return <Badge type="warning">{status}</Badge>
                                         }
                                     })()}
                                 </td>

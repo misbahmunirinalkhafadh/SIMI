@@ -16,7 +16,6 @@ import { EditIcon, TrashIcon } from '../../assets/icons'
 import Swal from 'sweetalert2'
 import ModalFormDeploy from './ModalFormDeploy'
 import useDataDeployment from '../../hooks/useDataDeployment'
-import useDataSite from '../../hooks/useDataSite'
 import { deploymentsServices } from '../../services/deployments'
 import useDataUser from '../../hooks/useDataUser'
 import { assetsServices } from '../../services/assets'
@@ -24,7 +23,6 @@ import useDataAsset from '../../hooks/useDataAsset'
 
 export default function TablePending({ filter }) {
     const { allDeployment } = useDataDeployment({})
-    // const { allSite } = useDataSite({})
     const { allAsset } = useDataAsset({})
     const { role } = useDataUser();
     const [response, setResponse] = useState([])
@@ -70,7 +68,7 @@ export default function TablePending({ filter }) {
             }).then((result) => {
                 if (result.isConfirmed) {
                     deploymentsServices.delete(id)
-                    assetsServices.update(assetId, { status: "Ready" })
+                    assetsServices.update(assetId, { status: "Ready", deployAt: '' })
                     Swal.fire(
                         'Deleted!',
                         'Your file has been deleted.',
