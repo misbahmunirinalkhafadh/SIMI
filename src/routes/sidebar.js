@@ -28,9 +28,22 @@ const routes = [
     name: "Request Service", // name that appear in Sidebar
   },
   {
-    path: "/app/deployments", // the url
     icon: "FormsIcon", // the component being exported from icons/index.js
-    name: "Deployments", // name that appear in Sidebar
+    name: "Assignments", // name that appear in Sidebar
+    routes: [
+      {
+        path: "/app/pending",
+        name: "Pending",
+      },
+      {
+        path: "/app/deployed",
+        name: "Deployed",
+      },
+      {
+        path: "/app/withdrawn",
+        name: "Withdrawn",
+      },
+    ]
   },
   {
     path: "/app/manage", // the url

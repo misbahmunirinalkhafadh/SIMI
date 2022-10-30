@@ -5,22 +5,22 @@ import { SectionTitle } from '../../components/atoms';
 import { usersServices } from '../../services/users';
 import useDataSite from '../../hooks/useDataSite';
 
-function TabDetail(data) {
+function TabDetail({data}) {
     const { allSite } = useDataSite()
     const [currentUser, setCurrentUser] = useState({})
-    const { site, salesOrder, category, brand, model, serialNumber, isArchived, status, statusDetail, description, createdAt, information, uid } = data.data;
+    const { site, salesOrder, category, brand, model, serialNumber, isArchived, status, statusDetail, description, createdAt, information, deployed } = data;
 
     useEffect(() => {
-        if (uid) {
+        if (deployed) {
             try {
-                usersServices.getById(uid).then(data => {
+                usersServices.getById(deployed?.uid).then(data => {
                     setCurrentUser(data);
                 })
             } catch (error) {
                 console.log(error);
             }
         }
-    }, [uid])
+    }, [deployed])
 
     return (
         <>

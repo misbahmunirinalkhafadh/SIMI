@@ -14,7 +14,7 @@ function Home() {
   const [resNonITAsset, setResNonITAsset] = useState([])
 
   useEffect(() => {
-    const dataAsset = allDeployment?.filter(e => e?.data?.email === dataUser.email)
+    const dataAsset = allDeployment?.filter(e => e?.data?.deployed?.email === dataUser.email)
     setResITAsset(dataAsset?.filter(e => e?.data?.category === 'Laptop' || e?.data?.category === 'Desktop'))
     setResNonITAsset(dataAsset?.filter(e => e?.data?.category === 'Printer' || e?.data?.category === 'Projector'))
   }, [allDeployment, dataUser])
@@ -23,10 +23,19 @@ function Home() {
     <>
       <PageTitle>Home</PageTitle>
 
-      <div className="grid gap-6 mb-8 md:grid-cols-2">
+      <div className="grid gap-4 mb-8 md:grid-cols-3">
         <Card>
           <CardBody>
             <p className="mb-4 font-semibold text-gray-600 dark:text-gray-300">My Request Summary</p>
+            <p className="text-gray-600 dark:text-gray-400">
+              Coming soon...
+            </p>
+          </CardBody>
+        </Card>
+
+        <Card>
+          <CardBody>
+            <p className="mb-4 font-semibold text-gray-600 dark:text-gray-300">Issues and Resolution</p>
             <p className="text-gray-600 dark:text-gray-400">
               Coming soon...
             </p>
@@ -44,7 +53,7 @@ function Home() {
       </div>
 
       {/* My Assets */}
-      {resITAsset ?
+      {resITAsset.length > 0 ?
         <>
           <SectionTitle>My IT Asset</SectionTitle>
           <div className="grid grid-cols-3 gap-4 mb-8">
@@ -55,7 +64,7 @@ function Home() {
         </> : ''
       }
 
-      {resNonITAsset ?
+      {resNonITAsset.length > 0 ?
         <>
           <SectionTitle>My Non IT Asset</SectionTitle>
           <div className="grid grid-cols-3 gap-4 mb-8">

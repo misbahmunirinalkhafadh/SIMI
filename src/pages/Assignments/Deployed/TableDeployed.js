@@ -7,35 +7,36 @@ import {
     TableRow,
     TableFooter,
     TableContainer,
-    Button,
     Pagination,
-    Badge
+    Badge,
+    Button
 } from '@windmill/react-ui'
-
-import { EditIcon, TrashIcon } from '../../assets/icons'
+import useDataDeployment from '../../../hooks/useDataDeployment'
+import { InformationIcon, WithdrawIcon } from '../../../assets/icons'
+import useDataSite from '../../../hooks/useDataSite'
+import ModalDetail from '../ModalDetail'
 import Swal from 'sweetalert2'
-import ModalFormDeploy from './ModalFormDeploy'
-import useDataDeployment from '../../hooks/useDataDeployment'
-import { deploymentsServices } from '../../services/deployments'
-import useDataUser from '../../hooks/useDataUser'
-import { assetsServices } from '../../services/assets'
-import useDataAsset from '../../hooks/useDataAsset'
+import { deploymentsServices } from '../../../services/deployments'
+import { assetsServices } from '../../../services/assets'
+import useDataAsset from '../../../hooks/useDataAsset'
+import { deleteField, Timestamp } from 'firebase/firestore'
+import useDataUser from '../../../hooks/useDataUser'
 
-export default function TablePending({ filter }) {
+export default function TableDeployed({ filter }) {
     const { allDeployment } = useDataDeployment({})
-    const { allAsset } = useDataAsset({})
-    const { role } = useDataUser();
+    const { allSite } = useDataSite({})
+    const { allAsset } = useDataAsset([])
+    const { dataUser } = useDataUser([])
+    const [detail, setDetail] = useState({})
     const [response, setResponse] = useState([])
-    const [dataDeploy, setDataDeploy] = useState({})
 
     // setup pages control for every table
     const [pageTable, setPageTable] = useState(1)
 
     // setup data for every table
     const [dataTable, setDataTable] = useState([])
-    const [isModalOpen, setIsModalOpen] = useState(false)
 
-    const priviledges = role?.priviledges?.filter(e => e.permission === "Deployments")[0];
+    const [isModalOpen, setIsModalOpen] = useState(false)
 
     // pagination setup
     const resultsPerPage = 10
@@ -45,46 +46,52 @@ export default function TablePending({ filter }) {
         setPageTable(p)
     }
 
-    function openModal({ id, data }) {
+    function openModal(value) {
         setIsModalOpen(true)
-        setDataDeploy({ id, data })
+        setDetail(value)
     }
 
     function closeModal() {
         setIsModalOpen(false)
     }
 
-    const handleDelete = ({ id, data }) => {
-        let assetId = allAsset.filter(e => e.data.serialNumber === data.serialNumber)[0].id
+    const handleWithdraw = ({ id, data }) => {
         try {
             Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                icon: 'warning',
+                title: "Withdraw",
+                text: "Do you want to withdraw this asset? Please enter remark",
+                input: 'text',
                 showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!'
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, withdraw it!",
             }).then((result) => {
                 if (result.isConfirmed) {
-                    deploymentsServices.delete(id)
-                    assetsServices.update(assetId, { status: "Ready", deployAt: '' })
+                    const withdrawn = {
+                        status: 'Asset Returned',
+                        remark: result.value,
+                        withdrawnAt: Timestamp.now(),
+                        withdrawnBy: dataUser.email
+                    }
+                    deploymentsServices.update(id, { isWithdrawn: true, statusDeploy: 'Withdrawn', withdrawn })
+                    const asset = allAsset.find(e => e.data.serialNumber === data.serialNumber)
+                    assetsServices.set(asset?.id, { status: 'Ready', deployed: deleteField() })
                     Swal.fire(
-                        'Deleted!',
-                        'Your file has been deleted.',
-                        'success',
-                    ).then(() => window.location.reload())
+                        "Withdrawn!",
+                        "Your file has been change status to Ready.",
+                        "success"
+                    ).then(() => window.location.reload());
                 }
-            })
+            });
         } catch (err) {
-            alert(err)
+            alert(err);
         }
     }
 
     useEffect(() => {
         let resultFilter = [];
         resultFilter.push(allDeployment?.filter((e) => {
-            let deploy = e.data.isDeployed === false
+            let deploy = e.data.isDeployed === true
 
             let search = filter.search !== "" ? e.data.serialNumber
                 .toLowerCase()
@@ -98,7 +105,6 @@ export default function TablePending({ filter }) {
 
             return deploy && search && category
         }));
-
         setResponse(resultFilter[0])
     }, [allDeployment, filter])
 
@@ -114,13 +120,15 @@ export default function TablePending({ filter }) {
                 <Table>
                     <TableHeader>
                         <tr>
-                            {/* <TableCell>Asset Site</TableCell> */}
+                            <TableCell>Confirm Date</TableCell>
+                            <TableCell>Asset Site</TableCell>
                             <TableCell>Category</TableCell>
                             <TableCell>Type</TableCell>
                             <TableCell>Serial Number</TableCell>
                             <TableCell>User</TableCell>
                             <TableCell>Email</TableCell>
                             <TableCell>Job Title</TableCell>
+                            <TableCell>Department</TableCell>
                             <TableCell className="text-center">Status Deploy</TableCell>
                             <TableCell className="text-center">Actions</TableCell>
                         </tr>
@@ -128,23 +136,29 @@ export default function TablePending({ filter }) {
                     <TableBody>
                         {dataTable.map(({ id, data }) => (
                             <TableRow className="dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600" key={id}>
-                                {/* <TableCell>
+                                <TableCell>{new Date(data?.deployed?.confirmAt?.seconds * 1000).toLocaleDateString("in-ID")}</TableCell>
+                                <TableCell>
                                     {allSite?.filter((e) => e.id === data?.site)[0]?.data.name}
-                                </TableCell> */}
+                                </TableCell>
                                 <TableCell>{data?.category}</TableCell>
-                                <TableCell>{data?.brand} {data?.model}</TableCell>
+                                <TableCell>{data?.brand} {data.model}</TableCell>
                                 <TableCell>{data?.serialNumber}</TableCell>
-                                <TableCell>{data?.user}</TableCell>
-                                <TableCell>{data?.email}</TableCell>
-                                <TableCell>{data?.job}</TableCell>
-                                <TableCell className="text-center" ><Badge type="warning">{data?.statusDeploy}</Badge></TableCell>
+                                <TableCell>{data?.deployed?.user}</TableCell>
+                                <TableCell>{data?.deployed?.email}</TableCell>
+                                <TableCell>{data?.deployed?.job}</TableCell>
+                                <TableCell>{data?.deployed?.department ? data?.deployed?.department : '-'}</TableCell>
+                                <TableCell className="text-center" >
+                                    <Badge type="success">
+                                        {data?.statusDeploy}
+                                    </Badge>
+                                </TableCell>
                                 <TableCell>
                                     <div className="flex items-center space-x-2">
-                                        <Button layout="link" size="icon" aria-label="Edit" disabled={!priviledges?.edit} onClick={() => openModal({ id, data })}>
-                                            <EditIcon className="w-5 h-5" aria-hidden="true" color="#7e3af2" />
+                                        <Button layout="link" size="icon" aria-label="Withdrawal" disabled={data?.isWithdrawn} onClick={() => handleWithdraw({ id, data })}>
+                                            <WithdrawIcon className="w-5 h-5" aria-hidden="true" color='#7e3af2' />
                                         </Button>
-                                        <Button layout="link" size="icon" aria-label="Delete" disabled={!priviledges?.delete} onClick={() => handleDelete({ id, data })}>
-                                            <TrashIcon className="w-5 h-5" aria-hidden="true" color='#c81e1e' />
+                                        <Button layout="link" size="icon" aria-label="Detail">
+                                            <InformationIcon className="w-5 h-5" aria-hidden="true" color="#7e3af2" onClick={() => openModal(data)} />
                                         </Button>
                                     </div>
                                 </TableCell>
@@ -163,7 +177,7 @@ export default function TablePending({ filter }) {
                     )}
                 </TableFooter>
             </TableContainer>
-            <ModalFormDeploy isModalOpen={isModalOpen} closeModal={closeModal} deployId={dataDeploy.id} data={dataDeploy.data} />
+            <ModalDetail isModalOpen={isModalOpen} closeModal={closeModal} data={detail} isDeployed={detail.isDeployed} />
         </>
     )
 }

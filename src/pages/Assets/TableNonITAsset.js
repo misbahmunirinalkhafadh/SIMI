@@ -18,8 +18,8 @@ import { Link } from 'react-router-dom'
 import { assetsServices } from '../../services/assets'
 import Swal from 'sweetalert2'
 import ModalFormNonITAsset from './ModalFormNonITAsset'
-import ModalFormDeploy from '../Deployments/ModalFormDeploy'
 import useDataSite from '../../hooks/useDataSite'
+import ModalFormDeploy from '../Assignments/ModalFormDeploy'
 // make a copy of the data, for the second table
 
 function TableNonITAsset({ filter, priviledges }) {

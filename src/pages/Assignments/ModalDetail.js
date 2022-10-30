@@ -1,8 +1,8 @@
 import React from 'react'
-import { Modal, ModalHeader, ModalBody } from '@windmill/react-ui'
+import { Modal, ModalHeader, ModalBody, Badge } from '@windmill/react-ui'
 import useDataSite from '../../hooks/useDataSite';
 
-function ModalDetailDeploy({ closeModal, isModalOpen, data }) {
+function ModalDetail({ closeModal, isModalOpen, data, isDeployed, isWithdrawn }) {
     const { allSite } = useDataSite({})
     return (
         <>
@@ -16,7 +16,7 @@ function ModalDetailDeploy({ closeModal, isModalOpen, data }) {
                                     User
                                 </th>
                                 <td className="px-6 py-2">
-                                    {data.user}
+                                    {data.deployed?.user}
                                 </td>
                             </tr>
                             <tr className="border-b border-gray-200 dark:border-gray-700">
@@ -24,7 +24,7 @@ function ModalDetailDeploy({ closeModal, isModalOpen, data }) {
                                     Email Address
                                 </th>
                                 <td className="px-6 py-2">
-                                    {data.email}
+                                    {data.deployed?.email}
                                 </td>
                             </tr>
                             <tr className="border-b border-gray-200 dark:border-gray-700">
@@ -32,7 +32,7 @@ function ModalDetailDeploy({ closeModal, isModalOpen, data }) {
                                     Department
                                 </th>
                                 <td className="px-6 py-2">
-                                    {data.department}
+                                    {data.deployed?.department}
                                 </td>
                             </tr>
                             <tr className="border-b border-gray-200 dark:border-gray-700">
@@ -40,7 +40,7 @@ function ModalDetailDeploy({ closeModal, isModalOpen, data }) {
                                     Job Title
                                 </th>
                                 <td className="px-6 py-2">
-                                    {data.job}
+                                    {data.deployed?.job}
                                 </td>
                             </tr>
                             <tr className="border-b border-gray-200 dark:border-gray-700">
@@ -82,7 +82,9 @@ function ModalDetailDeploy({ closeModal, isModalOpen, data }) {
                                     Status Deploy
                                 </th>
                                 <td className="px-6 py-2">
-                                    {data.statusDeploy}
+                                    <Badge type="success">
+                                        {data?.statusDeploy}
+                                    </Badge>
                                 </td>
                             </tr>
                             <tr className="border-b border-gray-200 dark:border-gray-700">
@@ -98,25 +100,39 @@ function ModalDetailDeploy({ closeModal, isModalOpen, data }) {
                                     Confirm Date
                                 </th>
                                 <td className="px-6 py-2">
-                                    {new Date(data.confirmAt?.seconds * 1000).toLocaleDateString("in-ID")}
+                                    {new Date(data.deployed?.confirmAt?.seconds * 1000).toLocaleDateString("in-ID")}
                                 </td>
                             </tr>
-                            <tr className="border-b border-gray-200 dark:border-gray-700">
-                                <th scope="row" className="px-6 py-2 font-medium text-gray-900 whitespace-nowrap bg-gray-50 dark:text-white dark:bg-gray-800">
-                                    Withdraw Date
-                                </th>
-                                <td className="px-6 py-2">
-                                    {data.withdrawalAt ? new Date(data.withdrawalAt?.seconds * 1000).toLocaleDateString("in-ID") : '-'}
-                                </td>
-                            </tr>
-                            <tr className="border-b border-gray-200 dark:border-gray-700">
-                                <th scope="row" className="px-6 py-2 font-medium text-gray-900 whitespace-nowrap bg-gray-50 dark:text-white dark:bg-gray-800">
-                                    Remark
-                                </th>
-                                <td className="px-6 py-2">
-                                    {data.remark}
-                                </td>
-                            </tr>
+                            {isDeployed ?
+                                <tr className="border-b border-gray-200 dark:border-gray-700">
+                                    <th scope="row" className="px-6 py-2 font-medium text-gray-900 whitespace-nowrap bg-gray-50 dark:text-white dark:bg-gray-800">
+                                        Remark
+                                    </th>
+                                    <td className="px-6 py-2">
+                                        {data.deployed?.remark}
+                                    </td>
+                                </tr> : null
+                            }
+                            {isWithdrawn ?
+                                <>
+                                    <tr className="border-b border-gray-200 dark:border-gray-700">
+                                        <th scope="row" className="px-6 py-2 font-medium text-gray-900 whitespace-nowrap bg-gray-50 dark:text-white dark:bg-gray-800">
+                                            Withdraw Date
+                                        </th>
+                                        <td className="px-6 py-2">
+                                            {new Date(data?.withdrawnAt?.seconds * 1000).toLocaleDateString("in-ID")}
+                                        </td>
+                                    </tr>
+                                    <tr className="border-b border-gray-200 dark:border-gray-700">
+                                        <th scope="row" className="px-6 py-2 font-medium text-gray-900 whitespace-nowrap bg-gray-50 dark:text-white dark:bg-gray-800">
+                                            Remark
+                                        </th>
+                                        <td className="px-6 py-2">
+                                            {data?.withdrawn?.remark}
+                                        </td>
+                                    </tr>
+                                </> : null
+                            }
                         </tbody>
                     </table>
                 </ModalBody>
@@ -125,4 +141,4 @@ function ModalDetailDeploy({ closeModal, isModalOpen, data }) {
     )
 }
 
-export default ModalDetailDeploy
+export default ModalDetail

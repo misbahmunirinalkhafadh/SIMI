@@ -50,7 +50,21 @@ function ModalFormRole({ closeModal, isModalOpen, id, data }) {
                     delete: false,
                 },
                 {
-                    permission: 'Deployments',
+                    permission: 'Pending',
+                    view: false,
+                    add: false,
+                    edit: false,
+                    delete: false,
+                },
+                {
+                    permission: 'Deployed',
+                    view: false,
+                    add: false,
+                    edit: false,
+                    delete: false,
+                },
+                {
+                    permission: 'Withdrawn',
                     view: false,
                     add: false,
                     edit: false,

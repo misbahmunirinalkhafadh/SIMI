@@ -22,7 +22,7 @@ function ModalFormDeploy({ closeModal, isModalOpen, deployId, assetId, data }) {
     const [userdata, setUserdata] = useState({})
 
     const indexAsset = listAsset?.findIndex(e => e?.label === data?.serialNumber)
-    const indexUser = listUser?.findIndex(e => e?.label === data?.email)
+    const indexUser = listUser?.findIndex(e => e?.label === data?.deployed?.email)
 
     const handleChange = (e) => {
         setFilter({
@@ -42,10 +42,12 @@ function ModalFormDeploy({ closeModal, isModalOpen, deployId, assetId, data }) {
                 serialNumber: value?.dataAsset?.label === undefined ? data?.serialNumber : value?.dataAsset?.label,
                 brand: value?.dataAsset?.brand === undefined ? data?.brand : value?.dataAsset?.brand,
                 model: value?.dataAsset?.model === undefined ? data?.model : value?.dataAsset?.model,
-                email: userdata?.label,
-                user: userdata?.name,
-                job: userdata?.job,
-                department: userdata?.department === undefined ? '' : userdata?.department,
+                deployed: {
+                    email: userdata?.label,
+                    user: userdata?.name,
+                    job: userdata?.job,
+                    department: userdata?.department === undefined ? '' : userdata?.department,
+                },
                 isDeployed: false,
                 statusDeploy: 'Assigned',
                 createdBy: dataUser?.email,
@@ -61,7 +63,7 @@ function ModalFormDeploy({ closeModal, isModalOpen, deployId, assetId, data }) {
                 let id = value?.dataAsset?.value === undefined ? assetId : value?.dataAsset?.value
                 if (result.isConfirmed) {
                     deploymentsServices.add(dataDeploy)
-                    assetsServices.update(id, { status: 'Assigned', deployAt: Timestamp.now() })
+                    assetsServices.update(id, { status: 'Assigned' })
                     Swal.fire('Saved!', '', 'success')
                         .then(() => window.location.reload())
                     closeModal()
@@ -77,10 +79,13 @@ function ModalFormDeploy({ closeModal, isModalOpen, deployId, assetId, data }) {
                     serialNumber: value?.dataAsset?.label === undefined ? data?.serialNumber : value?.dataAsset?.label,
                     brand: value?.dataAsset?.brand === undefined ? data?.brand : value?.dataAsset?.brand,
                     model: value?.dataAsset?.model === undefined ? data?.model : value?.dataAsset?.model,
-                    email: userdata?.label === undefined ? data?.email : userdata?.label,
-                    user: userdata?.name === undefined ? data?.user : userdata?.name,
-                    job: userdata?.job === undefined ? data?.job : userdata?.job,
-                    department: userdata?.department === undefined ? '' : userdata?.department,
+                    deployed: {
+                        email: userdata?.label === undefined ? data?.deployed?.email : userdata?.label,
+                        user: userdata?.name === undefined ? data?.deployed?.user : userdata?.name,
+                        job: userdata?.job === undefined ? data?.deployed?.job : userdata?.job,
+                        department: userdata?.department === undefined ? '' : userdata?.department,
+                    },
+                    statusDeploy: 'Assigned',
                     modifiedBy: dataUser?.email,
                     modifiedAt: Timestamp.now()
                 }
@@ -190,6 +195,7 @@ function ModalFormDeploy({ closeModal, isModalOpen, deployId, assetId, data }) {
                             <span>Email<small className='text-red-600'>*</small></span>
                             <ActionSelect
                                 name="dataUser"
+                                disabled={data?.deployed?.status === 'Rejected' ? true : false}
                                 control={control}
                                 options={listUser}
                                 optionLabel={false}
@@ -203,7 +209,7 @@ function ModalFormDeploy({ closeModal, isModalOpen, deployId, assetId, data }) {
                                 className="mt-1"
                                 disabled
                                 value={userdata?.name || ''}
-                                {...register('user')}
+                                {...register('deployed.user')}
                             />
                         </Label>
                         <Label className="mt-3">
@@ -212,7 +218,7 @@ function ModalFormDeploy({ closeModal, isModalOpen, deployId, assetId, data }) {
                                 className="mt-1"
                                 disabled
                                 value={userdata?.job || ''}
-                                {...register('job')}
+                                {...register('deployed.job')}
                             />
                         </Label>
                         <Label className="mt-3">
@@ -221,7 +227,7 @@ function ModalFormDeploy({ closeModal, isModalOpen, deployId, assetId, data }) {
                                 className="mt-1"
                                 disabled
                                 value={userdata?.department || ''}
-                                {...register('department')}
+                                {...register('deployed.department')}
                             />
                         </Label>
                     </ModalBody>

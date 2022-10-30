@@ -7,18 +7,20 @@ import {
     TableRow,
     TableFooter,
     TableContainer,
+    Button,
     Pagination,
-    Badge,
-    Button
+    Badge
 } from '@windmill/react-ui'
-import useDataDeployment from '../../hooks/useDataDeployment'
-import { EditIcon, InformationIcon, WithdrawIcon } from '../../assets/icons'
-import ModalDetailDeploy from './ModalDetailDeploy'
 
-export default function TableDeployed({ filter }) {
+import useDataDeployment from '../../../hooks/useDataDeployment'
+import { InformationIcon } from '../../../assets/icons'
+import useDataSite from '../../../hooks/useDataSite'
+import ModalDetail from '../ModalDetail'
+
+export default function TableWithdrawn({ filter }) {
     const { allDeployment } = useDataDeployment({})
-    // const { allSite } = useDataSite({})
-    const [detailDeploy, setDetailDeploy] = useState({})
+    const { allSite } = useDataSite({})
+    const [detail, setDetail] = useState({})
     const [response, setResponse] = useState([])
 
     // setup pages control for every table
@@ -39,7 +41,7 @@ export default function TableDeployed({ filter }) {
 
     function openModal(value) {
         setIsModalOpen(true)
-        setDetailDeploy(value)
+        setDetail(value)
     }
 
     function closeModal() {
@@ -49,7 +51,7 @@ export default function TableDeployed({ filter }) {
     useEffect(() => {
         let resultFilter = [];
         resultFilter.push(allDeployment?.filter((e) => {
-            let deploy = e.data.isDeployed === true
+            let deploy = e.data.isWithdrawn === true
 
             let search = filter.search !== "" ? e.data.serialNumber
                 .toLowerCase()
@@ -78,44 +80,38 @@ export default function TableDeployed({ filter }) {
                 <Table>
                     <TableHeader>
                         <tr>
-                            {/* <TableCell>Asset Site</TableCell> */}
+                            <TableCell>Withdraw Date</TableCell>
+                            <TableCell>Asset Site</TableCell>
                             <TableCell>Category</TableCell>
                             <TableCell>Type</TableCell>
                             <TableCell>Serial Number</TableCell>
                             <TableCell>User</TableCell>
                             <TableCell>Email</TableCell>
                             <TableCell>Job Title</TableCell>
-                            <TableCell>Deploy Date</TableCell>
-                            <TableCell>Withdrawal Date</TableCell>
-                            <TableCell>Status Withdrawal</TableCell>
-                            <TableCell>Actions</TableCell>
+                            <TableCell>Department</TableCell>
+                            <TableCell className="text-center">Status Deploy</TableCell>
+                            <TableCell className="text-center">Actions</TableCell>
                         </tr>
                     </TableHeader>
                     <TableBody>
                         {dataTable.map(({ id, data }) => (
                             <TableRow className="dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600" key={id}>
-                                {/* <TableCell>
-                                    {allSite?.filter((e) => e.id === data.site)[0]?.data.name}
-                                </TableCell> */}
-                                <TableCell>{data.category}</TableCell>
-                                <TableCell>{data.brand} {data.model}</TableCell>
-                                <TableCell>{data.serialNumber}</TableCell>
-                                <TableCell>{data.user}</TableCell>
-                                <TableCell>{data.email}</TableCell>
-                                <TableCell>{data.job}</TableCell>
-                                <TableCell className="text-center" ><Badge type="success">{data.statusDeploy}</Badge></TableCell>
-                                <TableCell></TableCell>
-                                <TableCell></TableCell>
+                                <TableCell>{new Date(data?.withdrawn?.withdrawnAt.seconds * 1000).toLocaleDateString("in-ID")}</TableCell>
+                                <TableCell>
+                                    {allSite?.filter((e) => e.id === data?.site)[0]?.data.name}
+                                </TableCell>
+                                <TableCell>{data?.category}</TableCell>
+                                <TableCell>{data?.brand} {data?.model}</TableCell>
+                                <TableCell>{data?.serialNumber}</TableCell>
+                                <TableCell>{data?.deployed?.user}</TableCell>
+                                <TableCell>{data?.deployed?.email}</TableCell>
+                                <TableCell>{data?.deployed?.job}</TableCell>
+                                <TableCell>{data?.deployed?.department ? data?.deployed?.department : '-'}</TableCell>
+                                <TableCell className="text-center" ><Badge type="success">{data?.withdrawn?.status}</Badge></TableCell>
                                 <TableCell>
                                     <div className="flex items-center space-x-2">
-                                        <Button layout="link" size="icon" aria-label="Edit" >
-                                            <EditIcon className="w-5 h-5" aria-hidden="true" color="#7e3af2" />
-                                        </Button>
                                         <Button layout="link" size="icon" aria-label="Detail">
                                             <InformationIcon className="w-5 h-5" aria-hidden="true" color="#7e3af2" onClick={() => openModal(data)} />
-                                        </Button>
-                                        <Button layout="link" size="icon" aria-label="Withdrawal" >
-                                            <WithdrawIcon className="w-5 h-5" aria-hidden="true" color='#7e3af2' />
                                         </Button>
                                     </div>
                                 </TableCell>
@@ -134,7 +130,7 @@ export default function TableDeployed({ filter }) {
                     )}
                 </TableFooter>
             </TableContainer>
-            <ModalDetailDeploy isModalOpen={isModalOpen} closeModal={closeModal} data={detailDeploy} />
+            <ModalDetail isModalOpen={isModalOpen} closeModal={closeModal} data={detail} isWithdrawn={detail.isWithdrawn} />
         </>
     )
 }

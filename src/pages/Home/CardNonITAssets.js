@@ -13,7 +13,7 @@ export default function CardNonITAsset({ deployId, data }) {
     const { allNonITAsset } = useDataAsset([])
     const { allUser, dataUser } = useDataUser([])
 
-    const { serialNumber, site, category, brand, model, statusDeploy, email, createdAt, createdBy, withdrawalAt, isDeployed } = data
+    const { serialNumber, site, category, brand, model, statusDeploy, createdAt, createdBy, withdrawnAt, isDeployed, deployed } = data
 
     const handleConf = () => {
         Swal.fire({
@@ -35,31 +35,24 @@ export default function CardNonITAsset({ deployId, data }) {
                     confirmButtonText: 'Submit',
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        const assetId = allNonITAsset.find(e => e.data.serialNumber === serialNumber).id
-                        const user = allUser.find(e => e.data.email === email)
-                        deploymentsServices.update(deployId, {
-                            statusDeploy: 'Accepted',
-                            isDeployed: true,
+                        const deployed = {
+                            status: 'Accepted',
                             remark: result.value,
                             confirmAt: Timestamp.now(),
                             confirmBy: dataUser.email
-                        })
+                        }
+                        deploymentsServices.set(deployId, { isDeployed: true, deployed, statusDeploy: 'Deployed' })
+                        const assetId = allNonITAsset.find(e => e.data.serialNumber === serialNumber).id
+                        const userId = allUser.find(e => e.data?.deployed?.email === deployed.email).id
                         assetsServices.update(assetId, {
                             status: 'In Use',
-                            uid: user.id,
-                            historyUser: [
-                                {
-                                    name: user?.data?.displayName,
-                                    email: user?.data?.email,
-                                    job: user?.data?.job,
-                                    department: user?.data?.department,
-                                    site: user?.data?.site,
-                                    deployedAt: createdAt,
-                                    deployedBy: createdBy,
-                                    confirmAt: Timestamp.now(),
-                                    confirmBy: dataUser.email
-                                }
-                            ]
+                            deployed: {
+                                uid: userId,
+                                deployedAt: createdAt,
+                                deployedBy: createdBy,
+                                confirmAt: Timestamp.now(),
+                                confirmBy: dataUser.email
+                            }
                         })
                         Swal.fire('Accepted!', 'Your reason has been submitted.', 'success')
                             .then(() => window.location.reload())
@@ -75,12 +68,13 @@ export default function CardNonITAsset({ deployId, data }) {
                     confirmButtonText: 'Submit',
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        deploymentsServices.update(deployId, {
-                            statusDeploy: 'Rejected',
+                        const deployed = {
+                            status: 'Rejected',
                             remark: result.value,
                             confirmAt: Timestamp.now(),
                             confirmBy: dataUser.email
-                        })
+                        }
+                        deploymentsServices.set(deployId, { deployed })
                         Swal.fire('Rejected!', 'Your reason has been submitted.', 'success')
                             .then(() => window.location.reload())
                     }
@@ -97,19 +91,19 @@ export default function CardNonITAsset({ deployId, data }) {
                         {(() => {
                             switch (statusDeploy) {
                                 case "Accepted":
-                                    return <Badge className="float-right my-1" type="success">{statusDeploy}</Badge>
+                                    return <Badge className="float-right my-1" type="success">{!deployed?.status ? statusDeploy : ('Assign ' + deployed?.status)}</Badge>
                                 case "Rejected":
-                                    return <Badge className="float-right my-1" type="danger">{statusDeploy}</Badge>
+                                    return <Badge className="float-right my-1" type="danger">{!deployed?.status ? statusDeploy : ('Assign ' + deployed?.status)}</Badge>
                                 case "On Service":
-                                    return <Badge className="float-right my-1" type="neutral">{statusDeploy}</Badge>
+                                    return <Badge className="float-right my-1" type="neutral">{!deployed?.status ? statusDeploy : ('Assign ' + deployed?.status)}</Badge>
                                 default:
-                                    return <Badge className="float-right my-1" type="primary">{statusDeploy}</Badge>
+                                    return <Badge className="float-right my-1" type="primary">{!deployed?.status ? statusDeploy : ('Assign ' + deployed?.status)}</Badge>
                             }
                         })()}
                     </h5>
                     <div className="grid col-gap-3 my-3 sm:grid-cols-2">
                         <small className='text-gray-600'>Deployed: {new Date(createdAt?.seconds * 1000).toLocaleDateString("in-ID")}</small>
-                        <small className='text-gray-600'>Withdrawal: {withdrawalAt ? new Date(withdrawalAt?.seconds * 1000).toLocaleDateString("in-ID") : '-'}</small>
+                        <small className='text-gray-600'>Withdrawal: {withdrawnAt ? new Date(withdrawnAt?.seconds * 1000).toLocaleDateString("in-ID") : '-'}</small>
                     </div>
                     <ul className="space-y-5 my-7">
                         <li className="flex space-x-3">

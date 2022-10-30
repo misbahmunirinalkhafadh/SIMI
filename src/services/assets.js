@@ -1,4 +1,4 @@
-import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore";
 import { db } from "../utils/firebase";
 
 export const assetsServices = {
@@ -64,5 +64,12 @@ export const assetsServices = {
         const col = collection(db, 'assets')
         const remove = await deleteDoc(doc(col, id));
         return remove;
+    },
+
+    // Set a list of deployments from database
+    async set(id, value) {
+        const col = collection(db, 'assets',)
+        const set = await setDoc(doc(col, id), value, { merge: true });
+        return set;
     }
 }

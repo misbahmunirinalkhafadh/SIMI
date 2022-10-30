@@ -15,7 +15,9 @@ import {
   Tables,
   Permission,
   FormITAsset,
-  Deployments
+  Pending,
+  Deployed,
+  Withdrawn,
 } from '../pages'
 
 // use lazy for better code splitting, a.k.a. load faster
@@ -65,8 +67,16 @@ const routes = [
     component: RequestService, // view rendered
   },
   {
-    path: '/deployments', // the url
-    component: Deployments, // view rendered
+    path: '/pending', // the url
+    component: Pending, // view rendered
+  },
+  {
+    path: '/deployed', // the url
+    component: Deployed, // view rendered
+  },
+  {
+    path: '/withdrawn', // the url
+    component: Withdrawn, // view rendered
   },
   {
     path: '/manage', // the url

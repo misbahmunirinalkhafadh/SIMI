@@ -23,8 +23,8 @@ import { Link, useHistory } from "react-router-dom";
 import Swal from "sweetalert2";
 
 import { assetsServices } from "../../services/assets";
-import ModalFormDeploy from "../Deployments/ModalFormDeploy";
 import useDataSite from "../../hooks/useDataSite";
+import ModalFormDeploy from "../Assignments/ModalFormDeploy";
 // make a copy of the data, for the second table
 
 function TableITAsset({ filter, priviledges }) {

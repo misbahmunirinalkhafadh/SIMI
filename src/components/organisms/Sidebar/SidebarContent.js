@@ -7,8 +7,8 @@ import * as Icons from "../../../assets/icons";
 import SidebarSubmenu from "./SidebarSubmenu";
 import routes from "../../../routes/sidebar";
 import useDataUser from "../../../hooks/useDataUser";
-import ModalFormDeploy from "../../../pages/Deployments/ModalFormDeploy";
 import useDataDeployment from '../../../hooks/useDataDeployment'
+import ModalFormDeploy from "../../../pages/Assignments/ModalFormDeploy";
 
 function Icon({ icon, ...props }) {
   const Icon = Icons[icon];
@@ -42,7 +42,7 @@ function SidebarContent() {
 
   let btnRequest = null
   const priviledges = role?.priviledges?.filter(
-    (e) => e.permission === "Deployments"
+    (e) => e.permission === "Assignments"
   );
 
   if (priviledges) {
@@ -71,7 +71,7 @@ function SidebarContent() {
             className="px-2 py-0.5 ml-auto tracking-wide"
           >  10 </Badge>) : ""
         }
-        {route.name === "Deployments" ?
+        {route.name === "Assignments" ?
           (<Badge
             type="danger"
             className="px-2 py-0.5 ml-auto tracking-wide"
@@ -133,7 +133,7 @@ function SidebarContent() {
                       icon={route.icon}
                     />
                     <span className="ml-4">{route.name}</span>
-                    <Badges route={route} pendingDeploy={pendingDeploy} />
+                    {/* <Badges route={route} pendingDeploy={pendingDeploy} /> */}
                   </NavLink>
                 </li>
               )

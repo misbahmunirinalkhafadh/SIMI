@@ -102,7 +102,7 @@ export const Tabs = () => {
                                 <TabHardware data={data.information} />
                             </div>
                             <div className={openTab === 3 ? "block" : "hidden"} id="link3">
-                                <TabHistory users={data.historyUser} hardware={data.historyInfo} />
+                                <TabHistory serialNumber={data.serialNumber} hardware={data.historyInfo} />
                             </div>
                         </div>
                     </div>

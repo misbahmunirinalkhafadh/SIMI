@@ -9,7 +9,7 @@ export const Tabs = ({ color }) => {
 
   const priviledges = role?.priviledges?.filter((e) =>
     e.permission === "Assets"
-    || e.permission === "Deployments"
+    || e.permission === "Assignments"
   );
 
   return (
