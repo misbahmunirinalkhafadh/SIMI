@@ -12,6 +12,7 @@ import { ReactComponent as PrinterIcon } from './printer.svg'
 import { ReactComponent as InformationIcon } from './information.svg'
 import { ReactComponent as FormsIcon } from './forms.svg'
 import { ReactComponent as HomeIcon } from './home.svg'
+import { ReactComponent as DownloadIcon } from './download.svg'
 import { ReactComponent as ModalsIcon } from './modals.svg'
 import { ReactComponent as PagesIcon } from './pages.svg'
 import { ReactComponent as TablesIcon } from './tables.svg'
@@ -53,6 +54,7 @@ export {
   InformationIcon,
   FormsIcon,
   HomeIcon,
+  DownloadIcon,
   ModalsIcon,
   PagesIcon,
   TablesIcon,

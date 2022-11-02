@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@react-pdf/renderer": "^3.0.0",
     "@svgr/webpack": "5.4.0",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
@@ -12,6 +13,8 @@
     "classnames": "2.2.6",
     "faker": "4.1.0",
     "firebase": "^9.9.4",
+    "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.5.25",
     "netlify-cli": "^11.8.3",
     "react": "^16.13.1",
     "react-chartjs-2": "2.9.0",

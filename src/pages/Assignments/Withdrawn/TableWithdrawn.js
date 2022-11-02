@@ -13,7 +13,7 @@ import {
 } from '@windmill/react-ui'
 
 import useDataDeployment from '../../../hooks/useDataDeployment'
-import { InformationIcon } from '../../../assets/icons'
+import { DownloadIcon, InformationIcon } from '../../../assets/icons'
 import useDataSite from '../../../hooks/useDataSite'
 import ModalDetail from '../ModalDetail'
 
@@ -112,6 +112,9 @@ export default function TableWithdrawn({ filter }) {
                                     <div className="flex items-center space-x-2">
                                         <Button layout="link" size="icon" aria-label="Detail">
                                             <InformationIcon className="w-5 h-5" aria-hidden="true" color="#7e3af2" onClick={() => openModal(data)} />
+                                        </Button>
+                                        <Button layout="link" size="icon" aria-label="Download">
+                                            <DownloadIcon className="w-5 h-5" aria-hidden="true" color="#7e3af2" />
                                         </Button>
                                     </div>
                                 </TableCell>

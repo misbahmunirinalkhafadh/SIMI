@@ -12,7 +12,7 @@ import {
     Button
 } from '@windmill/react-ui'
 import useDataDeployment from '../../../hooks/useDataDeployment'
-import { InformationIcon, WithdrawIcon } from '../../../assets/icons'
+import { DownloadIcon, InformationIcon, WithdrawIcon } from '../../../assets/icons'
 import useDataSite from '../../../hooks/useDataSite'
 import ModalDetail from '../ModalDetail'
 import Swal from 'sweetalert2'
@@ -21,6 +21,7 @@ import { assetsServices } from '../../../services/assets'
 import useDataAsset from '../../../hooks/useDataAsset'
 import { deleteField, Timestamp } from 'firebase/firestore'
 import useDataUser from '../../../hooks/useDataUser'
+import { BASTDeployment } from '../../../components/templates/BASTDeployment'
 
 export default function TableDeployed({ filter }) {
     const { allDeployment } = useDataDeployment({})
@@ -159,6 +160,9 @@ export default function TableDeployed({ filter }) {
                                         </Button>
                                         <Button layout="link" size="icon" aria-label="Detail">
                                             <InformationIcon className="w-5 h-5" aria-hidden="true" color="#7e3af2" onClick={() => openModal(data)} />
+                                        </Button>
+                                        <Button layout="link" size="icon" aria-label="Download">
+                                            <DownloadIcon className="w-5 h-5" aria-hidden="true" color="#7e3af2" onClick={() => BASTDeployment({ id, data, site: allSite?.filter((e) => e.id === data?.site)[0]?.data.name })} />
                                         </Button>
                                     </div>
                                 </TableCell>
