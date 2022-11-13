@@ -16,6 +16,7 @@ import useDataDeployment from '../../../hooks/useDataDeployment'
 import { DownloadIcon, InformationIcon } from '../../../assets/icons'
 import useDataSite from '../../../hooks/useDataSite'
 import ModalDetail from '../ModalDetail'
+import { BASTWithdrawal } from '../../../components/templates/BASTWithdrawal'
 
 export default function TableWithdrawn({ filter }) {
     const { allDeployment } = useDataDeployment({})
@@ -114,7 +115,7 @@ export default function TableWithdrawn({ filter }) {
                                             <InformationIcon className="w-5 h-5" aria-hidden="true" color="#7e3af2" onClick={() => openModal(data)} />
                                         </Button>
                                         <Button layout="link" size="icon" aria-label="Download">
-                                            <DownloadIcon className="w-5 h-5" aria-hidden="true" color="#7e3af2" />
+                                            <DownloadIcon className="w-5 h-5" aria-hidden="true" color="#7e3af2" onClick={() => BASTWithdrawal({ id, data, site: allSite?.filter((e) => e.id === data?.site)[0]?.data.name })} />
                                         </Button>
                                     </div>
                                 </TableCell>

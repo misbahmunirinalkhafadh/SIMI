@@ -7,13 +7,14 @@ import { assetsServices } from '../../services/assets'
 import useDataAsset from '../../hooks/useDataAsset'
 import useDataUser from '../../hooks/useDataUser'
 import { Timestamp } from 'firebase/firestore'
+import { DownloadIcon } from '../../assets/icons'
 
 export default function CardNonITAsset({ deployId, data }) {
     const { allSite } = useDataSite({})
     const { allNonITAsset } = useDataAsset([])
     const { allUser, dataUser } = useDataUser([])
 
-    const { serialNumber, site, category, brand, model, statusDeploy, createdAt, createdBy, withdrawnAt, isDeployed, deployed } = data
+    const { serialNumber, site, category, brand, model, statusDeploy, createdAt, createdBy, withdrawn, isDeployed, isWithdrawn, deployed } = data
 
     const handleConf = () => {
         Swal.fire({
@@ -74,7 +75,7 @@ export default function CardNonITAsset({ deployId, data }) {
                             confirmAt: Timestamp.now(),
                             confirmBy: dataUser.email
                         }
-                        deploymentsServices.set(deployId, { deployed })
+                        deploymentsServices.set(deployId, { deployed, statusDeploy: 'Rejected' })
                         Swal.fire('Rejected!', 'Your reason has been submitted.', 'success')
                             .then(() => window.location.reload())
                     }
@@ -90,20 +91,22 @@ export default function CardNonITAsset({ deployId, data }) {
                     <h5 className="text-xl font-medium text-gray-500 dark:text-gray-400">{serialNumber}
                         {(() => {
                             switch (statusDeploy) {
-                                case "Accepted":
-                                    return <Badge className="float-right my-1" type="success">{!deployed?.status ? statusDeploy : ('Assign ' + deployed?.status)}</Badge>
+                                case "Assigned":
+                                    return <Badge className="float-right my-1" type="primary">{statusDeploy}</Badge>
+                                case "Deployed":
+                                    return <Badge className="float-right my-1" type="success">{statusDeploy}</Badge>
                                 case "Rejected":
-                                    return <Badge className="float-right my-1" type="danger">{!deployed?.status ? statusDeploy : ('Assign ' + deployed?.status)}</Badge>
-                                case "On Service":
-                                    return <Badge className="float-right my-1" type="neutral">{!deployed?.status ? statusDeploy : ('Assign ' + deployed?.status)}</Badge>
+                                    return <Badge className="float-right my-1" type="danger">{statusDeploy}</Badge>
+                                case "Withdrawn":
+                                    return <Badge className="float-right my-1" type="neutral">{statusDeploy}</Badge>
                                 default:
-                                    return <Badge className="float-right my-1" type="primary">{!deployed?.status ? statusDeploy : ('Assign ' + deployed?.status)}</Badge>
+                                    return <Badge className="float-right my-1" type="neutral">{statusDeploy}</Badge>
                             }
                         })()}
                     </h5>
                     <div className="grid col-gap-3 my-3 sm:grid-cols-2">
                         <small className='text-gray-600'>Deployed: {new Date(createdAt?.seconds * 1000).toLocaleDateString("in-ID")}</small>
-                        <small className='text-gray-600'>Withdrawal: {withdrawnAt ? new Date(withdrawnAt?.seconds * 1000).toLocaleDateString("in-ID") : '-'}</small>
+                        <small className='text-gray-600'>Withdrawal: {withdrawn ? new Date(withdrawn?.withdrawnAt?.seconds * 1000).toLocaleDateString("in-ID") : '-'}</small>
                     </div>
                     <ul className="space-y-5 my-7">
                         <li className="flex space-x-3">
@@ -124,13 +127,18 @@ export default function CardNonITAsset({ deployId, data }) {
                         </li>
                     </ul>
                     <div className="pt-5 pb-3">
-                        {isDeployed ?
-                            <>
-                                <Button block type="submit" >Download BAST</Button>
-                                <Button className="mt-2" block layout="outline" type="submit" >Report Issue</Button>
-                            </>
-                            :
-                            <Button block type="submit" onClick={handleConf} >Confirmation</Button>}
+                        <div hidden={isDeployed} >
+                            <Button block hidden={true} onClick={handleConf} disabled={deployed?.status === 'Rejected' ? true : false} >{deployed?.status === 'Rejected' ? 'On Request' : 'Confirmation'}</Button>
+                        </div>
+                        <div hidden={!isDeployed} >
+                            <Button block type="submit" iconLeft={DownloadIcon}>BAST Deployment</Button>
+                        </div>
+                        <div hidden={!isWithdrawn} >
+                            <Button block type="submit" className="mt-2" iconLeft={DownloadIcon}>BAST Withdrawal</Button>
+                        </div>
+                        <div hidden={!isDeployed || isWithdrawn}>
+                            <Button className="mt-2" block layout="outline" type="submit" >Report Issue</Button>
+                        </div>
                     </div>
                 </CardBody>
             </Card>

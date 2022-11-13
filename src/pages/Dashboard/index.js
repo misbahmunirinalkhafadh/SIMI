@@ -1,12 +1,10 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Doughnut, Line } from 'react-chartjs-2'
 import { ChartCard, ChartLegend, InfoCard, PageTitle, RoundIcon } from '../../components'
 import { CartIcon, PeopleIcon, FormsIcon } from '../../assets/icons'
 
 import {
-  doughnutOptions,
   lineOptions,
-  doughnutLegends,
   lineLegends,
 } from '../../utils/demo/chartsData'
 import useDataAsset from '../../hooks/useDataAsset'
@@ -14,9 +12,46 @@ import useDataUser from '../../hooks/useDataUser'
 import useDataDeployment from '../../hooks/useDataDeployment'
 
 function Dashboard() {
-  const { allAsset } = useDataAsset()
+  const { allAsset, allITAsset } = useDataAsset()
   const { allUser } = useDataUser()
   const { allDeployment } = useDataDeployment()
+  const [ITAsset, setITAsset] = useState([])
+
+  const doughnutLegends = [
+    { title: 'In Use', color: 'bg-blue-500' },
+    { title: 'Assigned', color: 'bg-teal-600' },
+    { title: 'Ready', color: 'bg-purple-600' },
+  ]
+  const doughnutOptions = {
+    data: {
+      datasets: [
+        {
+          data: [33, 33, 33],
+          backgroundColor: ['#0694a2', '#1c64f2', '#7e3af2'],
+          label: 'Dataset 1',
+        },
+      ],
+      labels: ITAsset,
+    },
+    options: {
+      responsive: true,
+      cutoutPercentage: 80,
+    },
+    legend: {
+      display: false,
+    },
+  }
+
+  useEffect(() => {
+    const uniqueStatus = [];
+
+    allITAsset.forEach((sts) => {
+      if (uniqueStatus.indexOf(sts.data.status) === -1) {
+        uniqueStatus.push(sts.data.status);
+      }
+    });
+    setITAsset(uniqueStatus);
+  }, [allITAsset]);
 
   return (
     <>

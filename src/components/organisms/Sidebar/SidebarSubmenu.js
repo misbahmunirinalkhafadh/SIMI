@@ -9,15 +9,17 @@ function Icon({ icon, ...props }) {
   return <Icon {...props} />;
 }
 
-function SidebarSubmenu({ route, priviledges }) {
+function SidebarSubmenu({ route, role }) {
   const [isDropdownMenuOpen, setIsDropdownMenuOpen] = useState(false);
+
+  const permission = role.priviledges.filter(e => e.permission === route.name)[0]
 
   function handleDropdownMenuClick() {
     setIsDropdownMenuOpen(!isDropdownMenuOpen);
   }
 
   return (
-    <li className="relative px-6 py-3" key={route.name}>
+    <li className="relative px-6 py-3" key={route.name} hidden={!permission.view}>
       <button
         className="inline-flex items-center justify-between w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
         onClick={handleDropdownMenuClick}

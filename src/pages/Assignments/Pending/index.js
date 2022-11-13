@@ -9,6 +9,7 @@ import useDataDeployment from '../../../hooks/useDataDeployment';
 function Pending() {
     const { allDeployment } = useDataDeployment({})
     const [category, setCategory] = useState([])
+    const [site, setSite] = useState([])
     const [filter, setFilter] = useState({ search: '', category: 'all' });
 
     function handleChange(e) {
@@ -21,6 +22,7 @@ function Pending() {
     useEffect(() => {
         const pending = allDeployment?.filter(e => e.data.isDeployed === false)
         const uniqueTags = [];
+        const uniqueSite = [];
 
         pending.forEach(asd => {
             if (uniqueTags.indexOf(asd.data.category) === -1) {
@@ -28,7 +30,14 @@ function Pending() {
             }
         });
 
+        pending.forEach(asd => {
+            if (uniqueSite.indexOf(asd.data.site) === -1) {
+                uniqueSite.push(asd.data.site)
+            }
+        });
+
         setCategory(uniqueTags)
+        setSite(uniqueSite)
     }, [allDeployment])
 
     return (
@@ -61,6 +70,28 @@ function Pending() {
                             ))}
                         </Select>
                     </div>
+                    {/* Site  */}
+                    <div className="ml-3" >
+                        <Select name="site"  >
+                            <option value="all" >All Site</option>
+                            {site.map((data, i) => (
+                                <option value={data} key={i}>
+                                    {data}
+                                </option>
+                            ))}
+                        </Select>
+                    </div>
+                    {/* Type  */}
+                    {/* <div className="ml-3" >
+                        <Select name="category" >
+                            <option value="all" >All Category</option>
+                            {category.map((data, i) => (
+                                <option value={data} key={i}>
+                                    {data}
+                                </option>
+                            ))}
+                        </Select>
+                    </div> */}
                 </div>
             </div>
             <TablePending filter={filter} />

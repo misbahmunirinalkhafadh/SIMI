@@ -27,9 +27,11 @@ export default function TableDeployed({ filter }) {
     const { allDeployment } = useDataDeployment({})
     const { allSite } = useDataSite({})
     const { allAsset } = useDataAsset([])
-    const { dataUser } = useDataUser([])
+    const { role, dataUser } = useDataUser([])
     const [detail, setDetail] = useState({})
     const [response, setResponse] = useState([])
+
+    const priviledges = role?.priviledges?.filter(e => e.permission === "Assignments")[0];
 
     // setup pages control for every table
     const [pageTable, setPageTable] = useState(1)
@@ -149,13 +151,20 @@ export default function TableDeployed({ filter }) {
                                 <TableCell>{data?.deployed?.job}</TableCell>
                                 <TableCell>{data?.deployed?.department ? data?.deployed?.department : '-'}</TableCell>
                                 <TableCell className="text-center" >
-                                    <Badge type="success">
-                                        {data?.statusDeploy}
-                                    </Badge>
+                                    {(() => {
+                                        switch (data?.statusDeploy) {
+                                            case "Deployed":
+                                                return <Badge className="float-right my-1" type="success">{data?.statusDeploy}</Badge>
+                                            case "Withdrawn":
+                                                return <Badge className="float-right my-1" type="neutral">{data?.statusDeploy}</Badge>
+                                            default:
+                                                return <Badge className="float-right my-1" type="neutral">{data?.statusDeploy}</Badge>
+                                        }
+                                    })()}
                                 </TableCell>
                                 <TableCell>
                                     <div className="flex items-center space-x-2">
-                                        <Button layout="link" size="icon" aria-label="Withdrawal" disabled={data?.isWithdrawn} onClick={() => handleWithdraw({ id, data })}>
+                                        <Button layout="link" size="icon" aria-label="Withdrawal" disabled={!priviledges?.edit || data?.isWithdrawn} onClick={() => handleWithdraw({ id, data })}>
                                             <WithdrawIcon className="w-5 h-5" aria-hidden="true" color='#7e3af2' />
                                         </Button>
                                         <Button layout="link" size="icon" aria-label="Detail">

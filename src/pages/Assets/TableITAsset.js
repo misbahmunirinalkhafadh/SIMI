@@ -284,7 +284,7 @@ function TableITAsset({ filter, priviledges }) {
                         layout="link"
                         size="icon"
                         aria-label="Archive"
-                        disabled={!priviledges[0]?.edit}
+                        disabled={!priviledges[0]?.edit || data.status === "In Use" || data.status === "Assigned"}
                         onClick={() => handleArchive(id)}
                       >
                         <ArchiveIcon

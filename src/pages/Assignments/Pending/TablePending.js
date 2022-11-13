@@ -145,15 +145,13 @@ export default function TablePending({ filter }) {
                                 <TableCell>{data?.deployed?.department ? data?.deployed?.department : '-'}</TableCell>
                                 <TableCell className="text-center" >
                                     {(() => {
-                                        switch (!data.deployed?.status ? data.statusDeploy : data?.deployed?.status) {
-                                            case "Accepted":
-                                                return <Badge className="float-right my-1" type="success">{!data.deployed?.status ? data.statusDeploy : data?.deployed?.status}</Badge>
+                                        switch (data?.statusDeploy) {
+                                            case "Assigned":
+                                                return <Badge className="float-right my-1" type="primary">{data?.statusDeploy}</Badge>
                                             case "Rejected":
-                                                return <Badge className="float-right my-1" type="danger">{!data.deployed?.status ? data.statusDeploy : data?.deployed?.status}</Badge>
-                                            case "On Service":
-                                                return <Badge className="float-right my-1" type="neutral">{!data.deployed?.status ? data.statusDeploy : data?.deployed?.status}</Badge>
+                                                return <Badge className="float-right my-1" type="danger">{data?.statusDeploy}</Badge>
                                             default:
-                                                return <Badge className="float-right my-1" type="primary">{!data.deployed?.status ? data.statusDeploy : data?.deployed?.status}</Badge>
+                                                return <Badge className="float-right my-1" type="neutral">{data?.statusDeploy}</Badge>
                                         }
                                     })()}
                                 </TableCell>

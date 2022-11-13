@@ -80,7 +80,7 @@ function SidebarContent() {
       </>
     )
   }
-  
+
   return (
     <div className="py-4 text-gray-500 dark:text-gray-400">
       <Link
@@ -109,7 +109,7 @@ function SidebarContent() {
         {role?.priviledges &&
           routes.map((route) =>
             route.routes ? (
-              <SidebarSubmenu route={route} key={route.name} />
+              <SidebarSubmenu route={route} key={route.name} role={role} />
             ) : (
               role?.priviledges
                 .filter((e) => e.permission === route.name)
