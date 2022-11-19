@@ -1,57 +1,76 @@
 import React, { useEffect, useState } from 'react'
-import { Doughnut, Line } from 'react-chartjs-2'
-import { ChartCard, ChartLegend, InfoCard, PageTitle, RoundIcon } from '../../components'
+import { Doughnut, Line, Pie } from 'react-chartjs-2'
+import { Card, CardBody, Select } from '@windmill/react-ui'
+import { ChartLegend, InfoCard, PageTitle, RoundIcon } from '../../components'
 import { CartIcon, PeopleIcon, FormsIcon } from '../../assets/icons'
 
-import {
-  lineOptions,
-  lineLegends,
-} from '../../utils/demo/chartsData'
 import useDataAsset from '../../hooks/useDataAsset'
 import useDataUser from '../../hooks/useDataUser'
 import useDataDeployment from '../../hooks/useDataDeployment'
 
 function Dashboard() {
-  const { allAsset, allITAsset } = useDataAsset()
+  const { allAsset } = useDataAsset()
   const { allUser } = useDataUser()
   const { allDeployment } = useDataDeployment()
-  const [ITAsset, setITAsset] = useState([])
+  const [assetData, setAssetData] = useState([])
+  const [assetCategory, setAssetCategory] = useState([])
 
   const doughnutLegends = [
-    { title: 'In Use', color: 'bg-blue-500' },
-    { title: 'Assigned', color: 'bg-teal-600' },
-    { title: 'Ready', color: 'bg-purple-600' },
+    { title: 'In Use', color: 'bg-purple-500' },
+    { title: 'Assigned', color: 'bg-orange-500' },
+    { title: 'Ready', color: 'bg-green-500' },
   ]
-  const doughnutOptions = {
+
+  const dataITAsset = {
     data: {
       datasets: [
         {
-          data: [33, 33, 33],
-          backgroundColor: ['#0694a2', '#1c64f2', '#7e3af2'],
+          data: assetData,
+          backgroundColor: ['#9061f9', '#ff5a1f', '#0e9f6e'],
           label: 'Dataset 1',
         },
       ],
-      labels: ITAsset,
+      labels: ['In Use', 'Assigned', 'Ready'],
     },
     options: {
       responsive: true,
-      cutoutPercentage: 80,
+      cutoutPercentage: 0,
     },
     legend: {
       display: false,
     },
   }
 
-  useEffect(() => {
-    const uniqueStatus = [];
+  const handleChange = (e) => {
+    if (e.target.value === "all") {
+      setAssetData([
+        allAsset.filter(e => e.data.status === 'In Use').length,
+        allAsset.filter(e => e.data.status === 'Assigned').length,
+        allAsset.filter(e => e.data.status === 'Ready').length
+      ])
+    } else {
+      setAssetData([
+        allAsset.filter(el => el.data.status === 'In Use' && el?.data?.category === e.target.value).length,
+        allAsset.filter(el => el.data.status === 'Assigned' && el?.data?.category === e.target.value).length,
+        allAsset.filter(el => el.data.status === 'Ready' && el?.data?.category === e.target.value).length
+      ])
+    }
+  }
 
-    allITAsset.forEach((sts) => {
-      if (uniqueStatus.indexOf(sts.data.status) === -1) {
-        uniqueStatus.push(sts.data.status);
+  useEffect(() => {
+    setAssetData([
+      allAsset.filter(e => e.data.status === 'In Use').length,
+      allAsset.filter(e => e.data.status === 'Assigned').length,
+      allAsset.filter(e => e.data.status === 'Ready').length
+    ])
+    const uniqueTags = [];
+    allAsset.forEach((asd) => {
+      if (uniqueTags.indexOf(asd.data.category) === -1) {
+        uniqueTags.push(asd.data.category);
       }
     });
-    setITAsset(uniqueStatus);
-  }, [allITAsset]);
+    setAssetCategory(uniqueTags)
+  }, [allAsset]);
 
   return (
     <>
@@ -97,15 +116,28 @@ function Dashboard() {
       </div>
 
       <div className="grid gap-6 mb-8 md:grid-cols-2">
-        <ChartCard title="Revenue">
-          <Doughnut {...doughnutOptions} />
-          <ChartLegend legends={doughnutLegends} />
-        </ChartCard>
+        <Card>
+          <CardBody>
+            <div className="grid gap-6 mb-8 md:grid-cols-2">
+              <p className="mb-4 font-semibold text-gray-600 dark:text-gray-300">Asset Category By Status</p>
+              <Select onChange={handleChange}>
+                <option value="all" >All Asset</option>
+                {assetCategory.sort().map((data, i) => (
+                  <option value={data} key={i}>
+                    {data}
+                  </option>
+                ))}
+              </Select>
+            </div>
+            <Pie {...dataITAsset} />
+            <ChartLegend legends={doughnutLegends} />
+          </CardBody>
+        </Card>
 
-        <ChartCard title="Traffic">
-          <Line {...lineOptions} />
-          <ChartLegend legends={lineLegends} />
-        </ChartCard>
+        {/* <ChartCard title="Non-IT Asset">
+          <Line {...dataITAsset} />
+          <ChartLegend legends={doughnutLegends} />
+        </ChartCard> */}
       </div>
     </>
   )

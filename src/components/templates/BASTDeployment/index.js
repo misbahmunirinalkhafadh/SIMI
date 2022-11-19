@@ -65,7 +65,7 @@ export const BASTDeployment = ({ id, data, site }) => {
     doc.setFont('helvetica', 'normal', 'bold').setFontSize(14)
     doc.text("Catatan: ", 15, 205);
     doc.setFont('helvetica', 'normal').setFontSize(14);
-    doc.text(data?.deployed?.remark, 25, 212);
+    doc.text(data?.notes, 25, 212);
 
     doc.setFont('helvetica', 'normal', 'bold').setFontSize(14)
     doc.text("Tanda terima: ", 15, 223);
