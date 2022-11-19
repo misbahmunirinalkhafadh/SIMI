@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { Modal, ModalHeader, ModalBody, ModalFooter, Select, Button, Label, Input } from '@windmill/react-ui'
+import { Modal, ModalHeader, ModalBody, ModalFooter, Select, Button, Label, Input, Textarea } from '@windmill/react-ui'
 import { Timestamp } from 'firebase/firestore'
 import Swal from 'sweetalert2'
 
@@ -50,6 +50,7 @@ function ModalFormDeploy({ closeModal, isModalOpen, deployId, assetId, data }) {
                 },
                 isDeployed: false,
                 statusDeploy: 'Assigned',
+                notes: value.notes,
                 createdBy: dataUser?.email,
                 createdAt: Timestamp.now(),
             }
@@ -69,10 +70,11 @@ function ModalFormDeploy({ closeModal, isModalOpen, deployId, assetId, data }) {
                     closeModal()
                 }
             })
-            if (deployId) {
-                /**
-                 * Edit data Asset Deploy
-                 */
+
+            /**
+             * Edit data Asset Deploy
+             */
+            if(deployId) {
                 let dataEdit = {
                     site: value?.dataAsset?.site === undefined ? data?.site : value?.dataAsset?.site,
                     category: value?.dataAsset?.category === undefined ? data?.category : value?.dataAsset?.category,
@@ -83,9 +85,10 @@ function ModalFormDeploy({ closeModal, isModalOpen, deployId, assetId, data }) {
                         email: userdata?.label === undefined ? data?.deployed?.email : userdata?.label,
                         user: userdata?.name === undefined ? data?.deployed?.user : userdata?.name,
                         job: userdata?.job === undefined ? data?.deployed?.job : userdata?.job,
-                        department: userdata?.department === undefined ? '' : userdata?.department,
+                        department: userdata?.department === undefined ? data?.deployed?.department : userdata?.department,
                     },
                     statusDeploy: 'Assigned',
+                    notes: value.notes,
                     modifiedBy: dataUser?.email,
                     modifiedAt: Timestamp.now()
                 }
@@ -113,7 +116,7 @@ function ModalFormDeploy({ closeModal, isModalOpen, deployId, assetId, data }) {
                         closeModal()
                     }
                 })
-            }
+            } 
         } catch (err) {
             alert(err)
         }
@@ -212,23 +215,29 @@ function ModalFormDeploy({ closeModal, isModalOpen, deployId, assetId, data }) {
                                 {...register('deployed.user')}
                             />
                         </Label>
+                        <div className="grid col-gap-3 lg:grid-cols-2">
+                            <Label className="mt-3">
+                                <span>Job Title</span>
+                                <Input
+                                    className="mt-1"
+                                    disabled
+                                    value={userdata?.job || ''}
+                                    {...register('deployed.job')}
+                                />
+                            </Label>
+                            <Label className="mt-3">
+                                <span>Department</span>
+                                <Input
+                                    className="mt-1"
+                                    disabled
+                                    value={userdata?.department || ''}
+                                    {...register('deployed.department')}
+                                />
+                            </Label>
+                        </div>
                         <Label className="mt-3">
-                            <span>Job Title</span>
-                            <Input
-                                className="mt-1"
-                                disabled
-                                value={userdata?.job || ''}
-                                {...register('deployed.job')}
-                            />
-                        </Label>
-                        <Label className="mt-3">
-                            <span>Department</span>
-                            <Input
-                                className="mt-1"
-                                disabled
-                                value={userdata?.department || ''}
-                                {...register('deployed.department')}
-                            />
+                            <span>Notes</span>
+                            <Textarea className="mt-1" rows="3" placeholder="Enter notes" {...register("notes")} />
                         </Label>
                     </ModalBody>
                     <ModalFooter>
