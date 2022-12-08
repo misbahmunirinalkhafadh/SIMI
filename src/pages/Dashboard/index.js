@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Doughnut, Line, Pie } from 'react-chartjs-2'
+import { Pie } from 'react-chartjs-2'
 import { Card, CardBody, Select } from '@windmill/react-ui'
 import { ChartLegend, InfoCard, PageTitle, RoundIcon } from '../../components'
 import { CartIcon, PeopleIcon, FormsIcon } from '../../assets/icons'
@@ -135,7 +135,7 @@ function Dashboard() {
         </Card>
 
         {/* <ChartCard title="Non-IT Asset">
-          <Line {...dataITAsset} />
+          <Pie {...dataITAsset} />
           <ChartLegend legends={doughnutLegends} />
         </ChartCard> */}
       </div>

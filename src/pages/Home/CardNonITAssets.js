@@ -127,6 +127,9 @@ export default function CardNonITAsset({ deployId, data }) {
                         </li>
                     </ul>
                     <div className="pt-5 pb-3">
+                        <div hidden={!isDeployed || isWithdrawn}>
+                            <Button className="mb-2" block layout="outline" type="submit" >Report Issue</Button>
+                        </div>
                         <div hidden={isDeployed} >
                             <Button block hidden={true} onClick={handleConf} disabled={deployed?.status === 'Rejected' ? true : false} >{deployed?.status === 'Rejected' ? 'On Request' : 'Confirmation'}</Button>
                         </div>
@@ -135,9 +138,6 @@ export default function CardNonITAsset({ deployId, data }) {
                         </div>
                         <div hidden={!isWithdrawn} >
                             <Button block type="submit" className="mt-2" iconLeft={DownloadIcon}>BAST Withdrawal</Button>
-                        </div>
-                        <div hidden={!isDeployed || isWithdrawn}>
-                            <Button className="mt-2" block layout="outline" type="submit" >Report Issue</Button>
                         </div>
                     </div>
                 </CardBody>
